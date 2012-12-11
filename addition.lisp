@@ -276,7 +276,7 @@
       state       attend-second-operand
    =visual>
       ISA         text
-      value       =value
+      value       =value2
    ;; match imaginal to keep info about last number there
    =imaginal>
       ISA         arithmetic-info
