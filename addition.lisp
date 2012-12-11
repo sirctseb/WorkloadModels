@@ -160,7 +160,7 @@
  (a9+7 ISA ARITHMETIC FIRST 9 OPERATOR + SECOND 7 RESULT (16))
  (a9+8 ISA ARITHMETIC FIRST 9 OPERATOR + SECOND 8 RESULT (17))
  (a9+9 ISA ARITHMETIC FIRST 9 OPERATOR + SECOND 9 RESULT (18))
- (addition-goal ISA arithmetic-problem first 2 second 5 operator +)
+ (addition-goal ISA arithmetic-problem operator + state read-first-operand)
  )
 
 ;(P initialize-addition
