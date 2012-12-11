@@ -1,7 +1,7 @@
 
 (clear-all)
 
-(defun do-arithmetic-trial
+(defun do-arithmetic-trial ()
   
   (reset)
   
