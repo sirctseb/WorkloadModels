@@ -34,6 +34,7 @@
 
 (chunk-type arithmetic first operator second result)
 (chunk-type arithmetic-problem first operator second result state)
+(chunk-type arithmetic-info value1 value2)
 (chunk-type number)
 
 (add-dm
@@ -239,7 +240,7 @@
    =goal>
       state       read-second-operand
    +imaginal>
-      ISA         array
+      ISA         arithmetic-query
       value1      =value
 )
 
@@ -278,13 +279,13 @@
       value       =value
    ;; match imaginal to keep info about last number there
    =imaginal>
-      ISA         array
+      ISA         arithmetic-query
       value1      =value1
 ==>
    =goal>
       state       add-operands
    +imaginal>
-      ISA         array
+      ISA         arithmetic-query
       value1      =value1
       value2      =value2
 )
@@ -294,7 +295,7 @@
       ISA         arithmetic-problem
       state       add-operands
    =imaginal>
-      ISA         array
+      ISA         arithmetic-query
       value1      =value1
       value2      =value2
 ==>
