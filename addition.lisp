@@ -183,13 +183,13 @@
       ISA         visual-location
       :attended   nil
    =>goal>
-      state       find-location
+      state       find-first-location
 )
 
 (P attend-first-operand
    =goal>
       ISA         arithmetic-problem
-      state       find-location
+      state       find-first-location
    =>visual-location>
       ISA         visual-location
    ?visual>
@@ -200,6 +200,20 @@
       screen-pos  =visual-location
    =goal>
       state       attend-first-operand
+)
+(P encode-first-operand
+   =goal>
+      ISA         arithmetic-problem
+      state       attend-first-operand
+   =visual>
+      ISA         text
+      value       =value
+==>
+   =goal>
+      state       read-second-operand
+   +imaginal>
+      ISA         array
+      value       =value
 )
 
 (P retrieve-addition
