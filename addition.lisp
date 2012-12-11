@@ -240,7 +240,7 @@
    =goal>
       state       read-second-operand
    +imaginal>
-      ISA         arithmetic-query
+      ISA         arithmetic-info
       value1      =value
 )
 
@@ -279,13 +279,13 @@
       value       =value
    ;; match imaginal to keep info about last number there
    =imaginal>
-      ISA         arithmetic-query
+      ISA         arithmetic-info
       value1      =value1
 ==>
    =goal>
       state       add-operands
    +imaginal>
-      ISA         arithmetic-query
+      ISA         arithmetic-info
       value1      =value1
       value2      =value2
 )
@@ -295,7 +295,7 @@
       ISA         arithmetic-problem
       state       add-operands
    =imaginal>
-      ISA         arithmetic-query
+      ISA         arithmetic-info
       value1      =value1
       value2      =value2
 ==>
