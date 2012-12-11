@@ -174,6 +174,18 @@
 ;; retrieve sum
 ;; count up if retrieval fails // how?
 
+(P find-first-operand
+   =goal>
+      ISA         arithmetic-problem
+      state       read-first-operand
+==>
+   +visual-location>
+      ISA         visual-location
+      :attended   nil
+   =>goal>
+      state       find-location
+)
+
 (P retrieve-addition
    =goal>
       ISA         arithmetic-problem
