@@ -186,6 +186,22 @@
       state       find-location
 )
 
+(P attend-first-operand
+   =goal>
+      ISA         arithmetic-problem
+      state       find-location
+   =>visual-location>
+      ISA         visual-location
+   ?visual>
+      state       free
+==>
+   +visual>
+      ISA         move-attention
+      screen-pos  =visual-location
+   =goal>
+      state       attend-first-operand
+)
+
 (P retrieve-addition
    =goal>
       ISA         arithmetic-problem
