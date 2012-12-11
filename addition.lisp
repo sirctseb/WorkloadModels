@@ -303,7 +303,7 @@
       first       =value1
       operator    +
       second      =value2
-      status      retrieve-addition
+      state      retrieve-addition
 )
 
 (P retrieve-addition
