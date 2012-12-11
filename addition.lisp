@@ -162,6 +162,18 @@
 ;      count       nil
 ;)
 
+;;; TODO rules:
+;; monitor for appearance of problems
+;; - can limit to middle of screen because people will know that's where they are
+;; attend to first operand
+;; store first operand
+;; attend to operator ? // they already know it's addition
+;; store operator ? // same
+;; attend to second operand
+;; store second operand
+;; retrieve sum
+;; count up if retrieval fails // how?
+
 (P retrieve-addition
    =goal>
       ISA         arithmetic-problem
