@@ -6,7 +6,7 @@
 (sgp :esc t :lf .05)
 
 (chunk-type arithmetic first operator second result)
-(chunk-type arithmetic-problem first operator second result)
+(chunk-type arithmetic-problem first operator second result state)
 (chunk-type number)
 
 (add-dm
