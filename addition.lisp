@@ -1,6 +1,29 @@
 
 (clear-all)
 
+(defun do-arithmetic-trial
+  
+  (reset)
+  
+  (let* ((lis (permute-list '("1" "2" "3" "4" "5" "6" "7")))
+         (answers nil)   
+         (window (open-exp-window "Addition Problem"
+                                  :visible t
+                                  :width 300
+                                  :height 300)))
+    (add-text-to-exp-window :text "4"
+                            :width 40
+                            :x (100)
+                            :y (140)) 
+          
+    (install-device window)
+    (schedule-event-relative 5 'clear-screen)
+    
+    (proc-display)
+    (run 30)
+    ))
+
+
 (define-model addition
 
 (sgp :esc t :lf .05)
