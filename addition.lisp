@@ -236,12 +236,75 @@
       state       read-second-operand
    +imaginal>
       ISA         array
+      value1      =value
+)
+
+(P find-second-operand
+   =goal>
+      ISA         arithmetic-problem
+      state       read-second-operand
+==>
+   +visual-location>
+      ISA         visual-location
+      :attended   nil
+   =>goal>
+      state       find-second-location
+)
+(P attend-second-operand
+   =goal>
+      ISA         arithmetic-problem
+      state       find-second-location
+   =>visual-location>
+      ISA         visual-location
+   ?visual>
+      state       free
+==>
+   +visual>
+      ISA         move-attention
+      screen-pos  =visual-location
+   =goal>
+      state       attend-second-operand
+)
+(P encode-second-operand
+   =goal>
+      ISA         arithmetic-problem
+      state       attend-second-operand
+   =visual>
+      ISA         text
       value       =value
+   ;; match imaginal to keep info about last number there
+   =imaginal>
+      ISA         array
+      value1      =value1
+==>
+   =goal>
+      state       add-operands
+   +imaginal>
+      ISA         array
+      value1      =value1
+      value2      =value2
+)
+
+(P add-operands
+   =goal>
+      ISA         arithmetic-problem
+      state       add-operands
+   =imaginal>
+      ISA         array
+      value1      =value1
+      value2      =value2
+==>
+   =goal>
+      first       =value1
+      operator    +
+      second      =value2
+      status      retrieve-addition
 )
 
 (P retrieve-addition
    =goal>
       ISA         arithmetic-problem
+      state       retrieve-addition
       first       =first
       operator    +
       second      =second
