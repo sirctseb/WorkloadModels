@@ -209,7 +209,7 @@
    +visual-location>
       ISA         visual-location
       :attended   nil
-   =>goal>
+   =goal>
       state       find-first-location
 )
 
@@ -217,7 +217,7 @@
    =goal>
       ISA         arithmetic-problem
       state       find-first-location
-   =>visual-location>
+   =visual-location>
       ISA         visual-location
    ?visual>
       state       free
@@ -251,14 +251,14 @@
    +visual-location>
       ISA         visual-location
       :attended   nil
-   =>goal>
+   =goal>
       state       find-second-location
 )
 (P attend-second-operand
    =goal>
       ISA         arithmetic-problem
       state       find-second-location
-   =>visual-location>
+   =visual-location>
       ISA         visual-location
    ?visual>
       state       free
