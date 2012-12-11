@@ -340,6 +340,7 @@
 ==>
    =goal>
       result      =answer
+   !output!       (=answer)
 )
 
 ;(P increment-count
