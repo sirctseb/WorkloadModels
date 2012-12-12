@@ -191,5 +191,41 @@
     cursor-diff-y   (- target-y cursor-y)
 )
 
+;; rule to move cursor toward target
+(P move-cursor
+  =goal>
+    ISA           targeting
+    state         move-cursor
+    cursor-diff-x =cdx
+    cursor-diff-y =cdy
+    target-location =target-location
+
+  ;; request to move cursor
+  ;; TODO :cursor-noise should probably be enabled
+  ;; TODO also, :default-target-width
+  ;; TODO :incremental-mouse-moves?
+  ;; TODO just look at all the parameters
+
+  ;; make sure motor system is free
+  ?manual>
+    state         free
+==>
+
+  ;; request to move the cursor
+  +manual>
+    ISA           move-cursor
+    ;; TODO i guess we don't need the comparison rules
+    ;; TODO do we even need to move visual attention to cursor?
+    ;; TODO I think a better model is,
+    ;; 1. find target
+    ;; 2. move mouse
+    ;; 3. while manual busy, track cursor
+    ;; 4. if cursor within target, click button
+    loc           =target-location
+  =goal>
+    ISA           targeting
+    state         check-cursor
+)
+
 (goal-focus goal)
 )
