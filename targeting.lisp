@@ -35,7 +35,7 @@
 
 (define-model simple-tracking
 
-   (sgp :v t :needs-mouse nil :show-focus t :trace-detail high)
+   (sgp :v t :needs-mouse nil :show-focus t :trace-detail high :process-cursor t)
    (chunk-type targeting state target-x target-y cursor-diff-x cursor-diff-y)
 
    (add-dm (track isa chunk) (attend-letter isa chunk)
@@ -179,8 +179,7 @@
   ;; make sure we're looking at the cursor
   ;; TODO what if not?
   =visual>
-    ISA         text
-    value       "+"
+    ISA         cursor
 
 ==>
   =goal>
