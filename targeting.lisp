@@ -118,5 +118,25 @@
     state       find-cursor
 )
 
+;; rule to find the cursor
+(P find-cursor
+  =goal>
+    ISA         targeting
+    state       find-cursor
+
+  ;; TODO does this have to be free?
+  ?visual>
+    state       free
+==>
+  ;; ask to look for location where cursor might be
+  +visual-location>
+    ISA         visual-location
+    ;; TODO is this going to be unattended?
+    attended    :nil
+    ;; TODO look near old remembered cursor location?
+  =goal>
+    state       found-cursor
+)
+
 (goal-focus goal)
 )
