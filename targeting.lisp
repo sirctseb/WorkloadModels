@@ -93,7 +93,7 @@
       ISA         visual-location
 )
 
-(P locate-target
+(P store-target
   =goal>
     ISA           targeting
     state         remember-target
