@@ -138,5 +138,29 @@
     state       found-cursor
 )
 
+;; rule to register cursor location and ask to attend it
+(P found-cursor
+  =goal>
+    ISA         targeting
+    state       found-cursor
+
+  =visual-location>
+    ISA         visual-location
+
+  ?vision>
+    state       free
+==>
+  ;; request to attend location
+  =vision>
+    ISA         move-attention
+    screen-pos  =visual-location
+  ;; maintain location info
+  =visual-location>
+    ISA         visual-location
+  =goal>
+    ISA         targeting
+    state       compare-cursor-target
+)
+
 (goal-focus goal)
 )
