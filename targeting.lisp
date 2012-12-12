@@ -36,10 +36,10 @@
 (define-model simple-tracking
 
    (sgp :v t :needs-mouse nil :show-focus t :trace-detail high)
-   (chunk-type track-follow state)
+   (chunk-type targeting state)
 
    (add-dm (track isa chunk) (attend-letter isa chunk)
-      (goal isa track-follow state track))
+      (goal isa targeting state track))
   
    ;; adding this setting to the model will avoid the deleted chunk
    ;; warnings in the object tracking case.
@@ -47,7 +47,7 @@
   
 (P find-letter
    =goal>
-      ISA         track-follow
+      ISA         targeting
       state       track
    ?visual>
       state       free
@@ -62,7 +62,7 @@
 )
 (P on-move
    =goal>
-      ISA         track-follow
+      ISA         targeting
       state       track
    ?visual>
       state       error
@@ -72,7 +72,7 @@
 )
 (P found-letter
    =goal>
-      ISA         track-follow
+      ISA         targeting
       state       attend-letter
    =visual-location>
       ISA         visual-location
