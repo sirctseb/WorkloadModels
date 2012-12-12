@@ -1,11 +1,11 @@
-;; This is just the visual-tracking-example.lisp from the actr distribution
+;;; Implementation of the targeting task for the experiment
 
 ;;; Examples of visual tracking using the old style with an object
 ;;; based visicon (the currently provided devices) and with a custom
 ;;; device that uses a chunk based visicon (without having explicit
 ;;; objects set for the items).
 
-(defun object-tracking () ;; old style with a screen object
+(defun do-targeting () ;; old style with a screen object
   
    (reset)
    (let* ((window (open-exp-window "Moving X" :visible t))
