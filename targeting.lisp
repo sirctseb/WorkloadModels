@@ -36,10 +36,10 @@
 (define-model simple-tracking
 
    (sgp :v t :needs-mouse nil :show-focus t :trace-detail high :process-cursor t)
-   (chunk-type targeting state target-x target-y cursor-diff-x cursor-diff-y)
+   (chunk-type targeting state target-x target-y cursor-diff-x cursor-diff-y target-location)
 
    (add-dm (track isa chunk) (attend-letter isa chunk)
-      (goal isa targeting state track))
+      (goal isa targeting state find-target))
   
    ;; adding this setting to the model will avoid the deleted chunk
    ;; warnings in the object tracking case.
@@ -80,6 +80,7 @@
       state       attend-target
    =visual-location>
       ISA         visual-location
+      screen-x    =sx
    
    ?visual>
       state        free
@@ -92,7 +93,7 @@
       state       remember-target
    ;; maintain visual location info
    =visual-location>
-      ISA         visual-location
+      screen-x    =sx
 )
 
 ;; rule to store the location of a target
@@ -132,7 +133,7 @@
   +visual-location>
     ISA         visual-location
     ;; TODO is this going to be unattended?
-    attended    :nil
+    :attended   nil
     ;; TODO look near old remembered cursor location?
   =goal>
     state       found-cursor
@@ -146,24 +147,24 @@
 
   =visual-location>
     ISA         visual-location
+    screen-x    =sx
 
-  ?vision>
+  ?visual>
     state       free
 ==>
   ;; request to attend location
-  =vision>
+  +visual>
     ISA         move-attention
     screen-pos  =visual-location
   ;; maintain location info
   =visual-location>
-    ISA         visual-location
+    screen-x    =sx
   =goal>
-    ISA         targeting
     state       compare-cursor-target
 )
 
 ;; rule to compare cursor and target location
-(P found-cursor
+(P compare-cursor
   =goal>
     ISA         targeting
     state       compare-cursor-target
@@ -183,7 +184,6 @@
 
 ==>
   =goal>
-    ISA         targeting
     state       move-cursor
     ;; store difference between cursor and target
     cursor-diff-x   (- target-x cursor-x)
@@ -222,7 +222,6 @@
     ;; 4. if cursor within target, click button
     loc           =target-location
   =goal>
-    ISA           targeting
     state         check-cursor
 )
 
