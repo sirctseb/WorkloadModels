@@ -36,7 +36,7 @@
 (define-model simple-tracking
 
    (sgp :v t :needs-mouse nil :show-focus t :trace-detail high)
-   (chunk-type targeting state)
+   (chunk-type targeting state target-x target-y)
 
    (add-dm (track isa chunk) (attend-letter isa chunk)
       (goal isa targeting state track))
@@ -91,6 +91,28 @@
    ;; maintain visual location info
    =visual-location>
       ISA         visual-location
+)
+
+(P locate-target
+  =goal>
+    ISA           targeting
+    state         remember-target
+  ;; get location from where system
+  =visual-location>
+    ISA          visual-location
+    screen-x     =x-location
+    screen-y     =y-location
+  ;; make sure we are looking at a target
+  ;; TODO what to do on non-target?
+  =visual>
+    ISA          text
+    value        "x"
+==>
+  ;; store the target location in the goal
+  =goal>
+    target-x    =x-location
+    target-y    =y-location
+    state       find-cursor
 )
 
 (goal-focus goal)
