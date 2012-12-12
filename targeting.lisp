@@ -45,7 +45,7 @@
    ;; warnings in the object tracking case.
    ;; (sgp :delete-visicon-chunks nil)
   
-(P find-letter
+(P find-target
    =goal>
       ISA         targeting
       state       track
