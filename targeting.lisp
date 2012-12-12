@@ -44,7 +44,8 @@
    ;; adding this setting to the model will avoid the deleted chunk
    ;; warnings in the object tracking case.
    ;; (sgp :delete-visicon-chunks nil)
-  
+
+;; Rule to start searching for a target  
 (P find-target
    =goal>
       ISA         targeting
@@ -72,6 +73,7 @@
       ISA         clear
 )
 
+;; rule to register a location and ask to attend to it
 (P found-target
    =goal>
       ISA         targeting
@@ -93,6 +95,7 @@
       ISA         visual-location
 )
 
+;; rule to store the location of a target
 (P store-target
   =goal>
     ISA           targeting
