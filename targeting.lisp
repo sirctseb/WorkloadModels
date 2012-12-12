@@ -28,6 +28,7 @@
                                         (proc-display))
                                    :details "moving object"
                                    :initial-delay 0.5)
+            (set-cursor-position 20 30)
         
             (run 3 :real-time t)))))
 
