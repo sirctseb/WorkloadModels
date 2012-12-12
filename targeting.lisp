@@ -88,6 +88,9 @@
       screen-pos  =visual-location
    =goal>
       state       find-target
+   ;; maintain visual location info
+   =visual-location>
+      ISA         visual-location
 )
 
 (goal-focus goal)
