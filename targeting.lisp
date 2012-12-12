@@ -58,7 +58,7 @@
       ISA         visual-location
       :attended   nil
    =goal>
-      state       attend-letter
+      state       attend-target
 )
 
 (P on-move
@@ -72,10 +72,10 @@
       ISA         clear
 )
 
-(P found-letter
+(P found-target
    =goal>
       ISA         targeting
-      state       attend-letter
+      state       attend-target
    =visual-location>
       ISA         visual-location
    
@@ -87,7 +87,7 @@
       ISA         move-attention
       screen-pos  =visual-location
    =goal>
-      state       find-target
+      state       remember-target
    ;; maintain visual location info
    =visual-location>
       ISA         visual-location
