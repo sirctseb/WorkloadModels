@@ -60,16 +60,18 @@
    =goal>
       state       attend-letter
 )
+
 (P on-move
    =goal>
       ISA         targeting
-      state       track
+      state       find-target
    ?visual>
       state       error
 ==>
    +visual>
       ISA         clear
 )
+
 (P found-letter
    =goal>
       ISA         targeting
