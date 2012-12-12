@@ -36,7 +36,7 @@
 (define-model simple-tracking
 
    (sgp :v t :needs-mouse nil :show-focus t :trace-detail high)
-   (chunk-type targeting state target-x target-y)
+   (chunk-type targeting state target-x target-y cursor-diff-x cursor-diff-y)
 
    (add-dm (track isa chunk) (attend-letter isa chunk)
       (goal isa targeting state track))
@@ -160,6 +160,35 @@
   =goal>
     ISA         targeting
     state       compare-cursor-target
+)
+
+;; rule to compare cursor and target location
+(P found-cursor
+  =goal>
+    ISA         targeting
+    state       compare-cursor-target
+    target-x    =target-x
+    target-y    =target-y
+
+  ;; get the cursor x,y from the location
+  =visual-location>
+    ISA         visual-location
+    screen-x    =cursor-x
+    screen-y    =cursor-y
+
+  ;; make sure we're looking at the cursor
+  ;; TODO what if not?
+  =visual>
+    ISA         text
+    value       "+"
+
+==>
+  =goal>
+    ISA         targeting
+    state       move-cursor
+    ;; store difference between cursor and target
+    cursor-diff-x   (- target-x cursor-x)
+    cursor-diff-y   (- target-y cursor-y)
 )
 
 (goal-focus goal)
