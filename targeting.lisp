@@ -37,7 +37,7 @@
 
 (define-model simple-tracking
 
-   (sgp :v t :needs-mouse nil :show-focus t :trace-detail high :process-cursor t)
+   (sgp :v t :needs-mouse nil :show-focus t :trace-detail high)
    (chunk-type targeting state target-x target-y cursor-diff-x cursor-diff-y target-location)
 
    (add-dm (track isa chunk) (attend-letter isa chunk)
@@ -141,7 +141,8 @@
     ;; TODO is this going to be unattended?
 ;;    :attended   nil
     ;; TODO look near old remembered cursor location?
-    kind        cursor
+    kind        TEXT
+    value       "+"
   =goal>
     state       found-cursor
 )
