@@ -16,6 +16,8 @@
       
          (progn
             (install-device window)
+            (start-hand-at-mouse)
+            (set-cursor-position 20 30)
             (proc-display)
             (schedule-periodic-event .5 #'(lambda () 
                                          
@@ -28,9 +30,8 @@
                                         (proc-display))
                                    :details "moving object"
                                    :initial-delay 0.5)
-            (set-cursor-position 20 30)
         
-            (run 3 :real-time t)))))
+            (run 3 )))))
 
 (clear-all)
 
@@ -59,8 +60,12 @@
    +visual-location>
       ISA         visual-location
       :attended   nil
+      kind        TEXT
    =goal>
       state       attend-target
+   +manual>
+      ISA         move-cursor
+      loc         =visual-location
 )
 
 (P on-move
@@ -134,8 +139,9 @@
   +visual-location>
     ISA         visual-location
     ;; TODO is this going to be unattended?
-    :attended   nil
+;;    :attended   nil
     ;; TODO look near old remembered cursor location?
+    kind        cursor
   =goal>
     state       found-cursor
 )
