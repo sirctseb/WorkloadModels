@@ -9,7 +9,8 @@
   
    (reset)
    (let* ((window (open-exp-window "Moving X" :visible t))
-          (letter (add-text-to-exp-window :text "x" :x 10 :y 150)))
+          (letter (add-text-to-exp-window :text "x" :x 10 :y 150))
+          (cursor-marker (add-text-to-exp-window :text "+" :x 20 :y 30)))
     
       (if (not (subtypep (type-of window) 'virtual-window))
          (print-warning "This example only works correctly for virtual and visible-virtual windows because the x coordinate accessor is specific to those objects.")
