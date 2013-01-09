@@ -208,7 +208,6 @@
     cursor-diff-y   <10
 ==>
   =goal>
-    ISA             targeting
     state           click-mouse
 )
 ;; test rule for when cursor is not close enough
@@ -220,7 +219,6 @@
     cursor-diff-y   >=10
 ==>
   =goal>
-    ISA             targeting
     state           move-cursor
 )
 
@@ -271,7 +269,6 @@
     state         free
 ==>
   =goal>
-    ISA           targeting
     state         find-cursor
 )
 
