@@ -193,10 +193,35 @@
 
 ==>
   =goal>
-    state       move-cursor
+    state       test-cursor
     ;; store difference between cursor and target
     cursor-diff-x   (- target-x cursor-x)
     cursor-diff-y   (- target-y cursor-y)
+)
+
+;; perform the actual test to see if the cursor is close enough to the target
+(P test-cursor-click
+  =goal>
+    ISA             targeting
+    state           test-cursor
+    cursor-diff-x   <10
+    cursor-diff-y   <10
+==>
+  =goal>
+    ISA             targeting
+    state           click-mouse
+)
+;; test rule for when cursor is not close enough
+(P test-cursor-move
+  =goal>
+    ISA             targeting
+    state           test-cursor
+    cursor-diff-x   >=10
+    cursor-diff-y   >=10
+==>
+  =goal>
+    ISA             targeting
+    state           move-cursor
 )
 
 ;; rule to move cursor toward target
@@ -231,7 +256,23 @@
     ;; 4. if cursor within target, click button
     loc           =target-location
   =goal>
-    state         check-cursor
+    state         wait-for-move
+)
+
+;; wait for the manual system to be free, meaning the mouse move is complete,
+;; then check if it is close enough to the target
+(P wait-for-move
+  =goal>
+    ISA           targeting
+    state         wait-for-move
+
+  ;; wait for motor system to be free
+  ?manual>
+    state         free
+==>
+  =goal>
+    ISA           targeting
+    state         find-cursor
 )
 
 (goal-focus goal)
