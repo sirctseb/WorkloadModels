@@ -1,5 +1,34 @@
 ;;; Implementation of the targeting task for the experiment
 
+;; declar variable for cursor marker so we can access it in the hook
+(defvar *cursor-marker* nil)
+
+;;; Event hook function
+(defun hook (event)
+
+  (when (and
+          (eq (evt-module event) ':MOTOR)
+          (eq 'FINISH-MOVEMENT (evt-action event))
+          )
+    (progn
+      (setf (x-pos *cursor-marker*) 0)
+      (proc-display)
+;;; TODO for reference for accessing event properties
+;      (format t "action is FINISH-MOVEMENT: ~S~%" (eq 'FINISH-MOVENT (evt-action event)))
+;      (format t "type of action: ~S~%" (type-of (evt-action event)))
+;      (format t "Hook sees event with time: ~S~%" (evt-time event))
+;      (format t "Hook sees event with action: ~S~%" (evt-action event))
+;      (format t "Hook sees event with params: ~S~%" (evt-params event))
+;      (format t "Hook sees event with model: ~S~%" (evt-model event))
+;      (format t "Hook sees event with module: ~S~%" (evt-module event))
+;      (format t "Hook sees event with destination: ~S~%" (evt-destination event))
+;      (format t "Hook sees event with details: ~S~%" (evt-details event))
+;      (format t "Hook sees event with output: ~S~%" (evt-output event))
+    )
+  )
+)
+
+
 ;;; Examples of visual tracking using the old style with an object
 ;;; based visicon (the currently provided devices) and with a custom
 ;;; device that uses a chunk based visicon (without having explicit
@@ -11,11 +40,15 @@
    (let* ((window (open-exp-window "Moving X" :visible t))
           (letter (add-text-to-exp-window :text "x" :x 10 :y 150))
           (cursor-marker (add-text-to-exp-window :text "+" :x 20 :y 30)))
+      ;; store cursor-marker in the dynamic *cursor-marker* var
+      (setq *cursor-marker* cursor-marker)
     
       (if (not (subtypep (type-of window) 'virtual-window))
          (print-warning "This example only works correctly for virtual and visible-virtual windows because the x coordinate accessor is specific to those objects.")
       
          (progn
+
+
             (install-device window)
             (start-hand-at-mouse)
             (set-cursor-position 20 30)
@@ -35,6 +68,9 @@
             (run 3 )))))
 
 (clear-all)
+
+; add event hook
+(add-pre-event-hook 'hook)
 
 (define-model simple-tracking
 
