@@ -3,6 +3,19 @@
 ;; declar variable for cursor marker so we can access it in the hook
 (defvar *cursor-marker* nil)
 
+(defvar *cursor-loc* nil)
+
+(defun print-event-info (event)
+      (format t "Hook sees event with time: ~S~%" (evt-time event))
+      (format t "Hook sees event with action: ~S~%" (evt-action event))
+      (format t "Hook sees event with params: ~S~%" (evt-params event))
+      (format t "Hook sees event with model: ~S~%" (evt-model event))
+      (format t "Hook sees event with module: ~S~%" (evt-module event))
+      (format t "Hook sees event with destination: ~S~%" (evt-destination event))
+      (format t "Hook sees event with details: ~S~%" (evt-details event))
+      (format t "Hook sees event with output: ~S~%" (evt-output event))
+)
+
 ;;; Event hook function
 (defun hook (event)
 
