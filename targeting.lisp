@@ -24,19 +24,22 @@
           (eq 'FINISH-MOVEMENT (evt-action event))
           )
     (progn
-      (setf (x-pos *cursor-marker*) 0)
+      (setf (x-pos *cursor-marker*) (elt *cursor-loc* 0))
+      (setf (y-pos *cursor-marker*) (elt *cursor-loc* 1))
+      (print-event-info event)
       (proc-display)
-;;; TODO for reference for accessing event properties
-;      (format t "action is FINISH-MOVEMENT: ~S~%" (eq 'FINISH-MOVENT (evt-action event)))
-;      (format t "type of action: ~S~%" (type-of (evt-action event)))
-;      (format t "Hook sees event with time: ~S~%" (evt-time event))
-;      (format t "Hook sees event with action: ~S~%" (evt-action event))
-;      (format t "Hook sees event with params: ~S~%" (evt-params event))
-;      (format t "Hook sees event with model: ~S~%" (evt-model event))
-;      (format t "Hook sees event with module: ~S~%" (evt-module event))
-;      (format t "Hook sees event with destination: ~S~%" (evt-destination event))
-;      (format t "Hook sees event with details: ~S~%" (evt-details event))
-;      (format t "Hook sees event with output: ~S~%" (evt-output event))
+    )
+  )
+
+  (when (and
+          (eq (evt-module event) ':MOTOR)
+          (eq 'MOVE-CURSOR-ABSOLUTE (evt-action event))
+          )
+    ;(print-event-info event)
+    (progn
+      ; store location of cursor
+      (setf *cursor-loc* (car (evt-params event)))
+;      (format t "cursor-loc: ~S~%" *cursor-loc*)
     )
   )
 )
