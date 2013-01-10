@@ -69,17 +69,17 @@
             (start-hand-at-mouse)
             (set-cursor-position 20 30)
             (proc-display)
-            (schedule-periodic-event .5 #'(lambda () 
-                                         
-                                        ;; Virtual dialog item specific coordinate moving
-                                        ;; code.  Code for real windows is different for each
-                                        ;; Lisp since the x position accessor will differ.
-                                        
-                                        (setf (x-pos letter) (+ 10 (x-pos letter)))
-                                        
-                                        (proc-display))
-                                   :details "moving object"
-                                   :initial-delay 0.5)
+            ;(schedule-periodic-event .5 #'(lambda () 
+            ;                             
+            ;                            ;; Virtual dialog item specific coordinate moving
+            ;                            ;; code.  Code for real windows is different for each
+            ;                            ;; Lisp since the x position accessor will differ.
+            ;                            
+            ;                            (setf (x-pos letter) (+ 10 (x-pos letter)))
+            ;                            
+            ;                            (proc-display))
+            ;                       :details "moving object"
+            ;                       :initial-delay 0.5)
         
             (run 3 )))))
 
