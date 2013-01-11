@@ -246,11 +246,13 @@
     value       "+"
 
 ==>
+  !bind!          =diff-x (abs (- =target-x =cursor-x))
+  !bind!          =diff-y (abs (- =target-y =cursor-y))
   =goal>
     state       test-cursor
     ;; store difference between cursor and target
-    cursor-diff-x   (- target-x cursor-x)
-    cursor-diff-y   (- target-y cursor-y)
+    cursor-diff-x   =diff-x
+    cursor-diff-y   =diff-y
 )
 
 ;; perform the actual test to see if the cursor is close enough to the target
