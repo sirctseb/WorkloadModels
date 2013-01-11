@@ -114,6 +114,7 @@
       ISA         visual-location
       :attended   nil
       kind        TEXT
+      value       "x"
    =goal>
       state       attend-target
    +manual>
@@ -241,7 +242,8 @@
   ;; make sure we're looking at the cursor
   ;; TODO what if not?
   =visual>
-    ISA         cursor
+    ISA         text
+    value       "+"
 
 ==>
   =goal>
