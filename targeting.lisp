@@ -24,6 +24,8 @@
           (eq 'FINISH-MOVEMENT (evt-action event))
           )
     (progn
+      ;; TODO this occurs for mouse clicking as well. we don't particularly
+      ;; want to set the cursor marker position then, but it's also not a problem if we do
       (setf (x-pos *cursor-marker*) (elt *cursor-loc* 0))
       (setf (y-pos *cursor-marker*) (elt *cursor-loc* 1))
       (print-event-info event)
@@ -278,8 +280,6 @@
 )
 (P test-cursor-move-y
   =goal>
-
-  =goal>
     ISA             targeting
     state           test-cursor
     > cursor-diff-y 10
@@ -336,6 +336,22 @@
 ==>
   =goal>
     state         find-cursor
+  ;; TODO prepare the click motor request so it doesn't take so long
+)
+
+(P click-mouse
+  =goal>
+    ISA           targeting
+    state         click-mouse
+
+  ;; make sure motor module is free
+  ?manual>
+    state         free
+==>
+  
+  ;; submit click request
+  +manual>
+    ISA           click-mouse
 )
 
 (goal-focus goal)
