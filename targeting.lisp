@@ -260,8 +260,8 @@
   =goal>
     ISA             targeting
     state           test-cursor
-    cursor-diff-x   <10
-    cursor-diff-y   <10
+    <= cursor-diff-x   10
+    <= cursor-diff-y   10
 ==>
   =goal>
     state           click-mouse
@@ -271,8 +271,9 @@
   =goal>
     ISA             targeting
     state           test-cursor
-    cursor-diff-x   >=10
-    cursor-diff-y   >=10
+    ;;; TODO this should be OR, not AND
+    cursor-diff-x   >10
+    cursor-diff-y   >10
 ==>
   =goal>
     state           move-cursor
