@@ -176,7 +176,7 @@
   =goal>
     target-x    =x-location
     target-y    =y-location
-    state       find-cursor
+    state       wait-for-move
 )
 
 ;; rule to find the cursor
