@@ -266,14 +266,23 @@
   =goal>
     state           click-mouse
 )
-;; test rule for when cursor is not close enough
-(P test-cursor-move
+;; test rules for when cursor is not close enough
+(P test-cursor-move-x
   =goal>
     ISA             targeting
     state           test-cursor
-    ;;; TODO this should be OR, not AND
-    cursor-diff-x   >10
-    cursor-diff-y   >10
+    > cursor-diff-x 10
+==>
+  =goal>
+    state           move-cursor
+)
+(P test-cursor-move-y
+  =goal>
+
+  =goal>
+    ISA             targeting
+    state           test-cursor
+    > cursor-diff-y 10
 ==>
   =goal>
     state           move-cursor
