@@ -55,7 +55,7 @@
 (defun do-targeting () ;; old style with a screen object
   
    (reset)
-   (let* ((window (open-exp-window "Moving X" :visible t))
+   (let* ((window (open-exp-window "Moving X" :visible t :width 400 :height 400))
           (letter (add-text-to-exp-window :text "x" :x 10 :y 150))
           (cursor-marker (add-text-to-exp-window :text "+" :x 20 :y 30)))
       ;; store cursor-marker in the dynamic *cursor-marker* var
