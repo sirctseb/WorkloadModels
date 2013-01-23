@@ -44,7 +44,7 @@
   )
 )
 
-(defun do-targeting (&optional (num-targets 1)) ;; old style with a screen object
+(defun do-targeting (&optional (num-targets 3)) ;; old style with a screen object
   
    (reset)
    (let* ((window (open-exp-window "Moving X" :visible t :width 400 :height 400))
@@ -73,7 +73,7 @@
             ;                       :details "moving object"
             ;                       :initial-delay 0.5)
         
-            (run 3 )))))
+            (run 100 )))))
 
 (clear-all)
 
@@ -82,7 +82,7 @@
 
 (define-model simple-tracking
 
-   (sgp :v t :needs-mouse nil :show-focus t :trace-detail high)
+   (sgp :v t :needs-mouse nil :show-focus t :trace-detail high :cursor-noise t)
    (chunk-type targeting state target-x target-y cursor-diff-x cursor-diff-y target-location)
 
    (add-dm (track isa chunk) (attend-letter isa chunk)
