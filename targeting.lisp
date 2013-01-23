@@ -69,8 +69,6 @@
       state       find-target
    ?visual>
       state       free
-   =visual-location>
-      ISA         visual-location
 ==>
    +visual-location>
       ISA         visual-location
