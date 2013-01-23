@@ -1,56 +1,5 @@
 ;;; Implementation of the targeting task for the experiment
 
-;; declar variable for cursor marker so we can access it in the hook
-(defvar *cursor-marker* nil)
-
-(defvar *cursor-loc* nil)
-
-(defun print-event-info (event)
-      (format t "Hook sees event with time: ~S~%" (evt-time event))
-      (format t "Hook sees event with action: ~S~%" (evt-action event))
-      (format t "Hook sees event with params: ~S~%" (evt-params event))
-      (format t "Hook sees event with model: ~S~%" (evt-model event))
-      (format t "Hook sees event with module: ~S~%" (evt-module event))
-      (format t "Hook sees event with destination: ~S~%" (evt-destination event))
-      (format t "Hook sees event with details: ~S~%" (evt-details event))
-      (format t "Hook sees event with output: ~S~%" (evt-output event))
-)
-
-;;; Event hook function
-(defun hook (event)
-
-  (when (and
-          (eq (evt-module event) ':MOTOR)
-          (eq 'FINISH-MOVEMENT (evt-action event))
-          )
-    (progn
-      ;; TODO this occurs for mouse clicking as well. we don't particularly
-      ;; want to set the cursor marker position then, but it's also not a problem if we do
-      (setf (x-pos *cursor-marker*) (elt *cursor-loc* 0))
-      (setf (y-pos *cursor-marker*) (elt *cursor-loc* 1))
-      (print-event-info event)
-      (proc-display)
-    )
-  )
-
-  (when (and
-          (eq (evt-module event) ':MOTOR)
-          (eq 'MOVE-CURSOR-ABSOLUTE (evt-action event))
-          )
-    ;(print-event-info event)
-    (progn
-      ; store location of cursor
-      (setf *cursor-loc* (car (evt-params event)))
-;      (format t "cursor-loc: ~S~%" *cursor-loc*)
-    )
-  )
-)
-
-;;; Examples of visual tracking using the old style with an object
-;;; based visicon (the currently provided devices) and with a custom
-;;; device that uses a chunk based visicon (without having explicit
-;;; objects set for the items).
-
 (defun do-targeting () ;; old style with a screen object
   
    (reset)
@@ -68,9 +17,7 @@
               )
             )
           )
-          (cursor-marker (add-text-to-exp-window :text "+" :x 200 :y 30)))
-      ;; store cursor-marker in the dynamic *cursor-marker* var
-      (setq *cursor-marker* cursor-marker)
+        )
     
       (if (not (subtypep (type-of window) 'virtual-window))
          (print-warning "This example only works correctly for virtual and visible-virtual windows because the x coordinate accessor is specific to those objects.")
