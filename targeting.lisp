@@ -15,7 +15,7 @@
 (defun create-buttons (num)
   (let (buttons '())
     (dotimes (n num buttons)
-      (cons (create-button (* n 10) (* n 11)) buttons)
+      (cons (create-button (random 400) (random 400)) buttons)
     )
   )
 )
