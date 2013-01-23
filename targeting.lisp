@@ -131,9 +131,6 @@
       value       "x"
    =goal>
       state       attend-target
-   +manual>
-      ISA         move-cursor
-      loc         =visual-location
 )
 
 (P on-move
@@ -164,10 +161,10 @@
       ISA         move-attention
       screen-pos  =visual-location
    =goal>
-      state       click-mouse
+      state       move-cursor
    ;; maintain visual location info
-   =visual-location>
-      screen-x    =sx
+;   =visual-location>
+;      screen-x    =sx
 )
 
 ;; rule to move cursor toward target
@@ -175,9 +172,11 @@
   =goal>
     ISA           targeting
     state         move-cursor
-    cursor-diff-x =cdx
-    cursor-diff-y =cdy
-    target-location =target-location
+
+  =visual>
+    ISA           text
+    value         "x"
+    screen-pos    =target-location
 
   ;; request to move cursor
   ;; TODO :cursor-noise should probably be enabled
