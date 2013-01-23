@@ -352,6 +352,19 @@
   ;; submit click request
   +manual>
     ISA           click-mouse
+
+  =goal>
+    state         after-click
+)
+
+(P after-click
+  =goal>
+    ISA           targeting
+    state         after-click
+  ?manual>
+    state         free
+==>
+  !stop!
 )
 
 (goal-focus goal)
