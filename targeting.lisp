@@ -1,22 +1,24 @@
 ;;; Implementation of the targeting task for the experiment
 
+(defun remove-button-after-delay (b)
+  ;; TODO it seems that act-r crashes when you remove a button in its own
+  ;; action, so instead, schedule an event to remove the button in 0.01ms
+  (format t "removing button")
+  (schedule-event-relative .001 (lambda() (remove-items-from-exp-window b)))
+)
+(defun create-button (x y)
+  (add-button-to-exp-window :text "x" :x x :y y :width 40 :height 40
+    ;; NOTE for some reason giving 'remove-button-after-delay directly doesn't work
+    :action (lambda (button) (remove-button-after-delay button))
+  )
+)
+
 (defun do-targeting () ;; old style with a screen object
   
    (reset)
    (let* ((window (open-exp-window "Moving X" :visible t :width 400 :height 400))
-          ;; TODO :action to remove the button
-          (button
-            (add-button-to-exp-window :text "x" :x 10 :y 150 :width 40 :height 40
-              :action
-              (lambda (b)
-                ;; TODO it seems that act-r crashes when you remove a button in its own
-                ;; action, so instead, schedule an event to remove the button in 0.01ms
-                (schedule-event-relative .001 (lambda() (remove-items-from-exp-window b)))
-;                 (remove-items-from-exp-window b)
-
-              )
-            )
-          )
+          (button1 (create-button 10 150))
+          (button2 (create-button 30 270))
         )
     
       (if (not (subtypep (type-of window) 'virtual-window))
