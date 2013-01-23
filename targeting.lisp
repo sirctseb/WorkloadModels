@@ -12,13 +12,21 @@
     :action (lambda (button) (remove-button-after-delay button))
   )
 )
+(defun create-buttons (num)
+  (let (buttons '())
+    (dotimes (n num buttons)
+      (cons (create-button (* n 10) (* n 11)) buttons)
+    )
+  )
+)
 
-(defun do-targeting () ;; old style with a screen object
+(defun do-targeting (num-targets) ;; old style with a screen object
   
    (reset)
    (let* ((window (open-exp-window "Moving X" :visible t :width 400 :height 400))
-          (button1 (create-button 10 150))
-          (button2 (create-button 30 270))
+          (buttons (create-buttons num-targets))
+;          (button1 (create-button 10 150))
+;          (button2 (create-button 30 270))
         )
     
       (if (not (subtypep (type-of window) 'virtual-window))
