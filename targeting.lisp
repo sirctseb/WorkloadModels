@@ -56,8 +56,9 @@
   
    (reset)
    (let* ((window (open-exp-window "Moving X" :visible t :width 400 :height 400))
-          (letter (add-text-to-exp-window :text "x" :x 10 :y 150))
-          (cursor-marker (add-text-to-exp-window :text "+" :x 20 :y 30)))
+          ;; TODO :action to remove the button
+          (button (add-button-to-exp-window :text "x" :x 10 :y 150 :width 40 :height 40))
+          (cursor-marker (add-text-to-exp-window :text "+" :x 200 :y 30)))
       ;; store cursor-marker in the dynamic *cursor-marker* var
       (setq *cursor-marker* cursor-marker)
     
@@ -77,7 +78,7 @@
             ;                            ;; code.  Code for real windows is different for each
             ;                            ;; Lisp since the x position accessor will differ.
             ;                            
-            ;                            (setf (x-pos letter) (+ 10 (x-pos letter)))
+            ;                            (setf (x-pos button) (+ 10 (x-pos button)))
             ;                            
             ;                            (proc-display))
             ;                       :details "moving object"
