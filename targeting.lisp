@@ -28,7 +28,7 @@
   ;; TODO it seems that act-r crashes when you remove a button in its own
   ;; action, so instead, schedule an event to remove the button in 0.01ms
   (format t "removing button")
-  (schedule-event-relative .001 (lambda() (remove-items-from-exp-window b)))
+  (schedule-event-relative .001 (lambda() (remove-items-from-exp-window b) (proc-display)))
 )
 (defun create-button (x y)
   (add-button-to-exp-window :text "x" :x x :y y :width 40 :height 40
