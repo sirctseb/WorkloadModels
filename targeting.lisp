@@ -64,6 +64,7 @@
                 ;; action, so instead, schedule an event to remove the button in 0.01ms
                 (schedule-event-relative .001 (lambda() (remove-items-from-exp-window b)))
 ;                 (remove-items-from-exp-window b)
+
               )
             )
           )
@@ -126,6 +127,7 @@
       ISA         visual-location
       :attended   nil
       kind        TEXT
+      ;; TODO does this do anything?
       value       "x"
    =goal>
       state       attend-target
@@ -162,140 +164,10 @@
       ISA         move-attention
       screen-pos  =visual-location
    =goal>
-      state       remember-target
+      state       click-mouse
    ;; maintain visual location info
    =visual-location>
       screen-x    =sx
-)
-
-;; rule to store the location of a target
-(P store-target
-  =goal>
-    ISA           targeting
-    state         remember-target
-  ;; get location from where system
-  =visual-location>
-    ISA          visual-location
-    screen-x     =x-location
-    screen-y     =y-location
-  ;; make sure we are looking at a target
-  ;; TODO what to do on non-target?
-  =visual>
-    ISA          text
-    value        "x"
-==>
-  ;; store the target location in the goal
-  =goal>
-    target-x    =x-location
-    target-y    =y-location
-    state       wait-for-move
-)
-
-;; rule to find the cursor
-(P find-cursor
-  =goal>
-    ISA         targeting
-    state       find-cursor
-
-  ;; TODO does this have to be free?
-  ?visual>
-    state       free
-==>
-  ;; ask to look for location where cursor might be
-  +visual-location>
-    ISA         visual-location
-    ;; TODO is this going to be unattended?
-;;    :attended   nil
-    ;; TODO look near old remembered cursor location?
-    kind        TEXT
-    value       "+"
-  =goal>
-    state       found-cursor
-)
-
-;; rule to register cursor location and ask to attend it
-(P found-cursor
-  =goal>
-    ISA         targeting
-    state       found-cursor
-
-  =visual-location>
-    ISA         visual-location
-    screen-x    =sx
-
-  ?visual>
-    state       free
-==>
-  ;; request to attend location
-  +visual>
-    ISA         move-attention
-    screen-pos  =visual-location
-  ;; maintain location info
-  =visual-location>
-    screen-x    =sx
-  =goal>
-    state       compare-cursor-target
-)
-
-;; rule to compare cursor and target location
-(P compare-cursor
-  =goal>
-    ISA         targeting
-    state       compare-cursor-target
-    target-x    =target-x
-    target-y    =target-y
-
-  ;; get the cursor x,y from the location
-  =visual-location>
-    ISA         visual-location
-    screen-x    =cursor-x
-    screen-y    =cursor-y
-
-  ;; make sure we're looking at the cursor
-  ;; TODO what if not?
-  =visual>
-    ISA         text
-    value       "+"
-
-==>
-  !bind!          =diff-x (abs (- =target-x =cursor-x))
-  !bind!          =diff-y (abs (- =target-y =cursor-y))
-  =goal>
-    state       test-cursor
-    ;; store difference between cursor and target
-    cursor-diff-x   =diff-x
-    cursor-diff-y   =diff-y
-)
-
-;; perform the actual test to see if the cursor is close enough to the target
-(P test-cursor-click
-  =goal>
-    ISA             targeting
-    state           test-cursor
-    <= cursor-diff-x   10
-    <= cursor-diff-y   10
-==>
-  =goal>
-    state           click-mouse
-)
-;; test rules for when cursor is not close enough
-(P test-cursor-move-x
-  =goal>
-    ISA             targeting
-    state           test-cursor
-    > cursor-diff-x 10
-==>
-  =goal>
-    state           move-cursor
-)
-(P test-cursor-move-y
-  =goal>
-    ISA             targeting
-    state           test-cursor
-    > cursor-diff-y 10
-==>
-  =goal>
-    state           move-cursor
 )
 
 ;; rule to move cursor toward target
@@ -330,25 +202,10 @@
     ;; 4. if cursor within target, click button
     loc           =target-location
   =goal>
-    state         wait-for-move
+    state         click-mouse
 )
 
-;; wait for the manual system to be free, meaning the mouse move is complete,
-;; then check if it is close enough to the target
-(P wait-for-move
-  =goal>
-    ISA           targeting
-    state         wait-for-move
-
-  ;; wait for motor system to be free
-  ?manual>
-    state         free
-==>
-  =goal>
-    state         find-cursor
-  ;; TODO prepare the click motor request so it doesn't take so long
-)
-
+; request a mouse click
 (P click-mouse
   =goal>
     ISA           targeting
@@ -364,7 +221,7 @@
     ISA           click-mouse
 
   =goal>
-    state         after-click
+    state         find-target
 )
 
 (P after-click
