@@ -20,13 +20,11 @@
   )
 )
 
-(defun do-targeting (num-targets) ;; old style with a screen object
+(defun do-targeting (&optional (num-targets 1)) ;; old style with a screen object
   
    (reset)
    (let* ((window (open-exp-window "Moving X" :visible t :width 400 :height 400))
           (buttons (create-buttons num-targets))
-;          (button1 (create-button 10 150))
-;          (button2 (create-button 30 270))
         )
     
       (if (not (subtypep (type-of window) 'virtual-window))
