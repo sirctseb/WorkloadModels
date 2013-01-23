@@ -1,5 +1,29 @@
 ;;; Implementation of the targeting task for the experiment
 
+;; declar variable for cursor marker so we can access it in the hook
+
+(defun print-event-info (event)
+      (format t "Hook sees event with time: ~S~%" (evt-time event))
+      (format t "Hook sees event with action: ~S~%" (evt-action event))
+      (format t "Hook sees event with params: ~S~%" (evt-params event))
+      (format t "Hook sees event with model: ~S~%" (evt-model event))
+      (format t "Hook sees event with module: ~S~%" (evt-module event))
+      (format t "Hook sees event with destination: ~S~%" (evt-destination event))
+      (format t "Hook sees event with details: ~S~%" (evt-details event))
+      (format t "Hook sees event with output: ~S~%" (evt-output event))
+)
+
+;;; Event hook function
+(defun hook (event)
+
+  (when (and
+          (eq (evt-module event) ':MOTOR)
+          (eq 'FINISH-MOVEMENT (evt-action event))
+          )
+    (format t "finished moving or clicking mouse")
+  )
+)
+
 (defun remove-button-after-delay (b)
   ;; TODO it seems that act-r crashes when you remove a button in its own
   ;; action, so instead, schedule an event to remove the button in 0.01ms
