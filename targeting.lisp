@@ -46,7 +46,6 @@
   )
 )
 
-
 ;;; Examples of visual tracking using the old style with an object
 ;;; based visicon (the currently provided devices) and with a custom
 ;;; device that uses a chunk based visicon (without having explicit
@@ -57,7 +56,17 @@
    (reset)
    (let* ((window (open-exp-window "Moving X" :visible t :width 400 :height 400))
           ;; TODO :action to remove the button
-          (button (add-button-to-exp-window :text "x" :x 10 :y 150 :width 40 :height 40))
+          (button
+            (add-button-to-exp-window :text "x" :x 10 :y 150 :width 40 :height 40
+              :action
+              (lambda (b)
+                ;; TODO it seems that act-r crashes when you remove a button in its own
+                ;; action, so instead, schedule an event to remove the button in 0.01ms
+                (schedule-event-relative .001 (lambda() (remove-items-from-exp-window b)))
+;                 (remove-items-from-exp-window b)
+              )
+            )
+          )
           (cursor-marker (add-text-to-exp-window :text "+" :x 200 :y 30)))
       ;; store cursor-marker in the dynamic *cursor-marker* var
       (setq *cursor-marker* cursor-marker)
