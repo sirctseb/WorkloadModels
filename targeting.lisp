@@ -147,6 +147,7 @@
 ;                                            (format t "seeing if button ~a is visible so we can move it" button)
                                             (when (gethash button *buttons-visible*)
 ;                                              (format t "it is! moving it")
+                                              (format t "moving target at ~a~%" (get-time))
                                               (remove-items-from-exp-window button)
                                               (setf (x-pos button) (+ 1 (x-pos button)))
                                               (add-items-to-exp-window button)
@@ -194,7 +195,7 @@
 ;      :attended   nil
       kind        OVAL
    =goal>
-      state       attend-target
+      state       move-cursor
 )
 
 (P on-move
@@ -209,52 +210,16 @@
   !eval!          (dolog "failed to attend to target location~%")
 )
 
-;; rule to register a location and ask to attend to it
-(P found-target
-   =goal>
-      ISA         targeting
-      state       attend-target
-   =visual-location>
-      ISA         visual-location
-      screen-x    =sx
-   
-   ?visual>
-      state        free
-   
-==>
-   +visual>
-      ISA         move-attention
-      screen-pos  =visual-location
-   =goal>
-      state       move-cursor
-   ;; maintain visual location info
-;   =visual-location>
-;      screen-x    =sx
-)
-; go back to searching if attention switch fails
-(P attend-fail
-  =goal>
-    ISA           targeting
-    state         move-cursor
-  ?visual>
-    state         error
-==>
-  =goal>
-    state         find-target
-  ;; clear the visual system
-  +visual>
-    ISA           clear
-)
-
 ;; rule to move cursor toward target
 (P move-cursor
   =goal>
     ISA           targeting
     state         move-cursor
 
-  =visual>
-    ISA           oval
-    screen-pos    =target-location
+  =visual-location>
+    ISA           visual-location
+    kind          OVAL
+;    screen-pos    =target-location
 
   ;; request to move cursor
   ;; TODO :cursor-noise should probably be enabled
@@ -277,7 +242,7 @@
     ;; 2. move mouse
     ;; 3. while manual busy, track cursor
     ;; 4. if cursor within target, click button
-    loc           =target-location
+    loc           =visual-location
   !eval!        (setf *move-last* t)
   =goal>
     state         click-mouse
