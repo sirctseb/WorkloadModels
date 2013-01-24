@@ -175,14 +175,15 @@
 )
 
 (P on-move
-   =goal>
+  =goal>
       ISA         targeting
       state       find-target
-   ?visual>
+  ?visual>
       state       error
 ==>
-   +visual>
+  +visual>
       ISA         clear
+  !eval!          (dolog "failed to attend to target location~%")
 )
 
 ;; rule to register a location and ask to attend to it
