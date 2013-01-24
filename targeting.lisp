@@ -207,6 +207,20 @@
 ;   =visual-location>
 ;      screen-x    =sx
 )
+; go back to searching if attention switch fails
+(P attend-fail
+  =goal>
+    ISA           targeting
+    state         move-cursor
+  ?visual>
+    state         error
+==>
+  =goal>
+    state         find-target
+  ;; clear the visual system
+  +visual>
+    ISA           clear
+)
 
 ;; rule to move cursor toward target
 (P move-cursor
