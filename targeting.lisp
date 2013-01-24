@@ -8,6 +8,10 @@
 (defvar *log-file* nil)
 ;; hook handle
 (defvar *hook-handle*)
+;; the default screen size
+(defvar *default-screen-size* 400)
+;; the default button size
+(defvar *default-button-size* 40)
 
 (defun open-log-file ()
   (unless *log-file*
@@ -74,25 +78,25 @@
   ;; schedule the event for actually removing the button
   (schedule-event-relative .001 (lambda() (remove-items-from-exp-window b) (proc-display)))
 )
-(defun create-button (x y)
-  (add-button-to-exp-window :text "x" :x x :y y :width 40 :height 40
+(defun create-button (x y &optional (size *default-button-size*))
+  (add-button-to-exp-window :text "x" :x x :y y :width size :height size
     ;; NOTE for some reason giving 'remove-button-after-delay directly doesn't work
     :action (lambda (button) (remove-button-after-delay button))
   )
 )
-(defun create-buttons (num)
+(defun create-buttons (num &optional (size *default-button-size*))
   (let (buttons '())
     (dotimes (n num buttons)
-      (cons (create-button (random 400) (random 400)) buttons)
+      (cons (create-button (random 400) (random 400) size) buttons)
     )
   )
 )
 (defun dt () (do-targeting 5))
-(defun do-targeting (&optional (num-targets 3)) ;; old style with a screen object
+(defun do-targeting (&optional (num-targets 3) (button-size *default-button-size*)) ;; old style with a screen object
   
    (reset)
    (let* ((window (open-exp-window "Moving X" :visible t :width 400 :height 400))
-          (buttons (create-buttons num-targets))
+          (buttons (create-buttons num-targets button-size))
         )
     
       (if (not (subtypep (type-of window) 'virtual-window))
