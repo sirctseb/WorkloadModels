@@ -1,8 +1,36 @@
 ;;; Implementation of the targeting task for the experiment
 
 ;; true iff the last request to the manual system was a move
-(defvar *move-last*)
-(setq *move-last* nil)
+(defvar *move-last* nil)
+;; true iff a button was clicked more recently than a manual request finished
+(defvar *button-clicked* nil)
+;; log file
+(defvar *log-file* nil)
+;; hook handle
+(defvar *hook-handle*)
+
+(defun open-log-file ()
+  (unless *log-file*
+    (setf *log-file* (open "log.txt" :direction :output :if-exists :append
+      :if-does-not-exist :create))
+    )
+    (dolog "time: ~a~%" (list (get-universal-time)))
+  )
+(defun close-log-file()
+  (when *log-file*
+    (close *log-file*)
+    (setf *log-file* nil)
+    ))
+(defun dolog (msg &optional args)
+  (when *log-file*
+    (if args
+      ;; if args are supplied, call format with them
+      (apply 'format (cons *log-file* (cons msg args)))
+      ;; otherwise, just call with the message string
+      (format *log-file* msg)
+      )
+    )
+)
 
 ;; declar variable for cursor marker so we can access it in the hook
 
@@ -25,6 +53,15 @@
           (eq 'FINISH-MOVEMENT (evt-action event))
           )
     (format t "finished moving or clicking mouse")
+    ;; if we are finishing a click, check if a button was dismissed
+    ;; since the last movement finish.
+    (unless *move-last*
+      (unless *button-clicked*
+        (log "missed a target")
+      )
+    )
+    ;; unset click var
+    (setf *button-clicked* nil)
   )
 )
 
@@ -32,6 +69,9 @@
   ;; TODO it seems that act-r crashes when you remove a button in its own
   ;; action, so instead, schedule an event to remove the button in 0.01ms
   (format t "removing button")
+  ;; set var that indicates a click occured more recently than manual request finish
+  (setf *button-clicked* t)
+  ;; schedule the event for actually removing the button
   (schedule-event-relative .001 (lambda() (remove-items-from-exp-window b) (proc-display)))
 )
 (defun create-button (x y)
@@ -76,13 +116,16 @@
             ;                            (proc-display))
             ;                       :details "moving object"
             ;                       :initial-delay 0.5)
-        
-            (run 100 )))))
+            (cwd "/Users/sirc/Desktop/addition")
+            (open-log-file)
+            (run 100 )
+            (close-log-file)
+            ))))
 
 (clear-all)
 
 ; add event hook
-(add-pre-event-hook 'hook)
+(setf *hook-handle* (add-pre-event-hook 'hook))
 
 (define-model simple-tracking
 
@@ -178,6 +221,7 @@
     ;; 3. while manual busy, track cursor
     ;; 4. if cursor within target, click button
     loc           =target-location
+  !eval!        (setf *move-last* t)
   =goal>
     state         click-mouse
 )
@@ -196,6 +240,7 @@
   ;; submit click request
   +manual>
     ISA           click-mouse
+  !eval!        (setf *move-last* nil)
 
   =goal>
     state         find-target
