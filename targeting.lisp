@@ -117,7 +117,7 @@
             (start-hand-at-mouse)
             (set-cursor-position 20 30)
             (proc-display)
-            (schedule-periodic-event .5 #'(lambda ()
+            (schedule-periodic-event .05 #'(lambda ()
 
                                           ;; Virtual dialog item specific coordinate moving
                                           ;; code.  Code for real windows is different for each
@@ -127,7 +127,7 @@
                                             (when (gethash button *buttons-visible*)
 ;                                              (format t "it is! moving it")
                                               (remove-items-from-exp-window button)
-                                              (setf (x-pos button) (+ 10 (x-pos button)))
+                                              (setf (x-pos button) (+ 1 (x-pos button)))
                                               (add-items-to-exp-window button)
 
                                             )
