@@ -57,7 +57,7 @@
     ;; since the last movement finish.
     (unless *move-last*
       (unless *button-clicked*
-        (log "missed a target")
+        (dolog "missed a target~%")
       )
     )
     ;; unset click var
@@ -68,7 +68,7 @@
 (defun remove-button-after-delay (b)
   ;; TODO it seems that act-r crashes when you remove a button in its own
   ;; action, so instead, schedule an event to remove the button in 0.01ms
-  (format t "removing button")
+  (format t "removing button~%")
   ;; set var that indicates a click occured more recently than manual request finish
   (setf *button-clicked* t)
   ;; schedule the event for actually removing the button
