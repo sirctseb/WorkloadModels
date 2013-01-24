@@ -62,8 +62,9 @@
     ;; if we are finishing a click, check if a button was dismissed
     ;; since the last movement finish.
     (unless *move-last*
-      (unless *button-clicked*
-        (dolog "missed a target~%")
+      (if *button-clicked*
+        (dolog "hit a target at ~a ~%" `(,(evt-time event)))
+        (dolog "missed a target at ~a ~%" `(,(evt-time event)))
       )
     )
     ;; unset click var
