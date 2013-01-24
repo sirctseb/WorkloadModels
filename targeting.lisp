@@ -1,5 +1,9 @@
 ;;; Implementation of the targeting task for the experiment
 
+;; true iff the last request to the manual system was a move
+(defvar *move-last*)
+(setq *move-last* nil)
+
 ;; declar variable for cursor marker so we can access it in the hook
 
 (defun print-event-info (event)
