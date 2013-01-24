@@ -43,7 +43,7 @@
     )
   )
 )
-
+(defun dt () (do-targeting 5))
 (defun do-targeting (&optional (num-targets 3)) ;; old style with a screen object
   
    (reset)
