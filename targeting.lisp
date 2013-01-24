@@ -87,7 +87,7 @@
 (defun create-buttons (num &optional (size *default-button-size*))
   (let (buttons '())
     (dotimes (n num buttons)
-      (cons (create-button (random 400) (random 400) size) buttons)
+      (setf buttons (cons (create-button (random 400) (random 400) size) buttons))
     )
   )
 )
