@@ -12,6 +12,8 @@
 (defvar *default-screen-size* 400)
 ;; the default button size
 (defvar *default-button-size* 40)
+;; the current visibility of each button
+(defvar *buttons-visible* (make-hash-table))
 
 (defun open-log-file ()
   (unless *log-file*
@@ -75,13 +77,18 @@
   (format t "removing button~%")
   ;; set var that indicates a click occured more recently than manual request finish
   (setf *button-clicked* t)
+  ;; set var that shows this button is not visible
+  (setf (gethash b *buttons-visible*) nil)
   ;; schedule the event for actually removing the button
   (schedule-event-relative .001 (lambda() (remove-items-from-exp-window b) (proc-display)))
 )
 (defun create-button (x y &optional (size *default-button-size*))
-  (add-button-to-exp-window :text "x" :x x :y y :width size :height size
+  (let ((button (add-button-to-exp-window :text "x" :x x :y y :width size :height size
     ;; NOTE for some reason giving 'remove-button-after-delay directly doesn't work
     :action (lambda (button) (remove-button-after-delay button))
+    )))
+    (setf (gethash button *buttons-visible*) t)
+    button
   )
 )
 (defun create-buttons (num &optional (size *default-button-size*))
@@ -98,6 +105,7 @@
    (let* ((window (open-exp-window "Moving X" :visible t :width 400 :height 400))
           (buttons (create-buttons num-targets button-size))
         )
+      ;(setf *buttons-visible* (make-list (list-length buttons) t))
     
       (if (not (subtypep (type-of window) 'virtual-window))
          (print-warning "This example only works correctly for virtual and visible-virtual windows because the x coordinate accessor is specific to those objects.")
@@ -109,20 +117,27 @@
             (start-hand-at-mouse)
             (set-cursor-position 20 30)
             (proc-display)
-            ;(schedule-periodic-event .5 #'(lambda () 
-            ;                             
-            ;                            ;; Virtual dialog item specific coordinate moving
-            ;                            ;; code.  Code for real windows is different for each
-            ;                            ;; Lisp since the x position accessor will differ.
-            ;                            
-            ;                            (setf (x-pos button) (+ 10 (x-pos button)))
-            ;                            
-            ;                            (proc-display))
-            ;                       :details "moving object"
-            ;                       :initial-delay 0.5)
+            (schedule-periodic-event .5 #'(lambda ()
+
+                                          ;; Virtual dialog item specific coordinate moving
+                                          ;; code.  Code for real windows is different for each
+                                          ;; Lisp since the x position accessor will differ.
+                                          (dolist (button buttons)
+;                                            (format t "seeing if button ~a is visible so we can move it" button)
+                                            (when (gethash button *buttons-visible*)
+;                                              (format t "it is! moving it")
+                                              (remove-items-from-exp-window button)
+                                              (setf (x-pos button) (+ 10 (x-pos button)))
+                                              (add-items-to-exp-window button)
+
+                                            )
+                                          )
+                                          (proc-display)
+                                     :details "moving object"
+                                     :initial-delay 0.5))
             (cwd "/Users/sirc/Desktop/addition")
             (open-log-file)
-            (run 100 )
+            (run 8 :real-time t)
             (close-log-file)
             ))))
 
@@ -153,7 +168,7 @@
 ==>
    +visual-location>
       ISA         visual-location
-      :attended   nil
+;      :attended   nil
       kind        OVAL
    =goal>
       state       attend-target
