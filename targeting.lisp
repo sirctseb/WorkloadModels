@@ -194,6 +194,7 @@
       ISA         visual-location
 ;      :attended   nil
       kind        OVAL
+      :nearest    current
    =goal>
       state       move-cursor
 )
