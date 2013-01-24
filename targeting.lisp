@@ -103,9 +103,7 @@
    +visual-location>
       ISA         visual-location
       :attended   nil
-      kind        TEXT
-      ;; TODO does this do anything?
-      value       "x"
+      kind        OVAL
    =goal>
       state       attend-target
 )
@@ -151,8 +149,7 @@
     state         move-cursor
 
   =visual>
-    ISA           text
-    value         "x"
+    ISA           oval
     screen-pos    =target-location
 
   ;; request to move cursor
