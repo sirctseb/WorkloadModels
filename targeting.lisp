@@ -99,6 +99,11 @@
     )
   )
 )
+(defun run-trials (&key (num-targets 3) (trials 50) (button-size 128) (screen-size 800))
+  (dotimes (n trials)
+    (do-targeting num-targets :button-size button-size :screen-size screen-size)
+    )
+  )
 (defun dt () (do-targeting 5))
 (defun do-targeting (&optional (num-targets 3) &key (button-size *default-button-size*) (screen-size *default-screen-size*)) ;; old style with a screen object
   
