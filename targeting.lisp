@@ -100,10 +100,10 @@
   )
 )
 (defun dt () (do-targeting 5))
-(defun do-targeting (&optional (num-targets 3) (button-size *default-button-size*)) ;; old style with a screen object
+(defun do-targeting (&optional (num-targets 3) &key (button-size *default-button-size*) (screen-size *default-screen-size*)) ;; old style with a screen object
   
    (reset)
-   (let* ((window (open-exp-window "Moving X" :visible t :width 400 :height 400))
+   (let* ((window (open-exp-window "Moving X" :visible t :width screen-size :height screen-size))
           (buttons (create-buttons num-targets button-size))
         )
       ;(setf *buttons-visible* (make-list (list-length buttons) t))
