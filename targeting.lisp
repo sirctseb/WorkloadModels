@@ -92,10 +92,10 @@
     button
   )
 )
-(defun create-buttons (num &optional (size *default-button-size*))
+(defun create-buttons (num &optional (size *default-button-size*) (screen-size *default-screen-size*))
   (let (buttons '())
     (dotimes (n num buttons)
-      (setf buttons (cons (create-button (random 400) (random 400) size) buttons))
+      (setf buttons (cons (create-button (random screen-size) (random screen-size) size) buttons))
     )
   )
 )
@@ -109,7 +109,7 @@
   
    (reset)
    (let* ((window (open-exp-window "Moving X" :visible t :width screen-size :height screen-size))
-          (buttons (create-buttons num-targets button-size))
+          (buttons (create-buttons num-targets button-size screen-size))
         )
       ;(setf *buttons-visible* (make-list (list-length buttons) t))
     
