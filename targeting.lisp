@@ -14,6 +14,10 @@
 (defvar *default-button-size* 40)
 ;; the current visibility of each button
 (defvar *buttons-visible* (make-hash-table))
+;; the number of targets hit
+(defvar *hit-counter* 0)
+;; the number of misses
+(defvar *miss-counter* 0)
 
 (defun open-log-file ()
   (unless *log-file*
@@ -63,8 +67,14 @@
     ;; since the last movement finish.
     (unless *move-last*
       (if *button-clicked*
+        (progn
         (dolog "hit a target at ~a ~%" `(,(evt-time event)))
+        (incf *hit-counter*)
+        )
+        (progn
         (dolog "missed a target at ~a ~%" `(,(evt-time event)))
+        (incf *miss-counter*)
+        )
       )
     )
     ;; unset click var
@@ -105,8 +115,13 @@
     )
   )
 (defun dt () (do-targeting 5))
+(defun reset-task ()
+  (setf *hit-counter* 0)
+  (setf *miss-counter* 0)
+)
 (defun do-targeting (&optional (num-targets 3) &key (button-size *default-button-size*) (screen-size *default-screen-size*)) ;; old style with a screen object
   
+   (reset-task)
    (reset)
    (let* ((window (open-exp-window "Moving X" :visible t :width screen-size :height screen-size))
           (buttons (create-buttons num-targets button-size screen-size))
@@ -144,6 +159,8 @@
             (cwd "/Users/sirc/Desktop/addition")
             (open-log-file)
             (run 10 :real-time nil)
+            (dolog "hits: ~a~%" `(,*hit-counter*))
+            (dolog "misses: ~a~%" `(,*miss-counter*))
             (close-log-file)
             ))))
 
