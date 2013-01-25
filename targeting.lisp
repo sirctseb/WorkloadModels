@@ -138,7 +138,7 @@
                                      :initial-delay 0.5))
             (cwd "/Users/sirc/Desktop/addition")
             (open-log-file)
-            (run 8 :real-time t)
+            (run 10 :real-time nil)
             (close-log-file)
             ))))
 
