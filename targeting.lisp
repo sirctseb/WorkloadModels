@@ -176,12 +176,13 @@
                                                         (button-y (y-pos button))
                                                         (size (width button)))
                                                   ; test if cursor within button
-                                                  (when (and (> cursor-x button-x)
+                                                  (if (and (> cursor-x button-x)
                                                              (< cursor-x (+ button-x size))
                                                              (> cursor-y button-y)
                                                              (< cursor-y (+ button-y size)))
                                                     ; set button color
                                                     (setf (color button) (gethash button *button-colors*))
+                                                    (setf (color button) 'black)
                                                   )
                                                 )
                                               )
