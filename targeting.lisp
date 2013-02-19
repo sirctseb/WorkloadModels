@@ -284,7 +284,28 @@
     loc           =visual-location
   !eval!        (setf *move-last* t)
   =goal>
-    state         click-mouse
+    state         check-target
+)
+
+; after a mouse move is done, re-find the nearest oval to get info about its color
+(P check-target
+  =goal>
+    ISA           targeting
+    state         check-target
+  ;; wait until the mouse movement is done
+  ?manual>
+    ;; TODO can we be more specific about what the state of the manual system has to be?
+    state         free
+==>
+  ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
+  +visual-location>
+    ;; search for oval
+    kind          OVAL
+    ;; nearest the current location
+    :nearest      current
+  =goal>
+    ;; move to the state where we distinguish between red and green targets
+    state         distinguish-target
 )
 
 ; request a mouse click
