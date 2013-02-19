@@ -147,7 +147,6 @@
             (proc-display)
             ;; schedule moves if targets should move
             (when moving
-              (format t "scheduling moves")
               (schedule-periodic-event .05 #'(lambda ()
 
                                             ;; Virtual dialog item specific coordinate moving
