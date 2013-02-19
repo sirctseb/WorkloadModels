@@ -214,17 +214,17 @@
    (chunk-type targeting state target-x target-y cursor-diff-x cursor-diff-y target-location)
 
    (add-dm (track isa chunk) (attend-letter isa chunk)
-      (goal isa targeting state find-target))
+      (goal isa targeting state find-black-target))
   
    ;; adding this setting to the model will avoid the deleted chunk
    ;; warnings in the object tracking case.
    ;; (sgp :delete-visicon-chunks nil)
 
 ;; Rule to start searching for a target  
-(P find-target
+(P find-black-target
    =goal>
       ISA         targeting
-      state       find-target
+      state       find-black-target
    ?visual>
       state       free
 ==>
@@ -240,7 +240,7 @@
 (P on-move
   =goal>
       ISA         targeting
-      state       find-target
+      state       find-black-target
   ?visual>
       state       error
 ==>
@@ -304,7 +304,7 @@
   !eval!        (setf *move-last* nil)
 
   =goal>
-    state         find-target
+    state         find-black-target
 )
 
 (P after-click
