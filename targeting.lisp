@@ -352,7 +352,7 @@
 ==>
   ;; search for black targets again
   =goal>
-    start         find-black-target
+    state         find-black-target
 )
 
 ; request a mouse click
