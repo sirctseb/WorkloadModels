@@ -194,9 +194,9 @@
             (open-log-file)
             (if trace-file
               (with-open-file (*standard-output* trace-file :direction :output :if-exists :supersede)
-                (run 10 :real-time real-time)
+                (run 5 :real-time real-time)
               )
-              (run 10 :real-time real-time)
+              (run 5 :real-time real-time)
             )
             (dolog "hits: ~a~%" `(,*hit-counter*))
             (dolog "misses: ~a~%" `(,*miss-counter*))
