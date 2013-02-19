@@ -287,7 +287,7 @@
     state         check-target
 )
 
-; after a mouse move is done, re-find the nearest oval to get info about its color
+;; after a mouse move is done, re-find the nearest oval to get info about its color
 (P check-target
   =goal>
     ISA           targeting
@@ -306,6 +306,36 @@
   =goal>
     ;; move to the state where we distinguish between red and green targets
     state         distinguish-target
+)
+
+;; after a rescan of the target, check if the target is red and click it
+(P distinguish-target-enemy
+  =goal>
+    ISA           targeting
+    state         distinguish-target
+  ;; wait until visual location is found
+  =visual-location>
+    ;; check for oval
+    kind          OVAL
+    ;; check for red (enemy)
+    color         red
+  ;; make sure manual module is free so we can click immediately
+  ?manual>
+    ; TODO does state have to be free or can we be more specific?
+    state         free
+==>
+  ;; request a click
+  +manual>
+    ISA           click-mouse
+
+  ;; note that last manual request was not a move
+  !eval!          (setf *move-last* nil)
+
+  ;; search for black targets again
+  ;; TODO if click misses?
+  ;; TODO if visual location request fails?
+  =goal>
+    state         find-black-target
 )
 
 ; request a mouse click
