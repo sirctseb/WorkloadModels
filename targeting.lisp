@@ -97,10 +97,12 @@
   ;; schedule the event for actually removing the button
   (schedule-event-relative .001 (lambda() (remove-items-from-exp-window b) (proc-display)))
 )
-(defun create-button (x y &optional (size *default-button-size*))
+(defun create-button (x y &optional (size *default-button-size*) &key (enemy t))
   (let ((button (add-button-to-exp-window :text "x" :x x :y y :width size :height size
     ;; NOTE for some reason giving 'remove-button-after-delay directly doesn't work
     :action (lambda (button) (remove-button-after-delay button))
+    ;; color based on eneminess
+    :color (if enemy 'red 'green)
     )))
     (setf (gethash button *buttons-visible*) t)
     button
@@ -109,7 +111,7 @@
 (defun create-buttons (num &optional (size *default-button-size*) (screen-size *default-screen-size*))
   (let (buttons '())
     (dotimes (n num buttons)
-      (setf buttons (cons (create-button (random screen-size) (random screen-size) size) buttons))
+      (setf buttons (cons (create-button (random screen-size) (random screen-size) size :enemy (eq (mod n 2) 0)) buttons))
     )
   )
 )
