@@ -115,9 +115,9 @@
     )
   )
 )
-(defun run-trials (&key (num-targets 3) (trials 50) (button-size 128) (screen-size 800) (moving nil) (real-time nil))
+(defun run-trials (&key (num-targets 3) (trials 50) (button-size 128) (screen-size 800) (moving nil) (real-time nil) (trace-file nil))
   (dotimes (n trials)
-    (do-targeting num-targets :button-size button-size :screen-size screen-size :moving moving :real-time real-time)
+    (do-targeting num-targets :button-size button-size :screen-size screen-size :moving moving :real-time real-time :trace-file trace-file)
     )
   )
 (defun dt () (do-targeting 5))
@@ -126,7 +126,7 @@
   (setf *miss-counter* 0)
 )
 (defun do-targeting (&optional (num-targets 3) &key (button-size *default-button-size*) (screen-size *default-screen-size*)
-    (moving *default-moving*) (real-time *default-real-time*)) ;; old style with a screen object
+    (moving *default-moving*) (real-time *default-real-time*) (trace-file nil)) ;; old style with a screen object
   
    (reset-task)
    (reset)
@@ -169,7 +169,12 @@
             )
             (cwd "/Users/sirc/Desktop/addition")
             (open-log-file)
-            (run 10 :real-time real-time)
+            (if trace-file
+              (with-open-file (*standard-output* trace-file :direction :output :if-exists :supersede)
+                (run 10 :real-time real-time)
+              )
+              (run 10 :real-time real-time)
+            )
             (dolog "hits: ~a~%" `(,*hit-counter*))
             (dolog "misses: ~a~%" `(,*miss-counter*))
             (close-log-file)
