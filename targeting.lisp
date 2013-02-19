@@ -338,6 +338,23 @@
     state         find-black-target
 )
 
+;; after a rescan of the target, check if the target is green and go back to finding black targets
+(P distinguish-target-friend
+  =goal>
+    ISA           targeting
+    state         distinguish-target
+  ;; wait until visual location is found
+  =visual-location>
+    ;; check for oval
+    kind          OVAL
+    ;; check for green (friend)
+    color         green
+==>
+  ;; search for black targets again
+  =goal>
+    start         find-black-target
+)
+
 ; request a mouse click
 (P click-mouse
   =goal>
