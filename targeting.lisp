@@ -14,6 +14,8 @@
 (defvar *default-button-size* 40)
 ;; the current visibility of each button
 (defvar *buttons-visible* (make-hash-table))
+;; the underlying colors of each button
+(defvar *button-colors* (make-hash-table))
 ;; the number of targets hit
 (defvar *hit-counter* 0)
 ;; the number of misses
@@ -101,9 +103,13 @@
   (let ((button (add-button-to-exp-window :text "x" :x x :y y :width size :height size
     ;; NOTE for some reason giving 'remove-button-after-delay directly doesn't work
     :action (lambda (button) (remove-button-after-delay button))
-    ;; color based on eneminess
-    :color 'black;(if enemy 'red 'green)
+    ; make buttons black initially
+    ;; TODO condition on hardness
+    :color 'black
     )))
+    ; store buttons real color
+    (setf (gethash button *button-colors*) (if enemy 'red 'green))
+    ; store that button is visible
     (setf (gethash button *buttons-visible*) t)
     button
   )
@@ -175,7 +181,7 @@
                                                              (> cursor-y button-y)
                                                              (< cursor-y (+ button-y size)))
                                                     ; set button color
-                                                    (setf (color button) 'red)
+                                                    (setf (color button) (gethash button *button-colors*))
                                                   )
                                                 )
                                               )
