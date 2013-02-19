@@ -187,7 +187,7 @@
 
 (define-model simple-tracking
 
-   (sgp :v t :needs-mouse nil :show-focus t :trace-detail high :cursor-noise t)
+   (sgp :v t :needs-mouse nil :show-focus t :trace-detail high :cursor-noise nil :vwt t :incremental-mouse-moves t)
    (chunk-type targeting state target-x target-y cursor-diff-x cursor-diff-y target-location)
 
    (add-dm (track isa chunk) (attend-letter isa chunk)
