@@ -283,6 +283,13 @@
     ;; 4. if cursor within target, click button
     loc           =visual-location
   !eval!        (setf *move-last* t)
+  ;; request to attend to visual object so that we can search for nearest when
+  ;; distinguishing between friend and enemy targets
+  ; TODO it may be better to just keep the visual-location buffer full
+  ; and supply that when making the new request in check-target
+  +visual>
+    ISA           move-attention
+    screen-pos    =visual-location
   =goal>
     state         check-target
 )
@@ -296,9 +303,13 @@
   ?manual>
     ;; TODO can we be more specific about what the state of the manual system has to be?
     state         free
+  ;; wait until visual attention has been moved to target
+  ?visual>
+    state         free
 ==>
   ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
   +visual-location>
+    ISA           visual-location
     ;; search for oval
     kind          OVAL
     ;; nearest the current location
@@ -315,6 +326,7 @@
     state         distinguish-target
   ;; wait until visual location is found
   =visual-location>
+    ISA           visual-location
     ;; check for oval
     kind          OVAL
     ;; check for red (enemy)
@@ -345,6 +357,7 @@
     state         distinguish-target
   ;; wait until visual location is found
   =visual-location>
+    ISA           visual-location
     ;; check for oval
     kind          OVAL
     ;; check for green (friend)
