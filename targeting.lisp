@@ -204,6 +204,7 @@
       ISA         visual-location
 ;      :attended   nil
       kind        OVAL
+      color       red
    =goal>
       state       move-cursor
 )
