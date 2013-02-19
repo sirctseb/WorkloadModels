@@ -18,6 +18,10 @@
 (defvar *hit-counter* 0)
 ;; the number of misses
 (defvar *miss-counter* 0)
+;; true if the targets should move by default
+(defvar *default-moving* nil)
+;; true if the model should run in real time by default
+(defvar *real-time* nil)
 
 (defun open-log-file ()
   (unless *log-file*
@@ -109,9 +113,9 @@
     )
   )
 )
-(defun run-trials (&key (num-targets 3) (trials 50) (button-size 128) (screen-size 800))
+(defun run-trials (&key (num-targets 3) (trials 50) (button-size 128) (screen-size 800) (moving nil) (real-time nil))
   (dotimes (n trials)
-    (do-targeting num-targets :button-size button-size :screen-size screen-size)
+    (do-targeting num-targets :button-size button-size :screen-size screen-size :moving moving :real-time real-time)
     )
   )
 (defun dt () (do-targeting 5))
@@ -119,7 +123,8 @@
   (setf *hit-counter* 0)
   (setf *miss-counter* 0)
 )
-(defun do-targeting (&optional (num-targets 3) &key (button-size *default-button-size*) (screen-size *default-screen-size*)) ;; old style with a screen object
+(defun do-targeting (&optional (num-targets 3) &key (button-size *default-button-size*) (screen-size *default-screen-size*)
+    (moving *default-moving*) (real-time *default-real-time*)) ;; old style with a screen object
   
    (reset-task)
    (reset)
@@ -138,28 +143,32 @@
             (start-hand-at-mouse)
             (set-cursor-position 20 30)
             (proc-display)
-            (schedule-periodic-event .05 #'(lambda ()
+            ;; schedule moves if targets should move
+            (when moving
+              (format t "scheduling moves")
+              (schedule-periodic-event .05 #'(lambda ()
 
-                                          ;; Virtual dialog item specific coordinate moving
-                                          ;; code.  Code for real windows is different for each
-                                          ;; Lisp since the x position accessor will differ.
-                                          (dolist (button buttons)
-;                                            (format t "seeing if button ~a is visible so we can move it" button)
-                                            (when (gethash button *buttons-visible*)
-;                                              (format t "it is! moving it")
-                                              (format t "moving target at ~a~%" (get-time))
-                                              (remove-items-from-exp-window button)
-                                              (setf (x-pos button) (+ 1 (x-pos button)))
-                                              (add-items-to-exp-window button)
+                                            ;; Virtual dialog item specific coordinate moving
+                                            ;; code.  Code for real windows is different for each
+                                            ;; Lisp since the x position accessor will differ.
+                                            (dolist (button buttons)
+  ;                                            (format t "seeing if button ~a is visible so we can move it" button)
+                                              (when (gethash button *buttons-visible*)
+  ;                                              (format t "it is! moving it")
+                                                (format t "moving target at ~a~%" (get-time))
+                                                (remove-items-from-exp-window button)
+                                                (setf (x-pos button) (+ 1 (x-pos button)))
+                                                (add-items-to-exp-window button)
 
+                                              )
                                             )
-                                          )
-                                          (proc-display)
-                                     :details "moving object"
-                                     :initial-delay 0.5))
+                                            (proc-display)
+                                       :details "moving object"
+                                       :initial-delay 0.5))
+            )
             (cwd "/Users/sirc/Desktop/addition")
             (open-log-file)
-            (run 10 :real-time nil)
+            (run 10 :real-time real-time)
             (dolog "hits: ~a~%" `(,*hit-counter*))
             (dolog "misses: ~a~%" `(,*miss-counter*))
             (close-log-file)
