@@ -66,7 +66,7 @@
           (eq (evt-module event) ':MOTOR)
           (eq 'FINISH-MOVEMENT (evt-action event))
           )
-    (format t "finished moving or clicking mouse")
+    (format t "finished moving or clicking mouse~%")
     ;; if we are finishing a click, check if a button was dismissed
     ;; since the last movement finish.
     (unless *move-last*
@@ -102,7 +102,7 @@
     ;; NOTE for some reason giving 'remove-button-after-delay directly doesn't work
     :action (lambda (button) (remove-button-after-delay button))
     ;; color based on eneminess
-    :color (if enemy 'red 'green)
+    :color 'black;(if enemy 'red 'green)
     )))
     (setf (gethash button *buttons-visible*) t)
     button
@@ -146,9 +146,7 @@
             (set-cursor-position 20 30)
             (proc-display)
             ;; schedule moves if targets should move
-            (when moving
               (schedule-periodic-event .05 #'(lambda ()
-
                                             ;; Virtual dialog item specific coordinate moving
                                             ;; code.  Code for real windows is different for each
                                             ;; Lisp since the x position accessor will differ.
@@ -156,17 +154,35 @@
   ;                                            (format t "seeing if button ~a is visible so we can move it" button)
                                               (when (gethash button *buttons-visible*)
   ;                                              (format t "it is! moving it")
-                                                (format t "moving target at ~a~%" (get-time))
-                                                (remove-items-from-exp-window button)
-                                                (setf (x-pos button) (+ 1 (x-pos button)))
-                                                (add-items-to-exp-window button)
-
+                                                ;(remove-items-from-exp-window button)
+                                                (when moving
+                                                  (setf (x-pos button) (+ 1 (x-pos button)))
+                                                )
+                                                ;(add-items-to-exp-window button)
+                                                ;(format t "moving target at ~a to x ~d~%" (get-time) (x-pos button))
+                                                ;(format t "cursor location: ~s" (get-mouse-coordinates (current-device)))
+                                                ;; check if mouse is within target
+                                                ;; define cursor and button locations
+                                                (let* ((cursor-loc (get-mouse-coordinates (current-device)))
+                                                        (cursor-x (aref cursor-loc 0))
+                                                        (cursor-y (aref cursor-loc 1))
+                                                        (button-x (x-pos button))
+                                                        (button-y (y-pos button))
+                                                        (size (width button)))
+                                                  ; test if cursor within button
+                                                  (when (and (> cursor-x button-x)
+                                                             (< cursor-x (+ button-x size))
+                                                             (> cursor-y button-y)
+                                                             (< cursor-y (+ button-y size)))
+                                                    ; set button color
+                                                    (setf (color button) 'red)
+                                                  )
+                                                )
                                               )
                                             )
                                             (proc-display)
                                        :details "moving object"
                                        :initial-delay 0.5))
-            )
             (cwd "/Users/sirc/Desktop/addition")
             (open-log-file)
             (if trace-file
@@ -209,7 +225,7 @@
       ISA         visual-location
 ;      :attended   nil
       kind        OVAL
-      color       red
+      color       black
    =goal>
       state       move-cursor
 )
