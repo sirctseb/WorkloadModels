@@ -170,7 +170,7 @@
             (cwd "/Users/sirc/Desktop/addition")
             (open-log-file)
             (if trace-file
-              (with-open-file (*standard-output* trace-file :direction :output :if-exists :supersede)
+              (with-open-file (*standard-output* trace-file :direction :output :if-exists :append :if-does-not-exist :create)
                 (run 5 :real-time real-time)
               )
               (run 5 :real-time real-time)
