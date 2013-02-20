@@ -204,6 +204,8 @@
       state       find-target
    ?visual>
       state       free
+   ?manual>
+      state       free
 ==>
    +visual-location>
       ISA         visual-location
