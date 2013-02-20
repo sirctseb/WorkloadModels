@@ -158,7 +158,7 @@
   ;                                              (format t "it is! moving it")
                                                 (format t "moving target at ~a~%" (get-time))
                                                 (remove-items-from-exp-window button)
-                                                (setf (x-pos button) (+ 1 (x-pos button)))
+                                                (setf (x-pos button) (+ 8 (x-pos button)))
                                                 (add-items-to-exp-window button)
 
                                               )
