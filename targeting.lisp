@@ -9,9 +9,9 @@
 ;; hook handle
 (defvar *hook-handle*)
 ;; the default screen size
-(defvar *default-screen-size* 400)
+(defvar *default-screen-size* 800)
 ;; the default button size
-(defvar *default-button-size* 40)
+(defvar *default-button-size* 128)
 ;; the current visibility of each button
 (defvar *buttons-visible* (make-hash-table))
 ;; the number of targets hit
@@ -115,7 +115,7 @@
     )
   )
 )
-(defun run-trials (&key (num-targets 3) (trials 50) (button-size 128) (screen-size 800) (moving nil) (real-time nil) (trace-file nil))
+(defun run-trials (&key (num-targets 3) (trials 50) (button-size *default-button-size*) (screen-size *default-screen-size*) (moving *default-moving*) (real-time *default-real-time*) (trace-file nil))
   (dotimes (n trials)
     (do-targeting num-targets :button-size button-size :screen-size screen-size :moving moving :real-time real-time :trace-file trace-file)
     )
