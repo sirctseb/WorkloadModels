@@ -156,7 +156,7 @@
   ;                                            (format t "seeing if button ~a is visible so we can move it" button)
                                               (when (gethash button *buttons-visible*)
   ;                                              (format t "it is! moving it")
-                                                (format t "moving target at ~a~%" (get-time))
+                                                ;(format t "moving target at ~a~%" (get-time))
                                                 (remove-items-from-exp-window button)
                                                 (setf (x-pos button) (+ 8 (x-pos button)))
                                                 (add-items-to-exp-window button)
