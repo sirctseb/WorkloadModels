@@ -21,7 +21,7 @@
 ;; true if the targets should move by default
 (defvar *default-moving* nil)
 ;; true if the model should run in real time by default
-(defvar *real-time* nil)
+(defvar *default-real-time* nil)
 
 (defun open-log-file ()
   (unless *log-file*
