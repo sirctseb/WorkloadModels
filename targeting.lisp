@@ -294,15 +294,11 @@
     state         check-target
 )
 
-;; after a mouse move is done, re-find the nearest oval to get info about its color
+;; re-scan for the nearest oval to get info about its color
 (P check-target
   =goal>
     ISA           targeting
     state         check-target
-  ;; wait until the mouse movement is done
-  ?manual>
-    ;; TODO can we be more specific about what the state of the manual system has to be?
-    state         free
   ;; wait until visual attention has been moved to target
   ?visual>
     state         free
@@ -331,23 +327,11 @@
     kind          OVAL
     ;; check for red (enemy)
     color         red
-  ;; make sure manual module is free so we can click immediately
-  ?manual>
-    ; TODO does state have to be free or can we be more specific?
-    state         free
 ==>
-  ;; request a click
-  +manual>
-    ISA           click-mouse
-
-  ;; note that last manual request was not a move
-  !eval!          (setf *move-last* nil)
-
-  ;; search for black targets again
-  ;; TODO if click misses?
   ;; TODO if visual location request fails?
+  ;; go to click mouse state to wait for manual state to be free
   =goal>
-    state         find-black-target
+    state         click-mouse
 )
 
 ;; after a rescan of the target, check if the target is green and go back to finding black targets
