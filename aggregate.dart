@@ -30,6 +30,7 @@ main() {
 	var match;
 	RegExp hitRE = new RegExp(r"hit a target at ([\d\.]*)");
 	List<num> hitTimes = [];
+	List<num> targetingTimes = [];
 	num lastHitTime;
 	// iterate over lines
 	lines.forEach((line) {
@@ -47,6 +48,7 @@ main() {
 				num time = double.parse(match.group(1));
 				//print(lastHitTime);
 				hitTimes.add(time - lastHitTime);
+				targetingTimes.add(time);
 				lastHitTime = time;
 			} else if(line.startsWith("time:")) {
 				state = "firsthit";
@@ -54,14 +56,15 @@ main() {
 		}
 	});
 
-	var min = hitTimes.min();
+	var min = targetingTimes.min();
 	print("min: $min");
-	max = hitTimes.max();
+	max = targetingTimes.max();
 	print("max: $max");
-	print("mean: ${hitTimes.reduce(0, (prev, el) => prev + el) / hitTimes.length}");
-	var bucketSize = 0.2;
+	print("mean: ${targetingTimes.reduce(0, (prev, el) => prev + el) / targetingTimes.length}");
+	var bucketSize = 0.1;
 	for(num i = min; i <= max; i += bucketSize) {
-		int count = hitTimes.where((time) => i < time && time < i + bucketSize).length;
+		int count = targetingTimes.where((time) => i < time && time < i + bucketSize).length;
 		print("${i.toStringAsPrecision(2)}: ${new String.fromCharCodes([]..insertRange(0, count, "x".charCodeAt(0)))}");
 	}
+	print("${targetingTimes}");
 }
