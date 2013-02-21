@@ -352,6 +352,25 @@
     state         find-black-target
 )
 
+;; after a rescan of the target, check if the target is still black and keep rescanning
+(P distinguish-target-black
+  =goal>
+    ISA           targeting
+    state         distinguish-target
+  ;; wait until visual location is found
+  =visual-location>
+    ISA           visual-location
+    ;; check for oval
+    kind          OVAL
+    ;; check for black
+    color         black
+==>
+  ;; go back to check target to scan again
+  ;; TODO should we just do the visloc request here?
+  =goal>
+    state         check-target
+)
+
 ; request a mouse click
 (P click-mouse
   =goal>
