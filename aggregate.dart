@@ -14,6 +14,9 @@ main() {
 	// count each number of hits
 	print("hits:");
 	[0, 1, 2, 3].forEach((count) => print("$count: ${hit_counts.where((cur_count) => cur_count == count).length}"));
+	// sum hits
+	int hits = hit_counts.reduce(0, (cum, next) => cum + next);
+	print("total hits: $hits");
 
 	// get all miss counts
 	var miss_counts = new RegExp(r"misses: (\d+)").allMatches(logContents).mappedBy((match) => int.parse(match.group(1)));
@@ -22,6 +25,11 @@ main() {
 	for(int i = 0; i <= max; i++) {
 		print("$i: ${miss_counts.where((cur_count) => cur_count == i).length}");
 	}
+	// sum misses
+	int misses = miss_counts.reduce(0, (cum,next) => cum + next);
+	print("total misses: $misses");
+
+	print("total shots: ${misses + hits}");
 
 
 	// get times to hit target
