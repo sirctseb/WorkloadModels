@@ -68,7 +68,6 @@
           (eq (evt-module event) ':MOTOR)
           (eq 'FINISH-MOVEMENT (evt-action event))
           )
-    (format t "finished moving or clicking mouse~%")
     ;; if we are finishing a click, check if a button was dismissed
     ;; since the last movement finish.
     (unless *move-last*
@@ -91,7 +90,6 @@
 (defun remove-button-after-delay (b)
   ;; TODO it seems that act-r crashes when you remove a button in its own
   ;; action, so instead, schedule an event to remove the button in 0.01ms
-  (format t "removing button~%")
   ;; set var that indicates a click occured more recently than manual request finish
   (setf *button-clicked* t)
   ;; set var that shows this button is not visible
