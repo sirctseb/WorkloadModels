@@ -365,10 +365,16 @@
     ;; check for black
     color         black
 ==>
-  ;; go back to check target to scan again
-  ;; TODO should we just do the visloc request here?
+  ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
+  +visual-location>
+    ISA           visual-location
+    ;; search for oval
+    kind          OVAL
+    ;; nearest the current location
+    :nearest      current
   =goal>
-    state         check-target
+    ;; move to the state where we distinguish between red and green targets
+    state         distinguish-target
 )
 
 ; request a mouse click
