@@ -10,7 +10,7 @@ main() {
 	var logContents = new File(fileString).readAsStringSync();
 
 	// get all hit counts
-	var hit_counts = new RegExp(r"hits: (\d*)").allMatches(logContents).mappedBy((match) => int.parse(match.group(1))).toList();
+	var hit_counts = new RegExp(r"hits: (\d*)").allMatches(logContents).map((match) => int.parse(match.group(1))).toList();
 	// count each number of hits
 	print("hits:");
 	[0, 1, 2, 3].forEach((count) => print("$count: ${hit_counts.where((cur_count) => cur_count == count).length}"));
@@ -19,7 +19,7 @@ main() {
 	print("total hits: $hits");
 
 	// get all miss counts
-	var miss_counts = new RegExp(r"misses: (\d+)").allMatches(logContents).mappedBy((match) => int.parse(match.group(1)));
+	var miss_counts = new RegExp(r"misses: (\d+)").allMatches(logContents).map((match) => int.parse(match.group(1)));
 	int max = miss_counts.max();
 	print("misses");
 	for(int i = 0; i <= max; i++) {
@@ -72,7 +72,7 @@ main() {
 	var bucketSize = 0.1;
 	for(num i = min; i <= max; i += bucketSize) {
 		int count = targetingTimes.where((time) => i < time && time < i + bucketSize).length;
-		print("${i.toStringAsPrecision(2)}: ${new String.fromCharCodes([]..insertRange(0, count, "x".charCodeAt(0)))}");
+		print("${i.toStringAsPrecision(2)}: ${new String.fromCharCodes([]..insertRange(0, count, "x".codeUnitAt(0)))}");
 	}
 	print("${targetingTimes}");
 }
