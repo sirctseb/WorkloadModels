@@ -24,6 +24,8 @@
 (defvar *default-moving* nil)
 ;; true if the model should run in real time by default
 (defvar *real-time* nil)
+;; the number of times the friend target was hovered
+(defvar *friend-hovers* 0)
 
 (defun open-log-file ()
   (unless *log-file*
@@ -134,6 +136,7 @@
 (defun reset-task ()
   (setf *hit-counter* 0)
   (setf *miss-counter* 0)
+  (setf *friend-hovers* 0)
 )
 (defun do-targeting (&optional (num-targets 3) &key (button-size *default-button-size*) (screen-size *default-screen-size*)
     (moving *default-moving*) (real-time *default-real-time*) (trace-file nil)) ;; old style with a screen object
@@ -204,6 +207,8 @@
             )
             (dolog "hits: ~a~%" `(,*hit-counter*))
             (dolog "misses: ~a~%" `(,*miss-counter*))
+            (dolog "friend hovers: ~a~%" `(,*friend-hovers*))
+            (dolog "completion time: ~a~%" `(,(get-time)))
             (close-log-file)
             ))))
 
@@ -400,6 +405,8 @@
   ;; search for black targets again
   =goal>
     state         find-black-target
+  ;; increment the number of times the friend target was hovered
+  !eval!          (incf *friend-hovers*)
 )
 
 ;; after a rescan of the target, check if the target is still black and keep rescanning
