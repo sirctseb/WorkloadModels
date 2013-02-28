@@ -256,7 +256,6 @@
     state         move-cursor
 
   ;; check for friend info in the imaginal buffer
-  ;; TODO does this get harvested out after this check?
   =imaginal>
     ISA           friend-target
     ;; get friend location
@@ -271,6 +270,14 @@
 ==>
   =goal>
     state         find-black-target
+
+  ;; prevent imaginal buffer from being harvested by setting it to the same values
+  ;; TODO an alternative is to attempt to retrive the friend-target chunk from declarative
+  ;; TODO if it's not in the imaginal buffer. that may be more robust in dual-task cases because
+  ;; TODO something else might fill the imaginal buffer and then we'll never get it back
+  ;; NOTE this is different than +imaginal> x =fx which makes the imaginal module busy while it sets the value
+  =imaginal>
+    x             =fx
 )
 
 ;; rule to move cursor toward target
