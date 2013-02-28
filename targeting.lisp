@@ -248,7 +248,35 @@
   !eval!          (dolog "failed to attend to target location~%")
 )
 
+;; rule to check the visual location against a remembered
+;; location of a friend target and go to a different one
+(P avoid-friend
+  =goal>
+    ISA           targeting
+    state         move-cursor
+
+  ;; check for friend info in the imaginal buffer
+  ;; TODO does this get harvested out after this check?
+  =imaginal>
+    ISA           friend-target
+    ;; get friend location
+    x             =fx
+    y             =fy
+
+  =visual-location>
+    ISA           visual-location
+    ;; check if new location is at the remembered friend location
+    screen-x      =fx
+    screen-y      =fy
+==>
+  =goal>
+    state         find-black-target
+)
+
 ;; rule to move cursor toward target
+;; TODO can we somehow check that the imaginal buffer does NOT contain friend info?
+;; TODO if we don't have such a check (like now), what happens? sometimes move-cursor goes
+;; TODO even when friend info is there?
 (P move-cursor
   =goal>
     ISA           targeting
