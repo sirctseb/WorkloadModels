@@ -240,7 +240,7 @@
 ==>
    +visual-location>
       ISA         visual-location
-;      :attended   nil
+      :attended   nil
       kind        OVAL
       color       black
    =goal>
