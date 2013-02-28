@@ -210,6 +210,7 @@
 
    (sgp :v t :needs-mouse nil :show-focus t :trace-detail high :cursor-noise t :vwt t :incremental-mouse-moves t)
    (chunk-type targeting state target-x target-y cursor-diff-x cursor-diff-y target-location)
+   (chunk-type friend-target x y)
 
    (add-dm (track isa chunk) (attend-letter isa chunk)
       (goal isa targeting state find-black-target))
@@ -344,7 +345,15 @@
     kind          OVAL
     ;; check for green (friend)
     color         green
+    ;; get location values
+    screen-x      =sx
+    screen-y      =sy
 ==>
+  ;; store location of friend target
+  =imaginal>
+    isa           friend-target
+    x             =sx
+    y             =sy
   ;; search for black targets again
   =goal>
     state         find-black-target
