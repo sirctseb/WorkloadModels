@@ -31,6 +31,13 @@ main() {
 
 	print("total shots: ${misses + hits}");
 
+	// get all friend hover counts
+	var friend_hover_counts = new RegExp(r"friend hovers: (\d*)").allMatches(logContents).map((match) => int.parse(match.group(1))).toList();
+	// sum frind hovers
+	//int hovers = friend_hover_counts.reduce(0, (cum, next) => cum + next);
+	// TODO NO! we need to pair with times.
+	print("$friend_hover_counts");
+
 
 	// get times to hit target
 	var lines = logContents.split("\n");
@@ -63,6 +70,9 @@ main() {
 			}
 		}
 	});
+
+	// read completion time from log instead of calculating
+	targetingTimes = new RegExp(r"completion time: (\d*)").allMatches(logContents).map((match) => double.parse(match.group(1)) / 1000).toList();
 
 	var min = targetingTimes.min();
 	print("min: $min");
