@@ -251,7 +251,7 @@
   =goal>
       ISA         targeting
       state       find-black-target
-  ?visual>
+  ?visual-location>
       state       error
 ==>
   +visual>
