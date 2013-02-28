@@ -278,9 +278,18 @@
     ;; check if new location is at the remembered friend location
     screen-x      =fx
     screen-y      =fy
+
+  ;; make sure visual is free so we can move attention
+  ?visual>
+    state         free
 ==>
   =goal>
     state         find-black-target
+
+  ;; move attention to friend target so that find-target-black searches for the other
+  +visual>
+    isa           move-attention
+    screen-pos    =visual-location
 
   ;; prevent imaginal buffer from being harvested by setting it to the same values
   ;; TODO an alternative is to attempt to retrive the friend-target chunk from declarative
