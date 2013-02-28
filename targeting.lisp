@@ -119,6 +119,12 @@
     )
   )
 )
+;; condition function for stopping simulation:
+;; stop once we have hit two targets or 6 seconds have passed
+;; TODO this does not check for friendly hits
+(defun task-end-condition ()
+  (or (> *hit-counter* 1) (> (get-time) 6000))
+)
 (defun run-trials (&key (num-targets 3) (trials 50) (button-size 128) (screen-size 800) (moving nil) (real-time nil) (trace-file nil))
   (dotimes (n trials)
     (do-targeting num-targets :button-size button-size :screen-size screen-size :moving moving :real-time real-time :trace-file trace-file)
@@ -192,9 +198,9 @@
             (open-log-file)
             (if trace-file
               (with-open-file (*standard-output* trace-file :direction :output :if-exists :append :if-does-not-exist :create)
-                (run 5 :real-time real-time)
+                (run-until-condition 'task-end-condition :real-time real-time)
               )
-              (run 5 :real-time real-time)
+              (run-until-condition 'task-end-condition :real-time real-time)
             )
             (dolog "hits: ~a~%" `(,*hit-counter*))
             (dolog "misses: ~a~%" `(,*miss-counter*))
