@@ -26,6 +26,8 @@
 (defvar *real-time* nil)
 ;; the number of times the friend target was hovered
 (defvar *friend-hovers* 0)
+;; the number of times the cursor never even got onto the target we were moving to
+(defvar *whiff-counter* 0)
 
 (defun open-log-file ()
   (unless *log-file*
@@ -137,6 +139,7 @@
   (setf *hit-counter* 0)
   (setf *miss-counter* 0)
   (setf *friend-hovers* 0)
+  (setf *whiff-counter* 0)
 )
 (defun do-targeting (&optional (num-targets 3) &key (button-size *default-button-size*) (screen-size *default-screen-size*)
     (moving *default-moving*) (real-time *default-real-time*) (trace-file nil)) ;; old style with a screen object
@@ -209,6 +212,7 @@
             (dolog "misses: ~a~%" `(,*miss-counter*))
             (dolog "friend hovers: ~a~%" `(,*friend-hovers*))
             (dolog "completion time: ~a~%" `(,(get-time)))
+            (dolog "whiffs: ~a~%" `(,*whiff-counter*))
             (close-log-file)
             ))))
 
@@ -387,6 +391,34 @@
   ;; go to click mouse state to wait for manual state to be free
   =goal>
     state         click-mouse
+)
+
+;; if we are still trying to distinguish a target but it has stayed black through the mouse move,
+;; then we missed it, so do another mouse move to it
+(P distinguish-whiff
+  =goal>
+    ISA           targeting
+    state         distinguish-target
+
+  ;; wait until visual location found
+  =visual-location>
+    ISA           visual-location
+    ;; check for oval
+    kind          OVAL
+    ;; check for black
+    color         black
+
+  ;; wait for mouse move to be over
+  ?manual>
+    state         free
+==>
+  ;; move to the same location
+  +manual>
+    isa           move-cursor
+    loc           =visual-location
+
+  ;; log that we did this
+  !eval!          (incf *whiff-counter*)
 )
 
 ;; after a rescan of the target, check if the target is green and go back to finding black targets
