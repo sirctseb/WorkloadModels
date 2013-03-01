@@ -30,6 +30,8 @@
 (defvar *whiff-counter* 0)
 ;; the number of times the visual-location request had an error
 (defvar *vis-fails* 0)
+;; true if we should stop running when we encounter a miss after a hover
+(defvar *break-on-hover-miss* nil)
 
 (defun open-log-file ()
   (unless *log-file*
@@ -85,6 +87,7 @@
         (progn
         (dolog "missed a target at ~a ~%" `(,(evt-time event)))
         (incf *miss-counter*)
+        (when (and *break-on-hover-miss* (> *friend-hovers* 0)) (schedule-break-relative 0.001 :details "stopping after miss"))
         )
       )
     )
@@ -131,10 +134,17 @@
 (defun task-end-condition ()
   (or (> *hit-counter* 1) (> (get-time) 6000))
 )
-(defun run-trials (&key (num-targets 3) (trials 50) (button-size 128) (screen-size 800) (moving nil) (real-time nil) (trace-file nil))
+(defun run-trials (&key (num-targets 3) (trials 50) (button-size 128) (screen-size 800) (moving nil) (real-time nil) (trace-file nil) (break-hover-miss nil))
   (dotimes (n trials)
-    (do-targeting num-targets :button-size button-size :screen-size screen-size :moving moving :real-time real-time :trace-file trace-file)
+    (when 
+      (and
+        (third (do-targeting num-targets :button-size button-size :screen-size screen-size :moving moving :real-time real-time :trace-file trace-file :break-hover-miss break-hover-miss)
+          )
+        (> *friend-hovers* 0)
+        )
+      (return)
     )
+  )
   )
 (defun dt () (do-targeting 5))
 (defun reset-task ()
@@ -145,8 +155,11 @@
   (setf *vis-fails* 0)
 )
 (defun do-targeting (&optional (num-targets 3) &key (button-size *default-button-size*) (screen-size *default-screen-size*)
-    (moving *default-moving*) (real-time *default-real-time*) (trace-file nil)) ;; old style with a screen object
-  
+    (moving *default-moving*) (real-time *default-real-time*) (trace-file nil) (break-hover-miss nil)) ;; old style with a screen object
+ 
+
+   ; set break on hover miss flag
+   (setf *break-on-hover-miss* break-hover-miss)
    (reset-task)
    (reset)
    (let* ((window (open-exp-window "Moving X" :visible t :width screen-size :height screen-size))
