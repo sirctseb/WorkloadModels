@@ -359,7 +359,6 @@
   =visual-location>
     ISA           visual-location
     kind          OVAL
-    color         black
 ;    screen-pos    =target-location
 
   ;; request to move cursor
