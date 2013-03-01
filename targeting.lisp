@@ -169,35 +169,43 @@
                                             ;; Virtual dialog item specific coordinate moving
                                             ;; code.  Code for real windows is different for each
                                             ;; Lisp since the x position accessor will differ.
-                                            (dolist (button buttons)
-  ;                                            (format t "seeing if button ~a is visible so we can move it" button)
-                                              (when (gethash button *buttons-visible*)
-  ;                                              (format t "it is! moving it")
-                                                ;(remove-items-from-exp-window button)
-                                                (when moving
-                                                  (setf (x-pos button) (+ 1 (x-pos button)))
-                                                )
-                                                ;(add-items-to-exp-window button)
-                                                ;(format t "moving target at ~a to x ~d~%" (get-time) (x-pos button))
-                                                ;(format t "cursor location: ~s" (get-mouse-coordinates (current-device)))
-                                                ;; check if mouse is within target
-                                                ;; define cursor and button locations
-                                                (let* ((cursor-loc (get-mouse-coordinates (current-device)))
-                                                        (cursor-x (aref cursor-loc 0))
-                                                        (cursor-y (aref cursor-loc 1))
-                                                        (button-x (x-pos button))
-                                                        (button-y (y-pos button))
-                                                        (size (width button)))
-                                                  ; test if cursor within button
-                                                  (if (and (> cursor-x button-x)
-                                                             (< cursor-x (+ button-x size))
-                                                             (> cursor-y button-y)
-                                                             (< cursor-y (+ button-y size)))
-                                                    ; set button color
-                                                    (setf (color button) (gethash button *button-colors*))
-                                                    (setf (color button) 'black)
+                                            (let ((color-count 0))
+                                              (dolist (button buttons)
+    ;                                            (format t "seeing if button ~a is visible so we can move it" button)
+                                                (when (gethash button *buttons-visible*)
+    ;                                              (format t "it is! moving it")
+                                                  ;(remove-items-from-exp-window button)
+                                                  (when moving
+                                                    (setf (x-pos button) (+ 1 (x-pos button)))
+                                                  )
+                                                  ;(add-items-to-exp-window button)
+                                                  ;(format t "moving target at ~a to x ~d~%" (get-time) (x-pos button))
+                                                  ;(format t "cursor location: ~s" (get-mouse-coordinates (current-device)))
+                                                  ;; check if mouse is within target
+                                                  ;; define cursor and button locations
+                                                  (let* ((cursor-loc (get-mouse-coordinates (current-device)))
+                                                          (cursor-x (aref cursor-loc 0))
+                                                          (cursor-y (aref cursor-loc 1))
+                                                          (button-x (x-pos button))
+                                                          (button-y (y-pos button))
+                                                          (size (width button)))
+                                                    ; test if cursor within button
+                                                    (if (and (> cursor-x button-x)
+                                                               (< cursor-x (+ button-x size))
+                                                               (> cursor-y button-y)
+                                                               (< cursor-y (+ button-y size)))
+                                                      ; set button color
+                                                      (progn
+                                                        (setf (color button) (gethash button *button-colors*))
+                                                        (incf color-count)
+                                                      )
+                                                      (setf (color button) 'black)
+                                                    )
                                                   )
                                                 )
+                                              )
+                                              (when (> color-count 1)
+                                                (dolog "two targets are colored~%")
                                               )
                                             )
                                             (proc-display)
