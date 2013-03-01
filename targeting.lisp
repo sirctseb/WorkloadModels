@@ -258,7 +258,7 @@
 
 (define-model simple-tracking
 
-   (sgp :v t :needs-mouse nil :show-focus t :trace-detail high :cursor-noise t :vwt t :incremental-mouse-moves t)
+   (sgp :v t :needs-mouse nil :show-focus t :trace-detail high :cursor-noise t :vwt t :incremental-mouse-moves t :randomize-time nil)
    (chunk-type targeting state target-x target-y cursor-diff-x cursor-diff-y target-location)
    (chunk-type friend-target x y)
 
