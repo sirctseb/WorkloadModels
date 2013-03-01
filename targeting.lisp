@@ -258,8 +258,9 @@
   ?visual-location>
       state       error
 ==>
-  +visual>
-      ISA         clear
+  +visual-location>
+      ISA         visual-location
+      kind        OVAL
   !eval!          (dolog "failed to attend to target location~%")
 )
 
