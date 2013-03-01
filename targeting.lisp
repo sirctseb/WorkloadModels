@@ -482,6 +482,9 @@
     kind          OVAL
     ;; check for black
     color         black
+  ;; only loop when the move is not complete
+  ?manual>
+    state         busy
 ==>
   ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
   +visual-location>
