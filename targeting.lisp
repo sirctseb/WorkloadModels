@@ -28,6 +28,8 @@
 (defvar *friend-hovers* 0)
 ;; the number of times the cursor never even got onto the target we were moving to
 (defvar *whiff-counter* 0)
+;; the number of times the visual-location request had an error
+(defvar *vis-fails* 0)
 
 (defun open-log-file ()
   (unless *log-file*
@@ -140,6 +142,7 @@
   (setf *miss-counter* 0)
   (setf *friend-hovers* 0)
   (setf *whiff-counter* 0)
+  (setf *vis-fails* 0)
 )
 (defun do-targeting (&optional (num-targets 3) &key (button-size *default-button-size*) (screen-size *default-screen-size*)
     (moving *default-moving*) (real-time *default-real-time*) (trace-file nil)) ;; old style with a screen object
@@ -213,6 +216,7 @@
             (dolog "friend hovers: ~a~%" `(,*friend-hovers*))
             (dolog "completion time: ~a~%" `(,(get-time)))
             (dolog "whiffs: ~a~%" `(,*whiff-counter*))
+            (dolog "vis fails: ~a~%" `(,*vis-fails*))
             (close-log-file)
             ))))
 
@@ -261,7 +265,21 @@
   +visual-location>
       ISA         visual-location
       kind        OVAL
-  !eval!          (dolog "failed to attend to target location~%")
+  !eval!          (dolog "failed to attend to target location in find black target~%")
+  !eval!          (incf *vis-fails*)
+)
+(P on-move-move-cursor
+  =goal>
+    ISA           targeting
+    state         move-cursor
+  ?visual-location>
+    state         error
+==>
+  +visual-location>
+    ISA           visual-location
+    kind          OVAL
+  !eval!          (dolog "failed to attend to target location in move cursor~%")
+  !eval!          (incf *vis-fails*)
 )
 
 ;; rule to check the visual location against a remembered
