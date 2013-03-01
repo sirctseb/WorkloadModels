@@ -428,11 +428,18 @@
     kind          OVAL
     ;; check for red (enemy)
     color         red
+  ;; make sure visual is free so we can request to move attention
+  ?visual>
+    state         free
 ==>
   ;; TODO if visual location request fails?
   ;; go to click mouse state to wait for manual state to be free
   =goal>
     state         click-mouse
+  ;; request attention move
+  +visual>
+    ISA           move-attention
+    screen-pos    =visual-location
 )
 
 ;; if we are still trying to distinguish a target but it has stayed black through the mouse move,
@@ -527,6 +534,9 @@
     ISA           targeting
     state         click-mouse
 
+  ;; wait until we attended the target
+  =visual>
+    ISA           OVAL
   ;; make sure motor module is free
   ?manual>
     state         free
