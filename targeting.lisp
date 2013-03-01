@@ -78,7 +78,6 @@
     (when (eq 'MOVE-CURSOR-ABSOLUTE (evt-action event))
       (setf *move-last* t))
   )
-
   (when (and
           (eq (evt-module event) ':MOTOR)
           (eq 'FINISH-MOVEMENT (evt-action event))
@@ -141,11 +140,11 @@
 (defun task-end-condition ()
   (or (> *hit-counter* 1) (> (get-time) 6000))
 )
-(defun run-trials (&key (num-targets 3) (trials 50) (button-size 128) (screen-size 800) (moving nil) (real-time nil) (trace-file nil) (break-hover-miss nil))
+(defun run-trials (&key (num-targets 3) (trials 50) (button-size 128) (screen-size 800) (moving nil) (real-time nil) (trace-file nil) (break-hover-miss nil) (trace nil))
   (dotimes (n trials)
     (when 
       (and
-        (third (do-targeting num-targets :button-size button-size :screen-size screen-size :moving moving :real-time real-time :trace-file trace-file :break-hover-miss break-hover-miss)
+        (third (do-targeting num-targets :button-size button-size :screen-size screen-size :moving moving :real-time real-time :trace-file trace-file :break-hover-miss break-hover-miss :trace trace)
           )
         (> *friend-hovers* 0)
         )
@@ -162,13 +161,14 @@
   (setf *vis-fails* 0)
 )
 (defun do-targeting (&optional (num-targets 3) &key (button-size *default-button-size*) (screen-size *default-screen-size*)
-    (moving *default-moving*) (real-time *default-real-time*) (trace-file nil) (break-hover-miss nil)) ;; old style with a screen object
+    (moving *default-moving*) (real-time *default-real-time*) (trace-file nil) (break-hover-miss nil) (trace nil)) ;; old style with a screen object
  
 
    ; set break on hover miss flag
    (setf *break-on-hover-miss* break-hover-miss)
    (reset-task)
    (reset)
+   (if trace (sgp :v t) (sgp :v nil))
    (let* ((window (open-exp-window "Moving X" :visible t :width screen-size :height screen-size))
           (buttons (create-buttons num-targets button-size screen-size))
           (returnvalue nil)
@@ -258,7 +258,7 @@
 
 (define-model simple-tracking
 
-   (sgp :v t :needs-mouse nil :show-focus t :trace-detail high :cursor-noise t :vwt t :incremental-mouse-moves t :randomize-time nil)
+   (sgp :needs-mouse nil :show-focus t :trace-detail high :cursor-noise t :vwt t :incremental-mouse-moves t :randomize-time nil)
    (chunk-type targeting state target-x target-y cursor-diff-x cursor-diff-y target-location)
    (chunk-type friend-target x y)
 
