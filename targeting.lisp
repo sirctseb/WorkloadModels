@@ -376,7 +376,7 @@
 
   ;; make sure motor system is free
   ?manual>
-    state         free
+    preparation   free
 ==>
 
   ;; request to move the cursor
