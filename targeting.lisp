@@ -104,7 +104,7 @@
   (schedule-event-relative .001 (lambda() (remove-items-from-exp-window b) (proc-display)))
 )
 (defun create-button (x y &optional (size *default-button-size*) &key (enemy t))
-  (let ((button (add-button-to-exp-window :text "x" :x x :y y :width size :height size
+  (let ((button (add-button-to-exp-window :text "" :x x :y y :width size :height size
     ;; NOTE for some reason giving 'remove-button-after-delay directly doesn't work
     :action (lambda (button) (remove-button-after-delay button))
     ; make buttons black initially
