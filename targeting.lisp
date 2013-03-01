@@ -151,6 +151,7 @@
    (reset)
    (let* ((window (open-exp-window "Moving X" :visible t :width screen-size :height screen-size))
           (buttons (create-buttons num-targets button-size screen-size))
+          (returnvalue nil)
         )
       ;(setf *buttons-visible* (make-list (list-length buttons) t))
     
@@ -215,9 +216,11 @@
             (open-log-file)
             (if trace-file
               (with-open-file (*standard-output* trace-file :direction :output :if-exists :append :if-does-not-exist :create)
-                (run-until-condition 'task-end-condition :real-time real-time)
+                (setf returnvalue 
+                  (multiple-value-list (run-until-condition 'task-end-condition :real-time real-time)))
               )
-              (run-until-condition 'task-end-condition :real-time real-time)
+              (setf returnvalue
+                (multiple-value-list (run-until-condition 'task-end-condition :real-time real-time)))
             )
             (dolog "hits: ~a~%" `(,*hit-counter*))
             (dolog "misses: ~a~%" `(,*miss-counter*))
@@ -226,7 +229,7 @@
             (dolog "whiffs: ~a~%" `(,*whiff-counter*))
             (dolog "vis fails: ~a~%" `(,*vis-fails*))
             (close-log-file)
-            ))))
+            )) returnvalue ))
 
 (clear-all)
 
