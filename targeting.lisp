@@ -71,6 +71,13 @@
 
 ;;; Event hook function
 (defun hook (event)
+  (when (eq (evt-module event) ':MOTOR)
+    (when (eq 'OUTPUT-KEY (evt-action event))
+      (setf *move-last* nil)
+    )
+    (when (eq 'MOVE-CURSOR-ABSOLUTE (evt-action event))
+      (setf *move-last* t))
+  )
 
   (when (and
           (eq (evt-module event) ':MOTOR)
@@ -383,7 +390,6 @@
     ;; 3. while manual busy, track cursor
     ;; 4. if cursor within target, click button
     loc           =visual-location
-  !eval!        (setf *move-last* t)
   ;; request to attend to visual object so that we can search for nearest when
   ;; distinguishing between friend and enemy targets
   ; TODO it may be better to just keep the visual-location buffer full
@@ -545,7 +551,6 @@
   ;; submit click request
   +manual>
     ISA           click-mouse
-  !eval!        (setf *move-last* nil)
 
   =goal>
     state         find-black-target
