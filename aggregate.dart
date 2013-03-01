@@ -38,6 +38,9 @@ main() {
 	// read completion time from log instead of calculating
 	var targetingTimes = new RegExp(r"completion time: (\d*)").allMatches(logContents).map((match) => double.parse(match.group(1)) / 1000).toList();
 
+	// read number of whiffs
+	var whiff_counts = new RegExp(r"whiffs: (\d*)").allMatches(logContents).map((match) => int.parse(match.group(1))).toList();
+
 	/*var min = targetingTimes.min();
 	print("min: $min");
 	max = targetingTimes.max();
@@ -50,8 +53,8 @@ main() {
 	}
 	print("${targetingTimes}");*/
 
-	print("complete, hits, misses, hovers");
+	print("complete, hits, misses, hovers, whiffs");
 	for(int i = 0; i < hit_counts.length; i++) {
-		print("${targetingTimes[i]}, ${hit_counts[i]}, ${miss_counts[i]}, ${friend_hover_counts[i]}");
+		print("${targetingTimes[i]}, ${hit_counts[i]}, ${miss_counts[i]}, ${friend_hover_counts[i]}, ${whiff_counts[i]}");
 	}
 }
