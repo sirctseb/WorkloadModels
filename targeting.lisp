@@ -186,7 +186,7 @@
             (set-cursor-position 20 30)
             (proc-display)
             ;; schedule moves if targets should move
-              (schedule-periodic-event .05 #'(lambda ()
+              (schedule-periodic-event .01 #'(lambda ()
                                             ;; Virtual dialog item specific coordinate moving
                                             ;; code.  Code for real windows is different for each
                                             ;; Lisp since the x position accessor will differ.
@@ -197,7 +197,7 @@
     ;                                              (format t "it is! moving it")
                                                   ;(remove-items-from-exp-window button)
                                                   (when moving
-                                                    (setf (x-pos button) (+ 1 (x-pos button)))
+                                                    (setf (x-pos button) (+ 2.8 (x-pos button)))
                                                   )
                                                   ;(add-items-to-exp-window button)
                                                   ;(format t "moving target at ~a to x ~d~%" (get-time) (x-pos button))
