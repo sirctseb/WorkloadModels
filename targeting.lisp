@@ -284,7 +284,82 @@
       kind        OVAL
       color       black
    =goal>
-      state       move-cursor
+      state       cap-first-location
+)
+
+;; Rule to capture the location of a target
+(P cap-first-location
+  =goal>
+    ISA           targeting
+    state         cap-first-location
+
+  ;; find vis loc
+  =visual-location>
+    ISA           visual-location
+    screen-x      =tx
+    screen-y      =ty
+
+  ;; make sure visual is free so we can request move-attention
+  ?visual>
+    state         free
+==>
+  ;; store location in goal
+  =goal>
+    target-x      =tx
+    target-y      =ty
+    state         lead-target
+
+  ;; move attention to location
+  +visual>
+    ISA           move-attention
+    screen-pos    =visual-location
+
+  ;; reset timer
+  ;; TODO we could do this in find-black-target and get 0.005 or so more on the timer
+  +temporal>
+    ISA           time
+)
+
+;; Rule to capture second location of the target after moving attention
+(P lead-target
+  =goal>
+    ISA           targeting
+    state         lead-target
+
+  ;; wait until attention is moved to target
+  =visual>
+    ISA           OVAL
+    screen-pos    =sp
+
+==>
+  ;; keep the contents of the visual buffer
+  =visual>
+    screen-pos    =sp
+
+  ;; update the visual location buffer to the newest location values
+  +visual-location>
+    ISA           visual-location
+    :nearest      current
+  ;; change state to get the new vis-loc
+  =goal>
+    state         lead-target-2
+)
+(P lead-target-2
+  =goal>
+    ISA           targeting
+    state         lead-target-2
+    target-x      =tx
+    target-y      =ty
+  ;; get the new location
+  =visual-location>
+    ISA           visual-location
+    screen-x      =sx
+    screen-y      =sy
+==>
+  ;; calculate x difference
+  !bind!          =x-diff (- =sx =tx)
+  !bind!          =y-diff (- =sy =ty)
+  !eval!          (format t "x: ~a, y: ~a~%" =x-diff =y-diff)
 )
 
 (P on-move
