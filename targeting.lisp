@@ -183,7 +183,7 @@
 
             (install-device window)
             (start-hand-at-mouse)
-            (set-cursor-position 20 30)
+            (set-cursor-position 960 600)
             (proc-display)
             ;; schedule moves if targets should move
               (schedule-periodic-event .01 #'(lambda ()
