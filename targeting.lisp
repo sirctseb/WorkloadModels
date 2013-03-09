@@ -259,8 +259,8 @@
 (define-model simple-tracking
 
    (sgp :needs-mouse nil :show-focus t :trace-detail high :cursor-noise t :vwt t :incremental-mouse-moves 0.01 :randomize-time nil
-    :visual-movement-tolerance 0.5 :pixels-per-inch 96 :viewing-distance 96)
-   (chunk-type targeting state target-x target-y cursor-diff-x cursor-diff-y target-location)
+    :visual-movement-tolerance 10 :pixels-per-inch 96 :viewing-distance 96)
+   (chunk-type targeting state target-x target-y projected-x projected-y)
    (chunk-type friend-target x y)
 
    (add-dm (track isa chunk) (attend-letter isa chunk)
@@ -333,8 +333,10 @@
 
 ==>
   ;; keep the contents of the visual buffer
-  =visual>
-    screen-pos    =sp
+  ;=visual>
+  ;  screen-pos    =sp
+  ;+visual>
+  ;  ISA           clear
 
   ;; update the visual location buffer to the newest location values
   +visual-location>
@@ -355,11 +357,30 @@
     ISA           visual-location
     screen-x      =sx
     screen-y      =sy
+  ;; get elapsed time
+  =temporal>
+    ISA           time
+    ticks         =elapsed-ticks
 ==>
   ;; calculate x difference
   !bind!          =x-diff (- =sx =tx)
   !bind!          =y-diff (- =sy =ty)
-  !eval!          (format t "x: ~a, y: ~a~%" =x-diff =y-diff)
+  ;; project location
+  !bind!          =projected-x (+ =tx (* 37 (/ =x-diff =elapsed-ticks)))
+  !bind!          =projected-y (+ =ty (* 37 (/ =y-diff =elapsed-ticks)))
+  !eval!          (format t "projecting at x: ~a y: ~a, ticks: ~a~%" =projected-x =projected-y =elapsed-ticks)
+  ;; store projected location in visual location buffer
+  =visual-location>
+    screen-x      =projected-x
+    screen-y      =projected-y
+  ;; and move to next state
+  ;; TODO move move request here to speed up?
+  =goal>
+    state         move-cursor
+
+  ;; clear timer
+  +temporal>
+    ISA           clear
 )
 
 (P on-move
@@ -406,6 +427,7 @@
   =visual-location>
     ISA           visual-location
     ;; check if new location is at the remembered friend location
+    ;; TODO store movement parameters of friend location to compare against instead of location
     screen-x      =fx
     screen-y      =fy
 
@@ -442,7 +464,6 @@
   =visual-location>
     ISA           visual-location
     kind          OVAL
-;    screen-pos    =target-location
 
   ;; request to move cursor
   ;; TODO :cursor-noise should probably be enabled
@@ -453,6 +474,10 @@
   ;; make sure motor system is free
   ?manual>
     preparation   free
+
+  ;; make sure visual is free
+  ?visual>
+    state         free
 ==>
 
   ;; request to move the cursor
@@ -511,17 +536,19 @@
     ;; check for red (enemy)
     color         red
   ;; make sure visual is free so we can request to move attention
-  ?visual>
-    state         free
+;  ?visual>
+;    state         free
 ==>
   ;; TODO if visual location request fails?
   ;; go to click mouse state to wait for manual state to be free
   =goal>
     state         click-mouse
   ;; request attention move
-  +visual>
-    ISA           move-attention
-    screen-pos    =visual-location
+;  +visual>
+;    ISA           move-attention
+;    screen-pos    =visual-location
+
+  !eval!          (format t "detected enemy~%")
 )
 
 ;; if we are still trying to distinguish a target but it has stayed black through the mouse move,
@@ -531,6 +558,13 @@
     ISA           targeting
     state         distinguish-target
 
+  ?temporal>
+    buffer        empty
+
+  ;; wait for mouse move to be over
+  ?manual>
+    state         free
+
   ;; wait until visual location found
   =visual-location>
     ISA           visual-location
@@ -538,18 +572,42 @@
     kind          OVAL
     ;; check for black
     color         black
+==>
+  ;; wait to see if target moves under cursor
+  +temporal>
+    ISA           time
+
+  =visual-location>
+
+  ;; log that we did this
+  !eval!          (incf *whiff-counter*)
+  !eval!          (format t "detected whiff~%")
+)
+
+(P move-after-whiff
+  =goal>
+    ISA           targeting
+    state         distinguish-target
+
+  ;; wait until 5 ticks have gone by
+  =temporal>
+    ISA           time
+    > ticks       5
 
   ;; wait for mouse move to be over
   ?manual>
     state         free
+
+  =visual-location>
+    isa           visual-location
 ==>
   ;; move to the same location
   +manual>
     isa           move-cursor
     loc           =visual-location
-
-  ;; log that we did this
-  !eval!          (incf *whiff-counter*)
+  ;; clear temporal
+  +temporal>
+    isa           clear
 )
 
 ;; after a rescan of the target, check if the target is green and go back to finding black targets
@@ -580,6 +638,7 @@
     state         find-black-target
   ;; increment the number of times the friend target was hovered
   !eval!          (incf *friend-hovers*)
+  !eval!          (format t "detected friend~%")
 )
 
 ;; after a rescan of the target, check if the target is still black and keep rescanning
@@ -617,8 +676,8 @@
     state         click-mouse
 
   ;; wait until we attended the target
-  =visual>
-    ISA           OVAL
+;  =visual>
+;    ISA           OVAL
   ;; make sure motor module is free
   ?manual>
     state         free
