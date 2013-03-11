@@ -600,7 +600,7 @@
   ;; wait until 5 ticks have gone by
   =temporal>
     ISA           time
-    > ticks       5
+    > ticks       20
 
   ;; wait for mouse move to be over
   ?manual>
