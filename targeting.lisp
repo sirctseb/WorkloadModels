@@ -300,7 +300,54 @@
     ISA           time
 )
 
-;; Rule to capture the location of a target
+;; rule to check the visual location against a remembered
+;; location of a friend target and go to a different one
+(P avoid-friend
+  =goal>
+    ISA           targeting
+    state         cap-first-location
+
+  ;; check for friend info in the imaginal buffer
+  =imaginal>
+    ISA           friend-target
+    ;; get friend location and motion
+    x             =fx
+    y             =fy
+    x-diff        =x-diff
+    y-diff        =y-diff
+
+  =visual-location>
+    ISA           visual-location
+    ;; check if new location is at the remembered friend location
+    screen-x      =tx
+    screen-y      =ty
+
+  ;; test if target is on friend line
+  !bind!          =on-line (is-on-line =tx =ty =fx =fy =x-diff =y-diff)
+
+  ;; make sure visual is free so we can move attention
+  ?visual>
+    state         free
+==>
+  =goal>
+    state         find-black-target
+
+  ;; move attention to friend target so that find-target-black searches for the other
+  +visual>
+    isa           move-attention
+    screen-pos    =visual-location
+
+  ;; prevent imaginal buffer from being harvested by setting it to the same values
+  ;; TODO an alternative is to attempt to retrive the friend-target chunk from declarative
+  ;; TODO if it's not in the imaginal buffer. that may be more robust in dual-task cases because
+  ;; TODO something else might fill the imaginal buffer and then we'll never get it back
+  ;; NOTE this is different than +imaginal> x =fx which makes the imaginal module busy while it sets the value
+  =imaginal>
+
+  !eval!          (format t "avoiding friend~%")
+)
+
+;; Rule to capture the location of a target when there is no friend info
 (P cap-first-location
   =goal>
     ISA           targeting
@@ -315,6 +362,10 @@
   ;; make sure visual is free so we can request move-attention
   ?visual>
     state         free
+
+  ;; check that there is nothing in imaginal
+  ?imaginal>
+    buffer        empty
 ==>
   ;; store location in goal
   =goal>
@@ -328,7 +379,51 @@
   +visual-location>
     ISA           visual-location
     :nearest      =visual-location
+)
 
+;; Rule to capture the location of a target when it doesn't match friend info
+;; TODO failure to to cap-first-location when there is something in imaginal but it is
+;; TODO not a friend-target chunk
+(P cap-first-location-no-friend
+  =goal>
+    ISA           targeting
+    state         cap-first-location
+
+  ;; find vis loc
+  =visual-location>
+    ISA           visual-location
+    screen-x      =tx
+    screen-y      =ty
+
+  ;; make sure visual is free so we can request move-attention
+  ?visual>
+    state         free
+
+  ;; check that there is nothing in imaginal
+  =imaginal>
+    isa           friend-target
+    x             =fx
+    y             =fy
+    x-diff        =x-diff
+    y-diff        =y-diff
+
+  ;; determine that target is not friend
+  !bind!          =on-line (not (is-on-line =tx =ty =fx =fy =x-diff =y-diff))
+==>
+  ;; keep imaginal
+  =imaginal>
+  ;; store location in goal
+  =goal>
+    target-x      =tx
+    target-y      =ty
+    state         lead-target
+
+  !eval!          (format t "storing first target location: ~a, ~a~%" =tx =ty)
+
+  ;; search for same location
+  +visual-location>
+    ISA           visual-location
+    :nearest      =visual-location
 )
 
 ;; Rule to capture second location of the target after moving attention
@@ -400,57 +495,9 @@
   !eval!          (incf *vis-fails*)
 )
 
-;; rule to check the visual location against a remembered
-;; location of a friend target and go to a different one
-(P avoid-friend
-  =goal>
-    ISA           targeting
-    state         move-cursor
-
-  ;; check for friend info in the imaginal buffer
-  =imaginal>
-    ISA           friend-target
-    ;; get friend location and motion
-    x             =fx
-    y             =fy
-    x-diff        =x-diff
-    y-diff        =y-diff
-
-  =visual-location>
-    ISA           visual-location
-    ;; check if new location is at the remembered friend location
-    screen-x      =tx
-    screen-y      =ty
-
-  ;; test if target is on friend line
-  !bind!          =on-line (is-on-line =tx =ty =fx =fy =x-diff =y-diff)
-
-  ;; make sure visual is free so we can move attention
-  ?visual>
-    state         free
-==>
-  =goal>
-    state         find-black-target
-
-  ;; move attention to friend target so that find-target-black searches for the other
-  +visual>
-    isa           move-attention
-    screen-pos    =visual-location
-
-  ;; prevent imaginal buffer from being harvested by setting it to the same values
-  ;; TODO an alternative is to attempt to retrive the friend-target chunk from declarative
-  ;; TODO if it's not in the imaginal buffer. that may be more robust in dual-task cases because
-  ;; TODO something else might fill the imaginal buffer and then we'll never get it back
-  ;; NOTE this is different than +imaginal> x =fx which makes the imaginal module busy while it sets the value
-  =imaginal>
-    x             =fx
-)
 
 ;; rule to move cursor toward target
-;; TODO can we somehow check that the imaginal buffer does NOT contain friend info?
-;; TODO if we don't have such a check (like now), what happens? sometimes move-cursor goes
-;; TODO even when friend info is there?
-(P move-cursor-no-imaginal
+(P move-cursor
   =goal>
     ISA           targeting
     state         move-cursor
@@ -466,10 +513,6 @@
   ;; make sure visual is free
   ?visual>
     state         free
-
-  ;; make sure imaginal buffer is empty
-  ?imaginal>
-    buffer        empty
 ==>
 
   ;; request to move the cursor
@@ -485,54 +528,6 @@
     screen-pos    =visual-location
   =goal>
     state         check-target
-)
-;; rule to move cursor toward target when there is something in the imaginal buffer,
-;; but it doesn't looke like the new target is the friend target
-(P move-cursor-no-friend
-  =goal>
-    ISA           targeting
-    state         move-cursor
-
-  =visual-location>
-    ISA           visual-location
-    kind          OVAL
-    screen-x      =tx
-    screen-y      =ty
-
-  ;; make sure motor system is free
-  ?manual>
-    preparation   free
-
-  ;; make sure visual is free
-  ?visual>
-    state         free
-
-  ;; make sure imaginal buffer contents don't match friend target info
-  =imaginal>
-    ISA           friend-target
-    ;; get friend location and motion
-    x             =fx
-    y             =fy
-    x-diff        =x-diff
-    y-diff        =y-diff
-
-  ;; test if target is on friend line
-  !bind!          =on-line (not (is-on-line =tx =ty =fx =fy =x-diff =y-diff))
-==>
-  ;; request to move the cursor
-  +manual>
-    ISA           move-cursor
-    loc           =visual-location
-  ;; request to attend to visual object so that we can search for nearest when
-  ;; distinguishing between friend and enemy targets
-  ; TODO it may be better to just keep the visual-location buffer full
-  ; and supply that when making the new request in check-target
-  +visual>
-    ISA           move-attention
-    screen-pos    =visual-location
-  =goal>
-    state         check-target
-
 )
 
 ;; re-scan for the nearest oval to get info about its color
@@ -698,6 +693,8 @@
   =imaginal>
     ISA           friend-target
 ==>
+  ;; keep imaginal
+  =imaginal>
   ;; go back to finding black target
   =goal>
     state         find-black-target
