@@ -88,10 +88,12 @@
       (if *button-clicked*
         (progn
         (dolog "hit a target at ~a ~%" `(,(evt-time event)))
+        (format t "hit target~%")
         (incf *hit-counter*)
         )
         (progn
         (dolog "missed a target at ~a ~%" `(,(evt-time event)))
+        (format t "missed target ~%")
         (incf *miss-counter*)
         (when (and *break-on-hover-miss* (> *friend-hovers* 0)) (schedule-break-relative 0.001 :details "stopping after miss"))
         )
@@ -472,9 +474,16 @@
   +manual>
     isa           move-cursor
     loc           =visual-location
+<<<<<<< HEAD
 
   ;; log that we did this
   !eval!          (incf *whiff-counter*)
+=======
+  ;; clear temporal
+  +temporal>
+    isa           clear
+  !eval!          (format t "wiffed too long, moving ~%")
+>>>>>>> 3a378ae... added debug output
 )
 
 ;; after a rescan of the target, check if the target is green and go back to finding black targets
