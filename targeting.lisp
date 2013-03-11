@@ -579,7 +579,13 @@
   +temporal>
     ISA           time
 
-  =visual-location>
+  ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
+  +visual-location>
+    ISA           visual-location
+    ;; search for oval
+    kind          OVAL
+    ;; nearest the current location
+    :nearest      current
 
   ;; log that we did this
   !eval!          (incf *whiff-counter*)
