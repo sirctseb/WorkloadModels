@@ -680,6 +680,10 @@
   ;; wait until we attended the target
 ;  =visual>
 ;    ISA           OVAL
+  ;; make sure visual is free in an attempt to prevent re-encode
+  ;; from preventing visual clear
+  ?visual>
+    state         free
   ;; make sure motor module is free
   ?manual>
     state         free
@@ -691,6 +695,9 @@
 
   =goal>
     state         find-black-target
+
+  +visual>
+    ISA           clear
 )
 
 (P after-click
