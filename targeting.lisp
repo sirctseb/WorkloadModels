@@ -555,6 +555,7 @@
   =goal>
     ISA           targeting
     state         distinguish-target
+
   ;; wait until visual location is found
   =visual-location>
     ISA           visual-location
@@ -562,9 +563,6 @@
     kind          OVAL
     ;; check for red (enemy)
     color         red
-  ;; make sure visual is free so we can request to move attention
-;  ?visual>
-;    state         free
 
   ;; let prepare-click go first
   ;; TODO this is not a semantic test. it only exists to allow prepare-click to go first
@@ -572,17 +570,25 @@
   ;; TODO we could just put a flag in goal
   ?manual>
     last-command  prepare
-==>
-  ;; TODO if visual location request fails?
-  ;; go to click mouse state to wait for manual state to be free
-  =goal>
-    state         click-mouse
-  ;; request attention move
-;  +visual>
-;    ISA           move-attention
-;    screen-pos    =visual-location
+    state         free
 
-  !eval!          (format t "detected enemy~%")
+  ;; wait for visual to be free so we can clear it
+  ?visual>
+    state         free
+==>
+  =goal>
+    state         find-black-target
+
+  ;; submit click request
+  +manual>
+    ;ISA           click-mouse
+    ISA           execute
+
+  ;; clear visual buffer so that it doesn't keep re-encoding and slowing down future searches
+  +visual>
+    ISA           clear
+
+  !eval!          (format t "detected enemy, clicking~%")
 )
 
 ;; if we are still trying to distinguish a target but it has stayed black through the mouse move,
@@ -714,36 +720,6 @@
   =goal>
     ;; move to the state where we distinguish between red and green targets
     state         distinguish-target
-)
-
-; request a mouse click
-(P click-mouse
-  =goal>
-    ISA           targeting
-    state         click-mouse
-
-  ;; wait until we attended the target
-;  =visual>
-;    ISA           OVAL
-  ;; make sure visual is free in an attempt to prevent re-encode
-  ;; from preventing visual clear
-  ?visual>
-    state         free
-  ;; make sure motor module is free
-  ?manual>
-    state         free
-==>
-  
-  ;; submit click request
-  +manual>
-    ;ISA           click-mouse
-    ISA           execute
-
-  =goal>
-    state         find-black-target
-
-  +visual>
-    ISA           clear
 )
 
 (P after-click
