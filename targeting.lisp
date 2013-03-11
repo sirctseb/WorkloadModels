@@ -311,6 +311,8 @@
     target-y      =ty
     state         lead-target
 
+  !eval!          (format t "storing first target location: ~a, ~a~%" =tx =ty)
+
   ;; move attention to location
   +visual>
     ISA           move-attention
@@ -364,6 +366,7 @@
     ISA           time
     ticks         =elapsed-ticks
 ==>
+  !eval!          (format t "second target location: ~a, ~a~%" =sx =sy)
   ;; calculate x difference
   !bind!          =x-diff (- =sx =tx)
   !bind!          =y-diff (- =sy =ty)
@@ -527,6 +530,26 @@
     state         distinguish-target
 )
 
+;; prepare a click while checking the target
+(P prepare-click
+  =goal>
+    ISA           targeting
+    state         distinguish-target
+
+  ;; wait until manual preparation is free and last command was a move (we didn't already prepare click)
+  ?manual>
+    last-command  move-cursor
+    preparation   free
+==>
+  ;; prepare the mouse-click
+  ;; TODO there is no prepare mouse-click, hopefully manually doing the punch right index works
+  +manual>
+    ISA           prepare
+    style         punch
+    hand          right
+    finger        index
+)
+
 ;; after a rescan of the target, check if the target is red and click it
 (P distinguish-target-enemy
   =goal>
@@ -542,6 +565,13 @@
   ;; make sure visual is free so we can request to move attention
 ;  ?visual>
 ;    state         free
+
+  ;; let prepare-click go first
+  ;; TODO this is not a semantic test. it only exists to allow prepare-click to go first
+  ;; TODO there should be a better way to let prepare-click to have priority
+  ;; TODO we could just put a flag in goal
+  ?manual>
+    last-command  prepare
 ==>
   ;; TODO if visual location request fails?
   ;; go to click mouse state to wait for manual state to be free
@@ -667,6 +697,12 @@
   ;; only loop when the move is not complete
   ?manual>
     state         busy
+  ;; let prepare-click go first
+  ;; TODO this is not a semantic test. it only exists to allow prepare-click to go first
+  ;; TODO there should be a better way to let prepare-click to have priority
+  ;; TODO we could just put a flag in goal
+  ?manual>
+    last-command  prepare
 ==>
   ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
   +visual-location>
@@ -700,7 +736,8 @@
   
   ;; submit click request
   +manual>
-    ISA           click-mouse
+    ;ISA           click-mouse
+    ISA           execute
 
   =goal>
     state         find-black-target
