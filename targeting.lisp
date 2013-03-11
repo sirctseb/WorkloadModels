@@ -287,6 +287,10 @@
       color       black
    =goal>
       state       cap-first-location
+  ;; reset timer
+  ;; TODO we could do this in find-black-target and get 0.005 or so more on the timer
+  +temporal>
+    ISA           time
 )
 
 ;; Rule to capture the location of a target
@@ -313,15 +317,11 @@
 
   !eval!          (format t "storing first target location: ~a, ~a~%" =tx =ty)
 
-  ;; move attention to location
-  +visual>
-    ISA           move-attention
-    screen-pos    =visual-location
+  ;; search for same location
+  +visual-location>
+    ISA           visual-location
+    :nearest      =visual-location
 
-  ;; reset timer
-  ;; TODO we could do this in find-black-target and get 0.005 or so more on the timer
-  +temporal>
-    ISA           time
 )
 
 ;; Rule to capture second location of the target after moving attention
@@ -329,31 +329,6 @@
   =goal>
     ISA           targeting
     state         lead-target
-
-  ;; wait until attention is moved to target
-  =visual>
-    ISA           OVAL
-    screen-pos    =sp
-
-==>
-  ;; keep the contents of the visual buffer
-  ;=visual>
-  ;  screen-pos    =sp
-  ;+visual>
-  ;  ISA           clear
-
-  ;; update the visual location buffer to the newest location values
-  +visual-location>
-    ISA           visual-location
-    :nearest      current
-  ;; change state to get the new vis-loc
-  =goal>
-    state         lead-target-2
-)
-(P lead-target-2
-  =goal>
-    ISA           targeting
-    state         lead-target-2
     target-x      =tx
     target-y      =ty
   ;; get the new location
@@ -371,9 +346,10 @@
   !bind!          =x-diff (- =sx =tx)
   !bind!          =y-diff (- =sy =ty)
   ;; project location
-  !bind!          =projected-x (+ =tx (* 39 (/ =x-diff =elapsed-ticks)))
-  !bind!          =projected-y (+ =ty (* 39 (/ =y-diff =elapsed-ticks)))
+  !bind!          =projected-x (+ =tx (* 50 (/ =x-diff =elapsed-ticks)))
+  !bind!          =projected-y (+ =ty (* 50 (/ =y-diff =elapsed-ticks)))
   !eval!          (format t "x-diff: ~a~%" =x-diff)
+  !eval!          (format t "speed: ~a~%" (/ =x-diff =elapsed-ticks))
   !eval!          (format t "projecting move from ~a to ~a by ~a ~%" =tx =projected-x (* 39 (/ =x-diff =elapsed-ticks)))
   !eval!          (format t "projecting at x: ~a y: ~a, ticks: ~a~%" =projected-x =projected-y =elapsed-ticks)
   ;; store projected location in visual location buffer
