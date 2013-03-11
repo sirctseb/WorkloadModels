@@ -258,12 +258,19 @@
 ; add event hook
 (setf *hook-handle* (add-pre-event-hook 'hook))
 
+;; function to determine if point x,y is on line defined by point x1, y1 and vector x-diff,y-diff
+(defun is-on-line (x y x1 y1 x-diff y-diff)
+  (let ( (left-side (* (- y y1) x-diff)) (right-side (* (- x x1) y-diff)) )
+    (< (abs (- left-side right-side)) 0.1)
+    )
+)
+
 (define-model simple-tracking
 
    (sgp :needs-mouse nil :show-focus t :trace-detail high :cursor-noise t :vwt t :incremental-mouse-moves 0.01 :randomize-time nil
     :visual-movement-tolerance 10 :pixels-per-inch 96 :viewing-distance 96)
    (chunk-type targeting state target-x target-y projected-x projected-y)
-   (chunk-type friend-target x y)
+   (chunk-type friend-target x y x-diff y-diff)
 
    (add-dm (track isa chunk) (attend-letter isa chunk)
       (goal isa targeting state find-black-target))
@@ -350,7 +357,7 @@
   !bind!          =projected-y (+ =ty (* 50 (/ =y-diff =elapsed-ticks)))
   !eval!          (format t "x-diff: ~a~%" =x-diff)
   !eval!          (format t "speed: ~a~%" (/ =x-diff =elapsed-ticks))
-  !eval!          (format t "projecting move from ~a to ~a by ~a ~%" =tx =projected-x (* 39 (/ =x-diff =elapsed-ticks)))
+  !eval!          (format t "projecting move from ~a to ~a by ~a ~%" =tx =projected-x (* 50 (/ =x-diff =elapsed-ticks)))
   !eval!          (format t "projecting at x: ~a y: ~a, ticks: ~a~%" =projected-x =projected-y =elapsed-ticks)
   ;; store projected location in visual location buffer
   =visual-location>
@@ -403,16 +410,20 @@
   ;; check for friend info in the imaginal buffer
   =imaginal>
     ISA           friend-target
-    ;; get friend location
+    ;; get friend location and motion
     x             =fx
     y             =fy
+    x-diff        =x-diff
+    y-diff        =y-diff
 
   =visual-location>
     ISA           visual-location
     ;; check if new location is at the remembered friend location
-    ;; TODO store movement parameters of friend location to compare against instead of location
-    screen-x      =fx
-    screen-y      =fy
+    screen-x      =tx
+    screen-y      =ty
+
+  ;; test if target is on friend line
+  !bind!          =on-line (is-on-line =tx =ty =fx =fy =x-diff =y-diff)
 
   ;; make sure visual is free so we can move attention
   ?visual>
@@ -439,7 +450,7 @@
 ;; TODO can we somehow check that the imaginal buffer does NOT contain friend info?
 ;; TODO if we don't have such a check (like now), what happens? sometimes move-cursor goes
 ;; TODO even when friend info is there?
-(P move-cursor
+(P move-cursor-no-imaginal
   =goal>
     ISA           targeting
     state         move-cursor
@@ -448,12 +459,6 @@
     ISA           visual-location
     kind          OVAL
 
-  ;; request to move cursor
-  ;; TODO :cursor-noise should probably be enabled
-  ;; TODO also, :default-target-width
-  ;; TODO :incremental-mouse-moves?
-  ;; TODO just look at all the parameters
-
   ;; make sure motor system is free
   ?manual>
     preparation   free
@@ -461,18 +466,15 @@
   ;; make sure visual is free
   ?visual>
     state         free
+
+  ;; make sure imaginal buffer is empty
+  ?imaginal>
+    buffer        empty
 ==>
 
   ;; request to move the cursor
   +manual>
     ISA           move-cursor
-    ;; TODO i guess we don't need the comparison rules
-    ;; TODO do we even need to move visual attention to cursor?
-    ;; TODO I think a better model is,
-    ;; 1. find target
-    ;; 2. move mouse
-    ;; 3. while manual busy, track cursor
-    ;; 4. if cursor within target, click button
     loc           =visual-location
   ;; request to attend to visual object so that we can search for nearest when
   ;; distinguishing between friend and enemy targets
@@ -483,6 +485,54 @@
     screen-pos    =visual-location
   =goal>
     state         check-target
+)
+;; rule to move cursor toward target when there is something in the imaginal buffer,
+;; but it doesn't looke like the new target is the friend target
+(P move-cursor-no-friend
+  =goal>
+    ISA           targeting
+    state         move-cursor
+
+  =visual-location>
+    ISA           visual-location
+    kind          OVAL
+    screen-x      =tx
+    screen-y      =ty
+
+  ;; make sure motor system is free
+  ?manual>
+    preparation   free
+
+  ;; make sure visual is free
+  ?visual>
+    state         free
+
+  ;; make sure imaginal buffer contents don't match friend target info
+  =imaginal>
+    ISA           friend-target
+    ;; get friend location and motion
+    x             =fx
+    y             =fy
+    x-diff        =x-diff
+    y-diff        =y-diff
+
+  ;; test if target is on friend line
+  !bind!          =on-line (not (is-on-line =tx =ty =fx =fy =x-diff =y-diff))
+==>
+  ;; request to move the cursor
+  +manual>
+    ISA           move-cursor
+    loc           =visual-location
+  ;; request to attend to visual object so that we can search for nearest when
+  ;; distinguishing between friend and enemy targets
+  ; TODO it may be better to just keep the visual-location buffer full
+  ; and supply that when making the new request in check-target
+  +visual>
+    ISA           move-attention
+    screen-pos    =visual-location
+  =goal>
+    state         check-target
+
 )
 
 ;; re-scan for the nearest oval to get info about its color
@@ -633,7 +683,26 @@
   !eval!          (format t "wiffed too long, moving ~%")
 )
 
-;; after a rescan of the target, check if the target is green and go back to finding black targets
+;; detect friend when we've already seen it
+(P distinguish-target-friend-remembered
+  =goal>
+    ISA           targeting
+    state         distinguish-target
+  =visual-location>
+    ISA           visual-location
+    ;; wait until visual location is found
+    ;; check for oval
+    kind            OVAL
+    ;; check for green
+    color           green
+  =imaginal>
+    ISA           friend-target
+==>
+  ;; go back to finding black target
+  =goal>
+    state         find-black-target
+)
+;; after a rescan of the target, check if the target is green
 (P distinguish-target-friend
   =goal>
     ISA           targeting
@@ -650,18 +719,69 @@
     screen-y      =sy
   ;; TODO make sure imaginal module is free so we can remember where friend is?
   ;; TODO if it is not free? we should probably skip the remember
+
+  ;; only do the remembering if imaginal is empty
+  ?imaginal>
+    buffer        empty
 ==>
   ;; store location of friend target
   +imaginal>
     isa           friend-target
     x             =sx
     y             =sy
-  ;; search for black targets again
+  ;; scan for same location
+  +visual-location>
+    ISA           visual-location
+    :nearest      =visual-location
+  ;; remember motion
   =goal>
-    state         find-black-target
+    state         remember-friend-motion
   ;; increment the number of times the friend target was hovered
   !eval!          (incf *friend-hovers*)
   !eval!          (format t "detected friend~%")
+)
+;; get motion of friend target and store
+(P remember-friend-motion
+  =goal>
+    ISA           targeting
+    state         remember-friend-motion
+
+  ;; wait until imaginal is ready
+  ?imaginal>
+    state         free
+
+  ;; get current imaginal contents
+  =imaginal>
+    isa           friend-target
+    x             =fx
+    y             =fy
+
+  ;; get new vis-loc
+  =visual-location>
+    isa           visual-location
+    ;; check for oval
+    kind          OVAL
+    ;; TODO check for friend?
+    ;color        green
+    ;; get location values
+    screen-x      =sx
+    screen-y      =sy
+==>
+  ;; compute motion params
+  !bind!          =x-diff (- =sx =fx)
+  !bind!          =y-diff (- =sy =fy)
+
+  ;; store motion of friend target
+  +imaginal>
+    ISA           friend-target
+    x             =fx
+    y             =fy
+    x-diff        =x-diff
+    y-diff        =y-diff
+
+  ;; search for black targets again
+  =goal>
+    state         find-black-target
 )
 
 ;; after a rescan of the target, check if the target is still black and keep rescanning
