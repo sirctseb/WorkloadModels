@@ -366,8 +366,10 @@
   !bind!          =x-diff (- =sx =tx)
   !bind!          =y-diff (- =sy =ty)
   ;; project location
-  !bind!          =projected-x (+ =tx (* 37 (/ =x-diff =elapsed-ticks)))
-  !bind!          =projected-y (+ =ty (* 37 (/ =y-diff =elapsed-ticks)))
+  !bind!          =projected-x (+ =tx (* 39 (/ =x-diff =elapsed-ticks)))
+  !bind!          =projected-y (+ =ty (* 39 (/ =y-diff =elapsed-ticks)))
+  !eval!          (format t "x-diff: ~a~%" =x-diff)
+  !eval!          (format t "projecting move from ~a to ~a by ~a ~%" =tx =projected-x (* 39 (/ =x-diff =elapsed-ticks)))
   !eval!          (format t "projecting at x: ~a y: ~a, ticks: ~a~%" =projected-x =projected-y =elapsed-ticks)
   ;; store projected location in visual location buffer
   =visual-location>
