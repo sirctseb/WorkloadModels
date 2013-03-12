@@ -329,6 +329,8 @@
     y             =fy
     x-diff        =x-diff
     y-diff        =y-diff
+  ?imaginal>
+    state         free
 
   =visual-location>
     ISA           visual-location
@@ -382,6 +384,7 @@
   ;; check that there is nothing in imaginal
   ?imaginal>
     buffer        empty
+    state         free
 ==>
   ;; store location in goal
   =goal>
@@ -422,6 +425,9 @@
     y             =fy
     x-diff        =x-diff
     y-diff        =y-diff
+    
+  ?imaginal>
+    state         free
 
   ;; determine that target is not friend
   !bind!          =on-line (not (is-on-line =tx =ty =fx =fy =x-diff =y-diff))
