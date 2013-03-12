@@ -134,7 +134,7 @@
 (defun create-buttons (num &optional (size *default-button-size*) (screen-size *default-screen-size*))
   (let (buttons '())
     (dotimes (n num buttons)
-      (setf buttons (cons (create-button (random 100) (random 1200) size :enemy (eq (mod n 2) 0)) buttons))
+      (setf buttons (cons (create-button (random 100) (+ (* n 400) (random 250)) size :enemy (eq (mod n 2) 0)) buttons))
     )
   )
 )
