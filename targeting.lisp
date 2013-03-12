@@ -32,6 +32,8 @@
 (defvar *vis-fails* 0)
 ;; true if we should stop running when we encounter a miss after a hover
 (defvar *break-on-hover-miss* nil)
+;; the number of times we avoid a friend
+(defvar *friend-avoids* 0)
 
 (defun open-log-file ()
   (unless *log-file*
@@ -161,6 +163,7 @@
   (setf *friend-hovers* 0)
   (setf *whiff-counter* 0)
   (setf *vis-fails* 0)
+  (setf *friend-avoids* 0)
 )
 (defun do-targeting (&optional (num-targets 3) &key (button-size *default-button-size*) (screen-size *default-screen-size*)
     (moving *default-moving*) (real-time *default-real-time*) (trace-file nil) (break-hover-miss nil) (trace nil)) ;; old style with a screen object
@@ -250,6 +253,7 @@
             (dolog "completion time: ~a~%" `(,(get-time)))
             (dolog "whiffs: ~a~%" `(,*whiff-counter*))
             (dolog "vis fails: ~a~%" `(,*vis-fails*))
+            (dolog "friend avoids: ~a~%" `(,*friend-avoids*))
             (close-log-file)
             )) returnvalue ))
 
@@ -345,6 +349,8 @@
   =imaginal>
 
   !eval!          (format t "avoiding friend~%")
+  ;; increment number of times avoided friend
+  !eval!          (incf *friend-avoids*)
 )
 
 ;; Rule to capture the location of a target when there is no friend info
