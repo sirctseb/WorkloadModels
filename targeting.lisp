@@ -34,6 +34,10 @@
 (defvar *break-on-hover-miss* nil)
 ;; the number of times we avoid a friend
 (defvar *friend-avoids* 0)
+;; the first time the friend was hovered 
+(defvar *friend-order* -1)
+;; the current number of targets checked, used for calculating friend-order
+(defvar *check-order* 0)
 
 (defun open-log-file ()
   (unless *log-file*
@@ -164,6 +168,8 @@
   (setf *whiff-counter* 0)
   (setf *vis-fails* 0)
   (setf *friend-avoids* 0)
+  (setf *friend-order* -1)
+  (setf *check-order* 0)
 )
 (defun do-targeting (&optional (num-targets 3) &key (button-size *default-button-size*) (screen-size *default-screen-size*)
     (moving *default-moving*) (real-time *default-real-time*) (trace-file nil) (break-hover-miss nil) (trace nil)) ;; old style with a screen object
@@ -255,6 +261,7 @@
             (dolog "whiffs: ~a~%" `(,*whiff-counter*))
             (dolog "vis fails: ~a~%" `(,*vis-fails*))
             (dolog "friend avoids: ~a~%" `(,*friend-avoids*))
+            (dolog "friend order: ~a~%" `(,*friend-order*))
             (close-log-file)
             ; print final time
             (format t "end time: ~a~%" (get-time))
@@ -619,6 +626,9 @@
     ISA           clear
 
   !eval!          (format t "detected enemy, clicking~%")
+
+  ;; increment the number of targets checked
+  !eval!          (incf *check-order*)
 )
 
 ;; if we are still trying to distinguish a target but it has stayed black through the mouse move,
@@ -745,6 +755,9 @@
   ;; increment the number of times the friend target was hovered
   !eval!          (incf *friend-hovers*)
   !eval!          (format t "detected friend~%")
+
+  ;; set the order in which the friend was checked if it hasn't been set yet
+  !eval!          (when (eq -1 *friend-order*) (setf *friend-order* *check-order*))
 )
 ;; get motion of friend target and store
 (P remember-friend-motion

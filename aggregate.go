@@ -44,10 +44,13 @@ func main() {
 	avoids_re, _ := regexp.Compile(`friend avoids: (\d*)`)
 	avoids := avoids_re.FindAllStringSubmatch(logContents, -1)
 
-	fmt.Println("complete, hits, misses, hovers, whiffs, fails, avoids")
+	order_re, _ := regexp.Compile(`friend order: (-?\d*)`)
+	order := order_re.FindAllStringSubmatch(logContents, -1)
+
+	fmt.Println("complete, hits, misses, hovers, whiffs, fails, avoids, order")
 	for i := 0; i < len(hits); i++ {
 		c, _ := strconv.ParseFloat(complete[i][1], 10)
-		fmt.Printf("%f, %v, %v, %v, %v, %v, %v\n", c/1000, hits[i][1], misses[i][1],
-			friend_hovers[i][1], whiffs[i][1], vis_fails[i][1], avoids[i][1])
+		fmt.Printf("%f, %v, %v, %v, %v, %v, %v, %v\n", c/1000, hits[i][1], misses[i][1],
+			friend_hovers[i][1], whiffs[i][1], vis_fails[i][1], avoids[i][1], order[i][1])
 	}
 }
