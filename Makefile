@@ -12,7 +12,7 @@ $(output_dir)/aggregate.txt: log.txt aggregate.go
 	. $$HOME/.profile; go run aggregate.go > $(output_dir)/aggregate.txt
 	
 $(output_dir)/bymiss.pdf $(output_dir)/bywhiff.pdf $(output_dir)/byhover.pdf $(output_dir)/byavoid.pdf: $(output_dir)/aggregate.txt test.R
-	RScript test.R --args stats plots
+	RScript test.R --args stats plots; rm Rplots.pdf
 
 bymiss: $(output_dir)/bymiss.pdf
 	open $(output_dir)/bymiss.pdf
