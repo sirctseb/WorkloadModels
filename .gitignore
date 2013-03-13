@@ -1,2 +1,4 @@
 *.dx64fsl
 log.txt
+output
+trace.txt
