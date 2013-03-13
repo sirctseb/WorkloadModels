@@ -8,6 +8,9 @@ if("stats" %in% options) {
 	print("whiffs:")
 	print(table(hsm$whiffs))
 	print(sum(hsm$whiffs))
+	print("total whiffs:")
+	print(table(hsm$totalwhiffs))
+	print(sum(hsm$totalwhiffs))
 	print(sprintf("accuracy: %f", sum(hsm$hits) / (sum(hsm$hits) +  sum(hsm$misses))))
 	str(subset(hsm, complete > 6))
 }

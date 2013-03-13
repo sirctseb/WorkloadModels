@@ -28,6 +28,8 @@
 (defvar *friend-hovers* 0)
 ;; the number of times the cursor never even got onto the target we were moving to
 (defvar *whiff-counter* 0)
+;; the number of times we whiff so bad that we actually bail out on the target and re-search
+(defvar *total-whiff-counter* 0)
 ;; the number of times the visual-location request had an error
 (defvar *vis-fails* 0)
 ;; true if we should stop running when we encounter a miss after a hover
@@ -169,6 +171,7 @@
   (setf *miss-counter* 0)
   (setf *friend-hovers* 0)
   (setf *whiff-counter* 0)
+  (setf *total-whiff-counter* 0)
   (setf *vis-fails* 0)
   (setf *friend-avoids* 0)
   (setf *friend-order* -1)
@@ -265,6 +268,7 @@
             (dolog "vis fails: ~a~%" `(,*vis-fails*))
             (dolog "friend avoids: ~a~%" `(,*friend-avoids*))
             (dolog "friend order: ~a~%" `(,*friend-order*))
+            (dolog "total-whiffs: ~a~%" `(,*total-whiff-counter*))
             (close-log-file)
             ; print final time
             (format t "end time: ~a~%" (get-time))
@@ -719,6 +723,7 @@
   +temporal>
     isa           clear
   !eval!          (format t "wiffed too long, moving ~%")
+  (incf *total-whiff-counter*)
 )
 
 ;; detect friend when we've already seen it
