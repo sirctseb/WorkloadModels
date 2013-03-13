@@ -685,18 +685,9 @@
   =temporal>
     ISA           time
     > ticks       20
-
-  ;; wait for mouse move to be over
-  ?manual>
-    state         free
-
-  =visual-location>
-    isa           visual-location
 ==>
-  ;; move to the same location
-  +manual>
-    isa           move-cursor
-    loc           =visual-location
+  =goal>
+    state         find-black-target
   ;; clear temporal
   +temporal>
     isa           clear
