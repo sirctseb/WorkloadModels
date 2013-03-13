@@ -148,11 +148,14 @@
 (defun task-end-condition ()
   (or (> *hit-counter* 1) (> (get-time) 6000))
 )
-(defun run-trials (&key (num-targets 3) (trials 50) (button-size 128) (width 1920) (height 1200) (moving nil) (real-time nil) (trace-file nil) (break-hover-miss nil) (trace nil))
+(defun once (&key (num-targets 3) (trials 1) (button-size 128) (width 1920) (height 1200) (moving t) (real-time t) (trace-file nil) (break-hover-miss nil) (trace nil) (show-motion t)) 
+  (run-trials :num-targets num-targets :trials trials :button-size button-size :width width :height height :moving moving :real-time real-time :trace-file trace-file :break-hover-miss break-hover-miss :trace trace :show-motion show-motion)
+)
+(defun run-trials (&key (num-targets 3) (trials 50) (button-size 128) (width 1920) (height 1200) (moving nil) (real-time nil) (trace-file nil) (break-hover-miss nil) (trace nil) (show-motion nil))
   (dotimes (n trials)
     (when 
       (and
-        (third (do-targeting num-targets :button-size button-size :width width :height height :moving moving :real-time real-time :trace-file trace-file :break-hover-miss break-hover-miss :trace trace)
+        (third (do-targeting num-targets :button-size button-size :width width :height height :moving moving :real-time real-time :trace-file trace-file :break-hover-miss break-hover-miss :trace trace :show-motion show-motion)
           )
         (> *friend-hovers* 0)
         )
@@ -172,7 +175,7 @@
   (setf *check-order* 0)
 )
 (defun do-targeting (&optional (num-targets 3) &key (button-size *default-button-size*) (width 1920) (height 1200)
-    (moving *default-moving*) (real-time *default-real-time*) (trace-file nil) (break-hover-miss nil) (trace nil)) ;; old style with a screen object
+    (moving *default-moving*) (real-time *default-real-time*) (trace-file nil) (break-hover-miss nil) (trace nil) (show-motion nil)) ;; old style with a screen object
  
 
    ; set break on hover miss flag
@@ -206,11 +209,11 @@
     ;                                            (format t "seeing if button ~a is visible so we can move it" button)
                                                 (when (gethash button *buttons-visible*)
     ;                                              (format t "it is! moving it")
-                                                  ;(remove-items-from-exp-window button)
+                                                  (when show-motion (remove-items-from-exp-window button))
                                                   (when moving
                                                     (setf (x-pos button) (+ 2.8 (x-pos button)))
                                                   )
-                                                  ;(add-items-to-exp-window button)
+                                                  (when show-motion (add-items-to-exp-window button))
                                                   ;(format t "moving target at ~a to x ~d~%" (get-time) (x-pos button))
                                                   ;(format t "cursor location: ~s" (get-mouse-coordinates (current-device)))
                                                   ;; check if mouse is within target
