@@ -675,8 +675,32 @@
     :nearest      current
 
   ;; log that we did this
+  ;; TODO we should do this in move-after-whiff to only count when whiffs really happen
   !eval!          (incf *whiff-counter*)
   !eval!          (format t "detected whiff~%")
+)
+
+;; if we got a whiff, but we haven't bailed yet, keep scanning 
+(P whiff-spin
+  =goal>
+    ISA           targeting
+    state         distinguish-target
+
+  ;; check that the timer exists but time is not up yet
+  =temporal>
+    ISA           time
+    < ticks       21
+
+  ;; check that target is still black
+  =visual-location>
+    ISA           visual-location
+    kind          OVAL
+    color         black
+==>
+  ;; recan vis-loc
+  +visual-location>
+    ISA           visual-location
+    :nearest      current
 )
 
 (P move-after-whiff
