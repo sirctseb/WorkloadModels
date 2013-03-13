@@ -135,10 +135,10 @@
     button
   )
 )
-(defun create-buttons (num &optional (size *default-button-size*) (screen-size *default-screen-size*))
+(defun create-buttons (num &optional (size *default-button-size*) (width *default-screen-size*) (height *default-screen-size*))
   (let (buttons '())
     (dotimes (n num buttons)
-      (setf buttons (cons (create-button (random 100) (+ (* n 400) (random 250)) size :enemy (eq (mod n 2) 0)) buttons))
+      (setf buttons (cons (create-button (random 100) (+ (* n (round (/ height 3))) (random (- (round (/ height 3)) 150))) size :enemy (eq (mod n 2) 0)) buttons))
     )
   )
 )
@@ -148,11 +148,11 @@
 (defun task-end-condition ()
   (or (> *hit-counter* 1) (> (get-time) 6000))
 )
-(defun run-trials (&key (num-targets 3) (trials 50) (button-size 128) (screen-size 800) (moving nil) (real-time nil) (trace-file nil) (break-hover-miss nil) (trace nil))
+(defun run-trials (&key (num-targets 3) (trials 50) (button-size 128) (width 1920) (height 1200) (moving nil) (real-time nil) (trace-file nil) (break-hover-miss nil) (trace nil))
   (dotimes (n trials)
     (when 
       (and
-        (third (do-targeting num-targets :button-size button-size :screen-size screen-size :moving moving :real-time real-time :trace-file trace-file :break-hover-miss break-hover-miss :trace trace)
+        (third (do-targeting num-targets :button-size button-size :width width :height height :moving moving :real-time real-time :trace-file trace-file :break-hover-miss break-hover-miss :trace trace)
           )
         (> *friend-hovers* 0)
         )
@@ -171,7 +171,7 @@
   (setf *friend-order* -1)
   (setf *check-order* 0)
 )
-(defun do-targeting (&optional (num-targets 3) &key (button-size *default-button-size*) (screen-size *default-screen-size*)
+(defun do-targeting (&optional (num-targets 3) &key (button-size *default-button-size*) (width 1920) (height 1200)
     (moving *default-moving*) (real-time *default-real-time*) (trace-file nil) (break-hover-miss nil) (trace nil)) ;; old style with a screen object
  
 
@@ -180,8 +180,8 @@
    (reset-task)
    (reset)
    (if trace (sgp :v t) (sgp :v nil))
-   (let* ((window (open-exp-window "Moving X" :visible t :width 1920 :height 1200))
-          (buttons (create-buttons num-targets button-size screen-size))
+   (let* ((window (open-exp-window "Moving X" :visible t :width width :height height))
+          (buttons (create-buttons num-targets button-size width height))
           (returnvalue nil)
         )
       ;(setf *buttons-visible* (make-list (list-length buttons) t))
