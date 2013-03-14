@@ -1,7 +1,21 @@
 getwd()
 hsm <- read.table("output/aggregate.txt", sep=",", header=TRUE, strip.white = TRUE)
 options = commandArgs(trailingOnly = TRUE)
-options
+# produce a line of data for a data frame
+if("table" %in% options) {
+	# read current table
+	out <- read.table("output/table.txt", sep=",", header=TRUE, strip.white = TRUE)
+	# compute new variables
+	misses = sum(hsm$misses)
+	whiffs = sum(hsm$whiffs)
+	totalwhiffs = sum(hsm$totalwhiffs)
+	avoids = sum(hsm$avoids)
+	accuracy = sum(hsm$hits) / (sum(hsm$hits) + sum(hsm$misses))
+	# add variables to table
+	out[length(out$misses) + 1,] = c(misses, whiffs, totalwhiffs, avoids, accuracy)
+	# write table back to file
+	write.table(out, sep=",", quote = FALSE, row.names = FALSE, file = "output/table.txt")
+}
 if("stats" %in% options) {
 	print("misses:")
 	print(table(hsm$misses))
