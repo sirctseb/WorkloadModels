@@ -33,4 +33,7 @@ if("plots" %in% options) {
 
 	ggplot(hsm, aes(complete, fill=as.factor(order))) + geom_histogram(pos="dodge")
 	ggsave(file="output/byorder.pdf")
+
+	ggplot(hsm, aes(complete, fill=as.factor(totalwhiffs))) + geom_histogram(pos="dodge")
+	ggsave(file="output/bytotalwhiff.pdf")
 }

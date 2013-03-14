@@ -507,7 +507,7 @@
   ;; log that we did this
   !eval!          (incf *whiff-counter*)
   !eval!          (format t "wiffed too long, moving ~%")
-  (incf *total-whiff-counter*)
+  !eval!          (incf *total-whiff-counter*)
 )
 
 ;; after a rescan of the target, check if the target is green and go back to finding black targets
