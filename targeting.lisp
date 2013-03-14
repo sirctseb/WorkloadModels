@@ -254,7 +254,6 @@
                                        :initial-delay 0.5))
             (cwd "/Users/sirc/Desktop/addition")
             (open-log-file)
-            (format t "real time is: ~a~%" real-time)
             (if trace-file
               (with-open-file (*standard-output* trace-file :direction :output :if-exists :append :if-does-not-exist :create)
                 (setf returnvalue 
@@ -273,8 +272,6 @@
             (dolog "friend order: ~a~%" `(,*friend-order*))
             (dolog "total-whiffs: ~a~%" `(,*total-whiff-counter*))
             (close-log-file)
-            ; print final time
-            (format t "end time: ~a~%" (get-time))
             )) returnvalue ))
 
 (clear-all)
