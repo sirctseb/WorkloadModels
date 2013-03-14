@@ -40,6 +40,10 @@
 (defvar *friend-order* -1)
 ;; the current number of targets checked, used for calculating friend-order
 (defvar *check-order* 0)
+;; the target projection factor
+(defparameter *target-projection* 57)
+;; the number of ticks to wait after whiffing to give up on a target
+(defparameter *whiff-wait-time* 20)
 
 (defun open-log-file ()
   (unless *log-file*
@@ -477,11 +481,11 @@
   !bind!          =x-diff (- =sx =tx)
   !bind!          =y-diff (- =sy =ty)
   ;; project location
-  !bind!          =projected-x (+ =tx (* 53 (/ =x-diff =elapsed-ticks)))
-  !bind!          =projected-y (+ =ty (* 53 (/ =y-diff =elapsed-ticks)))
+  !bind!          =projected-x (+ =tx (* *target-projection* (/ =x-diff =elapsed-ticks)))
+  !bind!          =projected-y (+ =ty (* *target-projection* (/ =y-diff =elapsed-ticks)))
   !eval!          (format t "x-diff: ~a~%" =x-diff)
   !eval!          (format t "speed: ~a~%" (/ =x-diff =elapsed-ticks))
-  !eval!          (format t "projecting move from ~a to ~a by ~a ~%" =tx =projected-x (* 53 (/ =x-diff =elapsed-ticks)))
+  !eval!          (format t "projecting move from ~a to ~a by ~a ~%" =tx =projected-x (* *target-projection* (/ =x-diff =elapsed-ticks)))
   !eval!          (format t "projecting at x: ~a y: ~a, ticks: ~a~%" =projected-x =projected-y =elapsed-ticks)
   ;; store projected location in visual location buffer
   =visual-location>
@@ -693,7 +697,7 @@
   ;; check that the timer exists but time is not up yet
   =temporal>
     ISA           time
-    < ticks       21
+    < ticks       (+ 1 *whiff-wait-time*)
 
   ;; check that target is still black
   =visual-location>
@@ -715,7 +719,7 @@
   ;; wait until 5 ticks have gone by
   =temporal>
     ISA           time
-    > ticks       20
+    > ticks       *whiff-wait-time*
 ==>
   =goal>
     state         find-black-target
