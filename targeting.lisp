@@ -180,7 +180,7 @@
   (setf *check-order* 0)
 )
 (defun do-targeting (&optional (num-targets 3) &key (button-size *default-button-size*) (width 1920) (height 1200)
-    (moving *default-moving*) (real-time *default-real-time*) (trace-file nil) (break-hover-miss nil) (trace nil)
+    (moving *default-moving*) (real-time nil) (trace-file nil) (break-hover-miss nil) (trace nil)
     (show-motion nil) (visible t))
  
 
