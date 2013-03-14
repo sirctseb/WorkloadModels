@@ -695,9 +695,10 @@
     state         distinguish-target
 
   ;; check that the timer exists but time is not up yet
+  !bind!          =whiff-wait-time *whiff-wait-time*
   =temporal>
     ISA           time
-    < ticks       (+ 1 *whiff-wait-time*)
+    <= ticks      =whiff-wait-time
 
   ;; check that target is still black
   =visual-location>
@@ -717,9 +718,10 @@
     state         distinguish-target
 
   ;; wait until 5 ticks have gone by
+  !bind!          =whiff-wait-time *whiff-wait-time*
   =temporal>
     ISA           time
-    > ticks       *whiff-wait-time*
+    > ticks       =whiff-wait-time
 ==>
   =goal>
     state         find-black-target
