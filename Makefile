@@ -5,6 +5,11 @@ SHELL=/bin/bash
 
 all: showplots
 
+log.txt: targeting.lisp load-and-run.lisp
+	. $$HOME/.profile; rm log.txt; ccl64 -l load-and-run.lisp
+
+run-trials: $(output_dir)/log.txt
+
 stats: $(output_dir)/aggregate.txt test.R
 	RScript test.R --args stats
 
