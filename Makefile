@@ -33,3 +33,16 @@ bytotalwhiff: $(output_dir)/bytotalwhiff.pdf
 	open $(output_dir)/bytotalwhiff.pdf
 
 showplots: bymiss bywhiff byhover byavoid byorder bytotalwhiff
+
+$(output_dir)/table.txt: targeting.lisp load-and-run.lisp
+	echo "misses, whiffs, totalwhiffs, avoids, accuracy" > $(output_dir)/table.txt; \
+	for number in 56 ; do \
+		rm log.txt; \
+		. $$HOME/.profile; ccl64 -l load-and-run.lisp -- $$number; \
+		. $$HOME/.profile; go run aggregate.go > $(output_dir)/aggregate.txt; \
+		RScript test.R --args table; \
+	done
+projection-table: $(output_dir)/table.txt
+
+clean:
+	rm log.txt output/*
