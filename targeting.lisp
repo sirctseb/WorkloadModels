@@ -723,7 +723,7 @@
   +temporal>
     isa           clear
   !eval!          (format t "wiffed too long, moving ~%")
-  (incf *total-whiff-counter*)
+  !eval!          (incf *total-whiff-counter*)
 )
 
 ;; detect friend when we've already seen it
