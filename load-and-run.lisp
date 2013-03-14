@@ -4,6 +4,6 @@
 ;; load model
 (load "~/Desktop/addition/targeting.lisp")
 ;; run trials
-(run-trials :trials 100 :moving t :visible nil)
+(run-trials :trials 100 :moving t :visible nil :trace-file "trace.txt" :trace nil)
 ;; quit
 (quit)
