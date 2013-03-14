@@ -153,11 +153,13 @@
 (defun once (&key (num-targets 3) (trials 1) (button-size 128) (width 1920) (height 1200) (moving t) (real-time t) (trace-file nil) (break-hover-miss nil) (trace nil) (show-motion t)) 
   (run-trials :num-targets num-targets :trials trials :button-size button-size :width width :height height :moving moving :real-time real-time :trace-file trace-file :break-hover-miss break-hover-miss :trace trace :show-motion show-motion)
 )
-(defun run-trials (&key (num-targets 3) (trials 50) (button-size 128) (width 1920) (height 1200) (moving nil) (real-time nil) (trace-file nil) (break-hover-miss nil) (trace nil) (show-motion nil))
+(defun run-trials (&key (num-targets 3) (trials 50) (button-size 128) (width 1920) (height 1200)
+                        (moving nil) (real-time nil) (trace-file nil) (break-hover-miss nil)
+                        (trace nil) (show-motion nil) (visible t))
   (dotimes (n trials)
     (when 
       (and
-        (third (do-targeting num-targets :button-size button-size :width width :height height :moving moving :real-time real-time :trace-file trace-file :break-hover-miss break-hover-miss :trace trace :show-motion show-motion)
+        (third (do-targeting num-targets :button-size button-size :width width :height height :moving moving :real-time real-time :trace-file trace-file :break-hover-miss break-hover-miss :trace trace :show-motion show-motion :visible visible)
           )
         (> *friend-hovers* 0)
         )
@@ -178,7 +180,8 @@
   (setf *check-order* 0)
 )
 (defun do-targeting (&optional (num-targets 3) &key (button-size *default-button-size*) (width 1920) (height 1200)
-    (moving *default-moving*) (real-time *default-real-time*) (trace-file nil) (break-hover-miss nil) (trace nil) (show-motion nil)) ;; old style with a screen object
+    (moving *default-moving*) (real-time *default-real-time*) (trace-file nil) (break-hover-miss nil) (trace nil)
+    (show-motion nil) (visible t))
  
 
    ; set break on hover miss flag
@@ -186,7 +189,7 @@
    (reset-task)
    (reset)
    (if trace (sgp :v t) (sgp :v nil))
-   (let* ((window (open-exp-window "Moving X" :visible t :width width :height height))
+   (let* ((window (open-exp-window "Moving X" :visible visible :width width :height height))
           (buttons (create-buttons num-targets button-size width height))
           (returnvalue nil)
         )
