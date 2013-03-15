@@ -3,10 +3,12 @@
 (load "~/Documents/actr6/load-act-r-6.lisp")
 ;; load model
 (load "~/Desktop/addition/targeting.lisp")
-;; set projection parameters if passed on command line
-(when (> (length ccl:*unprocessed-command-line-arguments*) 0) (setf *target-projection* (parse-integer (car ccl:*unprocessed-command-line-arguments*))))
-(when (> (length ccl:*unprocessed-command-line-arguments*) 1) (setf *whiff-wait-time* (parse-integer (cadr ccl:*unprocessed-command-line-arguments*))))
+;; set parameters if passed on command line
+(defvar trials 1000)
+(when (> (length ccl:*unprocessed-command-line-arguments*) 0) (setf trials (parse-integer (car ccl:*unprocessed-command-line-arguments*))))
+(when (> (length ccl:*unprocessed-command-line-arguments*) 1) (setf *target-projection* (parse-integer (cadr ccl:*unprocessed-command-line-arguments*))))
+(when (> (length ccl:*unprocessed-command-line-arguments*) 2) (setf *whiff-wait-time* (parse-integer (caddr ccl:*unprocessed-command-line-arguments*))))
 ;; run trials
-(run-trials :trials 1000 :moving t :visible nil :trace-file "trace.txt" :trace nil)
+(run-trials :trials trials :moving t :visible nil :trace-file "trace.txt" :trace nil)
 ;; quit
 (quit)
