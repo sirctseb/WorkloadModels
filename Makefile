@@ -3,6 +3,7 @@ model_root = ~/Desktop/addition
 output_dir = $(model_root)/output
 SHELL=/bin/bash
 TRIALS=1000
+SAVE=saved
 
 all: showplots
 
@@ -46,6 +47,10 @@ $(output_dir)/table.txt: targeting.lisp load-and-run.lisp
 		done \
 	done
 projection-table: $(output_dir)/table.txt
+
+save: log.txt $(output_dir)/*.pdf $(output_dir)/aggregate.txt
+	mkdir -p output/$(SAVE)
+	cp log.txt $(output_dir)/*.pdf $(output_dir)/aggregate.txt output/$(SAVE)
 
 clean:
 	rm log.txt output/*
