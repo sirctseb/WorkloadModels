@@ -12,7 +12,7 @@ if("table" %in% options) {
 	avoids = sum(hsm$avoids)
 	accuracy = sum(hsm$hits) / (sum(hsm$hits) + sum(hsm$misses))
 	# add variables to table
-	out[length(out$misses) + 1,] = c(misses, whiffs, totalwhiffs, avoids, accuracy)
+	out[length(out$misses) + 1,] = c(misses, whiffs, totalwhiffs, avoids, accuracy, options[3], options[4])
 	# write table back to file
 	write.table(out, sep=",", quote = FALSE, row.names = FALSE, file = "output/table.txt")
 }
