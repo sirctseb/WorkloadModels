@@ -14,8 +14,6 @@
 (defvar *default-button-size* 40)
 ;; the current visibility of each button
 (defvar *buttons-visible* (make-hash-table))
-;; the underlying colors of each button
-(defvar *button-colors* (make-hash-table))
 ;; the number of targets hit
 (defvar *hit-counter* 0)
 ;; the number of misses
@@ -126,12 +124,8 @@
   (let ((button (add-button-to-exp-window :text "" :x x :y y :width size :height size
     ;; NOTE for some reason giving 'remove-button-after-delay directly doesn't work
     :action (lambda (button) (remove-button-after-delay button))
-    ; make buttons black initially
-    ;; TODO condition on hardness
-    :color 'black
+    :color (if enemy 'red 'green)
     )))
-    ; store buttons real color
-    (setf (gethash button *button-colors*) (if enemy 'red 'green))
     ; store that button is visible
     (setf (gethash button *buttons-visible*) t)
     button
@@ -210,43 +204,15 @@
                                             ;; Virtual dialog item specific coordinate moving
                                             ;; code.  Code for real windows is different for each
                                             ;; Lisp since the x position accessor will differ.
-                                            (let ((color-count 0))
-                                              (dolist (button buttons)
-    ;                                            (format t "seeing if button ~a is visible so we can move it" button)
-                                                (when (gethash button *buttons-visible*)
-    ;                                              (format t "it is! moving it")
-                                                  (when show-motion (remove-items-from-exp-window button))
-                                                  (when moving
-                                                    (setf (x-pos button) (+ 2.8 (x-pos button)))
-                                                  )
-                                                  (when show-motion (add-items-to-exp-window button))
-                                                  ;(format t "moving target at ~a to x ~d~%" (get-time) (x-pos button))
-                                                  ;(format t "cursor location: ~s" (get-mouse-coordinates (current-device)))
-                                                  ;; check if mouse is within target
-                                                  ;; define cursor and button locations
-                                                  (let* ((cursor-loc (get-mouse-coordinates (current-device)))
-                                                          (cursor-x (aref cursor-loc 0))
-                                                          (cursor-y (aref cursor-loc 1))
-                                                          (button-x (x-pos button))
-                                                          (button-y (y-pos button))
-                                                          (size (width button)))
-                                                    ; test if cursor within button
-                                                    (if (and (> cursor-x button-x)
-                                                               (< cursor-x (+ button-x size))
-                                                               (> cursor-y button-y)
-                                                               (< cursor-y (+ button-y size)))
-                                                      ; set button color
-                                                      (progn
-                                                        (setf (color button) (gethash button *button-colors*))
-                                                        (incf color-count)
-                                                      )
-                                                      (setf (color button) 'black)
-                                                    )
-                                                  )
+                                            (dolist (button buttons)
+  ;                                            (format t "seeing if button ~a is visible so we can move it" button)
+                                              (when (gethash button *buttons-visible*)
+  ;                                              (format t "it is! moving it")
+                                                (when show-motion (remove-items-from-exp-window button))
+                                                (when moving
+                                                  (setf (x-pos button) (+ 2.8 (x-pos button)))
                                                 )
-                                              )
-                                              (when (> color-count 1)
-                                                (dolog "two targets are colored~%")
+                                                (when show-motion (add-items-to-exp-window button))
                                               )
                                             )
                                             (proc-display)
