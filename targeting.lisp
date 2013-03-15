@@ -381,99 +381,6 @@
   !eval!          (incf *check-order*)
 )
 
-;; if we are still trying to distinguish a target but it has stayed black through the mouse move,
-;; then we missed it, so do another mouse move to it
-(P distinguish-whiff
-  =goal>
-    ISA           targeting
-    state         distinguish-target
-
-  ;; wait until visual location found
-  =visual-location>
-    ISA           visual-location
-    ;; check for oval
-    kind          OVAL
-    ;; check for black
-    color         black
-
-  ;; wait for mouse move to be over
-  ?manual>
-    state         free
-==>
-  ;; move to the same location
-  +manual>
-    isa           move-cursor
-    loc           =visual-location
-
-  ;; log that we did this
-  !eval!          (incf *whiff-counter*)
-  !eval!          (format t "wiffed too long, moving ~%")
-  !eval!          (incf *total-whiff-counter*)
-)
-
-;; after a rescan of the target, check if the target is green and go back to finding black targets
-(P distinguish-target-friend
-  =goal>
-    ISA           targeting
-    state         distinguish-target
-  ;; wait until visual location is found
-  =visual-location>
-    ISA           visual-location
-    ;; check for oval
-    kind          OVAL
-    ;; check for green (friend)
-    color         green
-    ;; get location values
-    screen-x      =sx
-    screen-y      =sy
-  ;; TODO make sure imaginal module is free so we can remember where friend is?
-  ;; TODO if it is not free? we should probably skip the remember
-==>
-  ;; store location of friend target
-  +imaginal>
-    isa           friend-target
-    x             =sx
-    y             =sy
-    
-  ;; increment the number of times the friend target was hovered
-  !eval!          (incf *friend-hovers*)
-  !eval!          (format t "detected friend~%")
-
-  ;; set the order in which the friend was checked if it hasn't been set yet
-  !eval!          (when (eq -1 *friend-order*) (setf *friend-order* *check-order*))
-  ;; search for black targets again
-  =goal>
-    state         find-red-target
-)
-
-;; after a rescan of the target, check if the target is still black and keep rescanning
-(P distinguish-target-black
-  =goal>
-    ISA           targeting
-    state         distinguish-target
-  ;; wait until visual location is found
-  =visual-location>
-    ISA           visual-location
-    ;; check for oval
-    kind          OVAL
-    ;; check for black
-    color         black
-  ;; only loop when the move is not complete
-  ?manual>
-    state         busy
-==>
-  ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
-  +visual-location>
-    ISA           visual-location
-    ;; search for oval
-    kind          OVAL
-    ;; nearest the current location
-    :nearest      current
-  =goal>
-    ;; move to the state where we distinguish between red and green targets
-    state         distinguish-target
-)
-
 ; request a mouse click
 (P click-mouse
   =goal>
@@ -494,16 +401,6 @@
 
   =goal>
     state         find-red-target
-)
-
-(P after-click
-  =goal>
-    ISA           targeting
-    state         after-click
-  ?manual>
-    state         free
-==>
-  !stop!
 )
 
 (goal-focus goal)
