@@ -304,59 +304,7 @@
   ?visual>
     state         free
 
-  ;; check that there is nothing in imaginal
-  ?imaginal>
-    buffer        empty
-    state         free
 ==>
-  ;; store location in goal
-  =goal>
-    target-x      =tx
-    target-y      =ty
-    state         lead-target
-
-  !eval!          (format t "storing first target location: ~a, ~a~%" =tx =ty)
-
-  ;; search for same location
-  +visual-location>
-    ISA           visual-location
-    :nearest      =visual-location
-)
-
-;; Rule to capture the location of a target when it doesn't match friend info
-;; TODO failure to to cap-first-location when there is something in imaginal but it is
-;; TODO not a friend-target chunk
-(P cap-first-location-no-friend
-  =goal>
-    ISA           targeting
-    state         cap-first-location
-
-  ;; find vis loc
-  =visual-location>
-    ISA           visual-location
-    screen-x      =tx
-    screen-y      =ty
-
-  ;; make sure visual is free so we can request move-attention
-  ?visual>
-    state         free
-
-  ;; check that there is nothing in imaginal
-  =imaginal>
-    isa           friend-target
-    x             =fx
-    y             =fy
-    x-diff        =x-diff
-    y-diff        =y-diff
-    
-  ?imaginal>
-    state         free
-
-  ;; determine that target is not friend
-  !bind!          =on-line (not (is-on-line =tx =ty =fx =fy =x-diff =y-diff))
-==>
-  ;; keep imaginal
-  =imaginal>
   ;; store location in goal
   =goal>
     target-x      =tx
