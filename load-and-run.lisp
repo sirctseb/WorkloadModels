@@ -7,6 +7,6 @@
 (defvar trials 1000)
 (when (> (length ccl:*unprocessed-command-line-arguments*) 0) (setf trials (parse-integer (car ccl:*unprocessed-command-line-arguments*))))
 ;; run trials
-(run-trials :trials trials :moving t :visible nil :trace-file "trace.txt" :trace nil)
+(run-trials :trials trials :moving nil :visible nil :trace-file "trace.txt" :trace nil)
 ;; quit
 (quit)
