@@ -253,17 +253,17 @@
    (chunk-type friend-target x y)
 
    (add-dm (track isa chunk) (attend-letter isa chunk)
-      (goal isa targeting state find-black-target))
+      (goal isa targeting state find-red-target))
   
    ;; adding this setting to the model will avoid the deleted chunk
    ;; warnings in the object tracking case.
    ;; (sgp :delete-visicon-chunks nil)
 
 ;; Rule to start searching for a target  
-(P find-black-target
+(P find-red-target
    =goal>
       ISA         targeting
-      state       find-black-target
+      state       find-red-target
    ?visual>
       state       free
 ==>
@@ -279,7 +279,7 @@
 (P on-move
   =goal>
       ISA         targeting
-      state       find-black-target
+      state       find-red-target
   ?visual-location>
       state       error
 ==>
@@ -301,50 +301,6 @@
     kind          OVAL
   !eval!          (dolog "failed to attend to target location in move cursor~%")
   !eval!          (incf *vis-fails*)
-)
-
-;; rule to check the visual location against a remembered
-;; location of a friend target and go to a different one
-(P avoid-friend
-  =goal>
-    ISA           targeting
-    state         move-cursor
-
-  ;; check for friend info in the imaginal buffer
-  =imaginal>
-    ISA           friend-target
-    ;; get friend location
-    x             =fx
-    y             =fy
-
-  =visual-location>
-    ISA           visual-location
-    ;; check if new location is at the remembered friend location
-    screen-x      =fx
-    screen-y      =fy
-
-  ;; make sure visual is free so we can move attention
-  ?visual>
-    state         free
-==>
-  =goal>
-    state         find-black-target
-
-  ;; move attention to friend target so that find-target-black searches for the other
-  +visual>
-    isa           move-attention
-    screen-pos    =visual-location
-
-  ;; prevent imaginal buffer from being harvested by setting it to the same values
-  ;; TODO an alternative is to attempt to retrive the friend-target chunk from declarative
-  ;; TODO if it's not in the imaginal buffer. that may be more robust in dual-task cases because
-  ;; TODO something else might fill the imaginal buffer and then we'll never get it back
-  ;; NOTE this is different than +imaginal> x =fx which makes the imaginal module busy while it sets the value
-  =imaginal>
-
-  !eval!          (format t "avoiding friend~%")
-  ;; increment number of times avoided friend
-  !eval!          (incf *friend-avoids*)
 )
 
 ;; rule to move cursor toward target
@@ -508,7 +464,7 @@
   !eval!          (when (eq -1 *friend-order*) (setf *friend-order* *check-order*))
   ;; search for black targets again
   =goal>
-    state         find-black-target
+    state         find-red-target
 )
 
 ;; after a rescan of the target, check if the target is still black and keep rescanning
@@ -558,7 +514,7 @@
     ISA           click-mouse
 
   =goal>
-    state         find-black-target
+    state         find-red-target
 )
 
 (P after-click
