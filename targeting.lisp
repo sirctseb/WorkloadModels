@@ -392,27 +392,6 @@
     ISA           move-attention
     screen-pos    =visual-location
   =goal>
-    state         check-target
-)
-
-;; re-scan for the nearest oval to get info about its color
-(P check-target
-  =goal>
-    ISA           targeting
-    state         check-target
-  ;; wait until visual attention has been moved to target
-  ?visual>
-    state         free
-==>
-  ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
-  +visual-location>
-    ISA           visual-location
-    ;; search for oval
-    kind          OVAL
-    ;; nearest the current location
-    :nearest      current
-  =goal>
-    ;; move to the state where we distinguish between red and green targets
     state         distinguish-target
 )
 
