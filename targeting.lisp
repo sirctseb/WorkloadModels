@@ -10,8 +10,6 @@
 (defvar *default-screen-size* 400)
 ;; the default button size
 (defvar *default-button-size* 40)
-;; the current visibility of each button
-(defvar *buttons-visible* (make-hash-table))
 ;; the underlying colors of each button
 (defvar *button-colors* (make-hash-table))
 ;; the number of targets hit
@@ -119,8 +117,6 @@
   ;; action, so instead, schedule an event to remove the button in 0.01ms
   ;; set var that indicates a click occured more recently than manual request finish
   (setf *button-clicked* t)
-  ;; set var that shows this button is not visible
-  (setf (gethash b *buttons-visible*) nil)
   ;; schedule the event for actually removing the button
   (schedule-event-relative .001 (lambda() (remove-items-from-exp-window b) (proc-display)))
 )
@@ -134,8 +130,6 @@
     )))
     ; store buttons real color
     (setf (gethash button *button-colors*) (if enemy 'red 'green))
-    ; store that button is visible
-    (setf (gethash button *buttons-visible*) t)
     button
   )
 )
@@ -199,7 +193,6 @@
           (buttons (create-buttons num-targets button-size width height))
           (returnvalue nil)
         )
-      ;(setf *buttons-visible* (make-list (list-length buttons) t))
     
       (if (not (subtypep (type-of window) 'virtual-window))
          (print-warning "This example only works correctly for virtual and visible-virtual windows because the x coordinate accessor is specific to those objects.")
@@ -220,7 +213,6 @@
                                             (let ((color-count 0))
                                               (dolist (button buttons)
     ;                                            (format t "seeing if button ~a is visible so we can move it" button)
-                                                (when (gethash button *buttons-visible*)
     ;                                              (format t "it is! moving it")
                                                   (when show-motion (remove-items-from-exp-window button))
                                                   (when moving
@@ -250,7 +242,6 @@
                                                       (setf (color button) 'black)
                                                     )
                                                   )
-                                                )
                                               )
                                               (when (> color-count 1)
                                                 (dolog "two targets are colored~%")
