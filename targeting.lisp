@@ -219,11 +219,12 @@
                                                     (setf (x-pos button) (+ 2.8 (x-pos button)))
                                                   )
                                                   (when show-motion (add-items-to-exp-window button))
-                                                )
+                                                	)
                                                   ;(format t "moving target at ~a to x ~d~%" (get-time) (x-pos button))
                                                   ;(format t "cursor location: ~s" (get-mouse-coordinates (current-device)))
                                                   ;; check if mouse is within target
                                                   ;; define cursor and button locations
+                                                (when difficult
 	                                            (let ((color-count 0))
                                                   (let* ((cursor-loc (get-mouse-coordinates (current-device)))
                                                           (cursor-x (aref cursor-loc 0))
@@ -248,6 +249,7 @@
 	                                                (dolog "two targets are colored~%")
 	                                              )
 	                                            )
+												)
                                               )
                                             (proc-display)
                                        :details "moving object"
