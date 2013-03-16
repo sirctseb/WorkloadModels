@@ -120,23 +120,22 @@
   ;; schedule the event for actually removing the button
   (schedule-event-relative .001 (lambda() (remove-items-from-exp-window b) (proc-display)))
 )
-(defun create-button (x y &optional (size *default-button-size*) &key (enemy t))
+(defun create-button (x y &optional (size *default-button-size*) &key (enemy t) (difficult t))
   (let ((button (add-button-to-exp-window :text "" :x x :y y :width size :height size
     ;; NOTE for some reason giving 'remove-button-after-delay directly doesn't work
     :action (lambda (button) (remove-button-after-delay button))
-    ; make buttons black initially
-    ;; TODO condition on hardness
-    :color 'black
+    ; if difficulty, make black. otherwise make red iff enemy
+    :color (if difficult 'black (if enemy 'red 'green))
     )))
     ; store buttons real color
     (setf (gethash button *button-colors*) (if enemy 'red 'green))
     button
   )
 )
-(defun create-buttons (num &optional (size *default-button-size*) (width *default-screen-size*) (height *default-screen-size*))
+(defun create-buttons (num &optional (size *default-button-size*) (width *default-screen-size*) (height *default-screen-size*) (difficult t))
   (let (buttons '())
     (dotimes (n num buttons)
-      (setf buttons (cons (create-button (random 100) (+ (* n (round (/ height 3))) (random (- (round (/ height 3)) 150))) size :enemy (eq (mod n 2) 0)) buttons))
+      (setf buttons (cons (create-button (random 100) (+ (* n (round (/ height 3))) (random (- (round (/ height 3)) 150))) size :enemy (eq (mod n 2) 0) :difficult difficult) buttons))
     )
   )
 )
@@ -146,16 +145,16 @@
 (defun task-end-condition ()
   (or (> *hit-counter* 1) (> (get-time) 6000))
 )
-(defun once (&key (num-targets 3) (trials 1) (button-size 128) (width 1920) (height 1200) (moving t) (real-time t) (trace-file nil) (break-hover-miss nil) (trace nil) (show-motion t)) 
-  (run-trials :num-targets num-targets :trials trials :button-size button-size :width width :height height :moving moving :real-time real-time :trace-file trace-file :break-hover-miss break-hover-miss :trace trace :show-motion show-motion)
+(defun once (&key (num-targets 3) (trials 1) (button-size 128) (width 1920) (height 1200) (moving t) (real-time t) (trace-file nil) (break-hover-miss nil) (trace nil) (show-motion t) (difficult t)) 
+  (run-trials :num-targets num-targets :trials trials :button-size button-size :width width :height height :moving moving :real-time real-time :trace-file trace-file :break-hover-miss break-hover-miss :trace trace :show-motion show-motion :difficult difficult)
 )
 (defun run-trials (&key (num-targets 3) (trials 50) (button-size 128) (width 1920) (height 1200)
                         (moving nil) (real-time nil) (trace-file nil) (break-hover-miss nil)
-                        (trace nil) (show-motion nil) (visible t))
+                        (trace nil) (show-motion nil) (visible t) (difficult t))
   (dotimes (n trials)
     (when 
       (and
-        (third (do-targeting num-targets :button-size button-size :width width :height height :moving moving :real-time real-time :trace-file trace-file :break-hover-miss break-hover-miss :trace trace :show-motion show-motion :visible visible)
+        (third (do-targeting num-targets :button-size button-size :width width :height height :moving moving :real-time real-time :trace-file trace-file :break-hover-miss break-hover-miss :trace trace :show-motion show-motion :visible visible :difficult difficult)
           )
         (> *friend-hovers* 0)
         )
@@ -194,7 +193,7 @@
    (reset)
    (if trace (sgp :v t) (sgp :v nil))
    (let* ((window (open-exp-window "Moving X" :visible visible :width width :height height))
-          (buttons (create-buttons num-targets button-size width height))
+          (buttons (create-buttons num-targets button-size width height difficult))
           (returnvalue nil)
         )
     
