@@ -182,7 +182,10 @@
 	;; load model based on params, but only if there is not already a model
 	;; TODO use relative path
 	(unless (current-model)
-		(load (concatenate 'string "~/Desktop/addition/targeting-" (if difficult "hard" "easy") "-" (if moving "fast" "slow") ".lisp"))
+		(let ((path (concatenate 'string "~/Desktop/addition/targeting-" (if difficult "hard" "easy") "-" (if moving "fast" "slow") ".lisp")))
+			(format t "loading ~a~%" path)
+			(load path)
+		)
 	)
 
    ; set break on hover miss flag
