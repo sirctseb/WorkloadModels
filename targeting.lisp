@@ -213,11 +213,13 @@
                                               (dolist (button buttons)
     ;                                            (format t "seeing if button ~a is visible so we can move it" button)
     ;                                              (format t "it is! moving it")
+    											(when moving
                                                   (when show-motion (remove-items-from-exp-window button))
                                                   (when moving
                                                     (setf (x-pos button) (+ 2.8 (x-pos button)))
                                                   )
                                                   (when show-motion (add-items-to-exp-window button))
+                                                )
                                                   ;(format t "moving target at ~a to x ~d~%" (get-time) (x-pos button))
                                                   ;(format t "cursor location: ~s" (get-mouse-coordinates (current-device)))
                                                   ;; check if mouse is within target
