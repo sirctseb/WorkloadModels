@@ -182,9 +182,13 @@
   (setf *check-order* 0)
 )
 (defun do-targeting (&optional (num-targets 3) &key (button-size *default-button-size*) (width 1920) (height 1200)
-    (moving *default-moving*) (real-time nil) (trace-file nil) (break-hover-miss nil) (trace nil)
+    (moving *default-moving*) (difficult t) (real-time nil) (trace-file nil) (break-hover-miss nil) (trace nil)
     (show-motion nil) (visible t))
- 
+
+	;; load model based on params, but only if there is not already a model
+	(unless (current-model)
+		(load (concatenate 'string "targeting-" (if difficult "hard" "easy") "-" (if moving "fast" "slow") ".lisp"))
+	)
 
    ; set break on hover miss flag
    (setf *break-on-hover-miss* break-hover-miss)
