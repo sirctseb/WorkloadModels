@@ -210,7 +210,6 @@
                                             ;; Virtual dialog item specific coordinate moving
                                             ;; code.  Code for real windows is different for each
                                             ;; Lisp since the x position accessor will differ.
-                                            (let ((color-count 0))
                                               (dolist (button buttons)
     ;                                            (format t "seeing if button ~a is visible so we can move it" button)
     ;                                              (format t "it is! moving it")
@@ -223,6 +222,7 @@
                                                   ;(format t "cursor location: ~s" (get-mouse-coordinates (current-device)))
                                                   ;; check if mouse is within target
                                                   ;; define cursor and button locations
+	                                            (let ((color-count 0))
                                                   (let* ((cursor-loc (get-mouse-coordinates (current-device)))
                                                           (cursor-x (aref cursor-loc 0))
                                                           (cursor-y (aref cursor-loc 1))
@@ -242,11 +242,11 @@
                                                       (setf (color button) 'black)
                                                     )
                                                   )
+	                                              (when (> color-count 1)
+	                                                (dolog "two targets are colored~%")
+	                                              )
+	                                            )
                                               )
-                                              (when (> color-count 1)
-                                                (dolog "two targets are colored~%")
-                                              )
-                                            )
                                             (proc-display)
                                        :details "moving object"
                                        :initial-delay 0.5))
