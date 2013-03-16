@@ -347,38 +347,7 @@
     ISA           move-attention
     screen-pos    =visual-location
   =goal>
-    state         distinguish-target
-)
-
-;; after a rescan of the target, check if the target is red and click it
-(P distinguish-target-enemy
-  =goal>
-    ISA           targeting
-    state         distinguish-target
-  ;; wait until visual location is found
-  =visual-location>
-    ISA           visual-location
-    ;; check for oval
-    kind          OVAL
-    ;; check for red (enemy)
-    color         red
-  ;; make sure visual is free so we can request to move attention
-  ?visual>
-    state         free
-==>
-  ;; TODO if visual location request fails?
-  ;; go to click mouse state to wait for manual state to be free
-  =goal>
     state         click-mouse
-  ;; request attention move
-  +visual>
-    ISA           move-attention
-    screen-pos    =visual-location
-
-  !eval!          (format t "detected enemy, clicking~%")
-
-  ;; increment the number of targets checked
-  !eval!          (incf *check-order*)
 )
 
 ; request a mouse click
