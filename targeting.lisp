@@ -211,7 +211,8 @@
             (start-hand-at-mouse)
             (set-cursor-position 960 600)
             (proc-display)
-            ;; schedule moves if targets should move
+            ;; schedule moves if targets should move or we need to change target colors
+            (when (or moving difficult)
               (schedule-periodic-event .01 #'(lambda ()
                                             ;; Virtual dialog item specific coordinate moving
                                             ;; code.  Code for real windows is different for each
@@ -258,6 +259,7 @@
                                             (proc-display)
                                        :details "moving object"
                                        :initial-delay 0.5))
+              )
             (cwd "/Users/sirc/Desktop/addition")
             (open-log-file)
             (if trace-file
