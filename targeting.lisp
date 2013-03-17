@@ -271,8 +271,7 @@
 									(dolog "two targets are colored~%")))
 							(proc-display))
 
-						:details "moving object"
-						:initial-delay 0.5))
+						:details "moving object"))
 
 				(cwd "/Users/sirc/Desktop/addition")
 				(open-log-file)
