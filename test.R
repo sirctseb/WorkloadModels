@@ -15,8 +15,6 @@ if(all(c("compare","to") %in% names(options))) {
 	# read in both tables
 	first <- read.table(paste("output/", options$compare, "/aggregate.txt", sep=""), sep=",", header=TRUE, strip.white=TRUE)
 	second <- read.table(paste("output/", options$to, "/aggregate.txt", sep=""), sep=",", header=TRUE, strip.white=TRUE)
-	print(str(first))
-	print(str(second))
 	# add factors and merge
 	first$version = as.factor(options$compare)
 	second$version = as.factor(options$compare)
