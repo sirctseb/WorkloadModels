@@ -17,7 +17,7 @@ if(all(c("compare","to") %in% names(options))) {
 	second <- read.table(paste("output/", options$to, "/aggregate.txt", sep=""), sep=",", header=TRUE, strip.white=TRUE)
 	# add factors and merge
 	first$version = as.factor(options$compare)
-	second$version = as.factor(options$compare)
+	second$version = as.factor(options$to)
 	combined = rbind(first, second)
 	# show brief statistics
 	print(summary(aov(complete~version, combined)))
