@@ -5,11 +5,33 @@ option_list = list(
 	make_option(c("--projection"), action="store", help="The projection factor used in the model"),
 	make_option(c("--whifftime"), action="store", help="The whiff wait time used in the model"),
 	make_option(c("-s", "--stats"), action = "store_true", default=FALSE, help="Print brief statistics about the model data"),
-	make_option(c("-p", "--plots"), action = "store_true", default=FALSE, help="Show completion time plots")
+	make_option(c("-p", "--plots"), action = "store_true", default=FALSE, help="Show completion time plots"),
+	make_option(c("--compare"), action = "store", help="The first of the output directories to compare"),
+	make_option(c("--to"), action="store", help="The second of the output directories to compare")
 )
 options = parse_args(OptionParser(option_list = option_list))
+if(all(c("compare","to") %in% names(options))) {
+	library(ggplot2)
+	# read in both tables
+	first <- read.table(paste("output/", options$compare, "/aggregate.txt", sep=""), sep=",", header=TRUE, strip.white=TRUE)
+	second <- read.table(paste("output/", options$to, "/aggregate.txt", sep=""), sep=",", header=TRUE, strip.white=TRUE)
+	print(str(first))
+	print(str(second))
+	# add factors and merge
+	first$version = as.factor(options$compare)
+	second$version = as.factor(options$compare)
+	combined = rbind(first, second)
+	# show brief statistics
+	print(summary(aov(complete~version, combined)))
+	# make and save plot
+	ggplot(combined, aes(complete, fill=version)) + geom_histogram(pos="dodge")
+	# TODO put this somewhere smarter, like output/$compare-$to.pdf
+	ggsave(file="output/compare.pdf")
+}
 
-hsm <- read.table("output/aggregate.txt", sep=",", header=TRUE, strip.white = TRUE)
+if(options$table || options$stats || options$plots) {
+	hsm <- read.table("output/aggregate.txt", sep=",", header=TRUE, strip.white = TRUE)
+}
 # produce a line of data for a data frame
 if(options$table) {
 	# read current table

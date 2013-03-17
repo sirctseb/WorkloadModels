@@ -54,5 +54,10 @@ save: log.txt $(output_dir)/*.pdf $(output_dir)/aggregate.txt
 	mkdir -p output/$(SAVE)
 	cp log.txt $(output_dir)/*.pdf $(output_dir)/aggregate.txt output/$(SAVE)
 
+$(output_dir)/compare.pdf: $(output_dir)/$(COMPARE)/aggregate.txt $(output_dir)/$(TO)/aggregate.txt
+	RScript test.R --compare $(COMPARE) --to $(TO)
+compare: $(output_dir)/compare.pdf
+	open $(output_dir)/compare.pdf
+	
 clean:
 	rm log.txt output/*
