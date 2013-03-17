@@ -4,11 +4,13 @@ output_dir = $(model_root)/output
 SHELL=/bin/bash
 TRIALS=1000
 SAVE=saved
+DIFFICULT=t
+MOVING=t
 
 all: showplots
 
 log.txt: targeting.lisp load-and-run.lisp
-	. $$HOME/.profile; rm log.txt; ccl64 -l load-and-run.lisp -- $$TRIALS
+	. $$HOME/.profile; rm log.txt; ccl64 -l load-and-run.lisp -- $(DIFFICULT) $(MOVING) $(TRIALS)
 
 run-trials: log.txt
 
@@ -41,7 +43,7 @@ $(output_dir)/table.txt: targeting.lisp load-and-run.lisp
 	for proj in 55 56 57 58 59 60 ; do \
 		for whiff in 16 18 20 22 24 ; do \
 			rm log.txt; \
-			. $$HOME/.profile; ccl64 -l load-and-run.lisp -- $$TRIALS $$proj $$whiff; \
+			. $$HOME/.profile; ccl64 -l load-and-run.lisp -- $(DIFFICULT) $(MOVING) $(TRIALS) $$proj $$whiff; \
 			. $$HOME/.profile; go run aggregate.go > $(output_dir)/aggregate.txt; \
 			RScript test.R --args table $$proj $$whiff; \
 		done \
