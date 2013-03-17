@@ -1,6 +1,7 @@
 ;; TODO use relative path or environment variable for these
-;; load actr
-(load "~/Documents/actr6/load-act-r-6.lisp")
+;; load actr while suppressing standard output so we don't see all the version info
+(let ((*standard-output* (make-broadcast-stream)))
+	(load "~/Documents/actr6/load-act-r-6.lisp"))
 ;; load model
 (load "~/Desktop/addition/targeting.lisp")
 ;; set parameters if passed on command line
