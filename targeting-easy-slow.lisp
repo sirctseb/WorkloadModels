@@ -6,9 +6,8 @@
 	(chunk-type targeting state target-x target-y cursor-diff-x cursor-diff-y target-location)
 	(chunk-type friend-target x y)
 
-	(add-dm (track isa chunk) (attend-letter isa chunk)
-			(goal isa targeting state find-red-target))
-	
+	(suppress-warnings (add-dm (track isa chunk) (attend-letter isa chunk)
+				(goal isa targeting state find-red-target)))
 	;; adding this setting to the model will avoid the deleted chunk
 	;; warnings in the object tracking case.
 	;; (sgp :delete-visicon-chunks nil)

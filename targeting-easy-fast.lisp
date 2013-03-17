@@ -4,8 +4,8 @@
 	(chunk-type targeting state target-x target-y projected-x projected-y)
 	(chunk-type friend-target x y x-diff y-diff)
 
-	(add-dm (track isa chunk) (attend-letter isa chunk)
-		(goal isa targeting state find-red-target))
+	(suppress-warnings (add-dm (track isa chunk) (attend-letter isa chunk)
+		(goal isa targeting state find-red-target)))
 	
 	;; adding this setting to the model will avoid the deleted chunk
 	;; warnings in the object tracking case.
