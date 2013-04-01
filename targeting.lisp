@@ -165,13 +165,14 @@
 			(c3 (list 1920 0 1200))
 			(c4 (list 1920 1200 100))
 			(c5 (list 960 600 300)))
-		(or (outside-rect point '(0 0 1856 1136))
-      		(not (inside-circle point c5))
-      		(and
-          		(inside-circle point c1)
-          		(inside-circle point c2)
-          		(inside-circle point c3)
-          		(inside-circle point c4)))))
+		(not
+			(or (outside-rect point '(0 0 1856 1136))
+				(inside-circle point c5)
+				(and
+					(inside-circle point c1)
+					(inside-circle point c2)
+					(inside-circle point c3)
+					(inside-circle point c4))))))
 ;; generate a point in the screen
 (defun get-point-in-screen()
 	(list (random 1920) (random 1200)))
