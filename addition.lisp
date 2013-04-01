@@ -31,7 +31,7 @@
 
 (chunk-type arithmetic first operator second result)
 (chunk-type arithmetic-problem first operator second result state)
-(chunk-type arithmetic-info value1 value2)
+(chunk-type arithmetic-info first-tens first-ones second-tens second-ones)
 (chunk-type number)
 
 (add-dm
