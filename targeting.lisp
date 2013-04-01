@@ -244,7 +244,7 @@
 										(gethash button *buttons-visible*)
 										(when moving
 											(when show-motion (remove-items-from-exp-window button))
-											(when moving (setf (x-pos button) (+ 2.8 (x-pos button))))
+											(when moving (setf (x-pos button) (+ 2 (x-pos button))))
 											(when show-motion (add-items-to-exp-window button)))
 
 										;; check if mouse is within target
