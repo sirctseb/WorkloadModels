@@ -172,16 +172,18 @@
 ;; retrieve sum
 ;; count up if retrieval fails // how?
 
-(P find-first-operand
+(P find-second-ones
    =goal>
       ISA         arithmetic-problem
-      state       read-first-operand
+      state       find-second-ones
 ==>
    +visual-location>
       ISA         visual-location
       :attended   nil
+      type        text
+      screen-x    highest
    =goal>
-      state       find-first-location
+      state       attend-second-ones
 )
 
 (P attend-first-operand
