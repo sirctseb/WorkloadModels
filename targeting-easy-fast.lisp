@@ -162,14 +162,6 @@
 			ISA           targeting
 			state         distinguish-target
 
-		;; wait until visual location is found
-		=visual-location>
-			ISA           visual-location
-			;; check for oval
-			kind          OVAL
-			;; check for red (enemy)
-			color         red
-
 		;; let prepare-click go first
 		;; TODO this is not a semantic test. it only exists to allow prepare-click to go first
 		;; TODO there should be a better way to let prepare-click to have priority
