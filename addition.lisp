@@ -164,33 +164,6 @@
  (addition-goal ISA arithmetic-problem operator + state read-first-operand)
  )
 
-;(P initialize-addition
-;   =goal>
-;      ISA         arithmetic
-;      arg1        =num1
-;      arg2        =num2
-;      operator    +
-;      result      nil
-;==>
-;   =goal>
-;      sum         =num1
-;      count       0
-;   +retrieval>
-;      isa        count-order
-;      first      =num1
-;)
-
-;(P terminate-addition
-;   =goal>
-;      ISA         add
-;      count       =num
-;      arg2        =num
-;      sum         =answer
-;==>
-;   =goal>
-;      count       nil
-;)
-
 ;;; TODO rules:
 ;; monitor for appearance of problems
 ;; - can limit to middle of screen because people will know that's where they are
@@ -342,41 +315,6 @@
       result      =answer
    !output!       (=answer)
 )
-
-;(P increment-count
-;   =goal>
-;      ISA         add
-;      sum         =sum
-;      count       =count
-;   =retrieval>
-;      ISA         count-order
-;      first       =count
-;      second      =newcount
-;==>
-;   =goal>
-;      count       =newcount
-;   +retrieval>
-;      isa        count-order
-;      first      =sum
-;)
-;
-;(P increment-sum
-;   =goal>
-;      ISA         add
-;      sum         =sum
-;      count       =count
-;    - arg2        =count
-;   =retrieval>
-;      ISA         count-order
-;      first       =sum
-;      second      =newsum
-;==>
-;   =goal>
-;      sum         =newsum
-;   +retrieval>
-;      isa        count-order
-;      first      =count
-;)
 
 (goal-focus addition-goal)
 )
