@@ -117,7 +117,7 @@
 (defun create-button (x y &optional (size *default-button-size*) &key (enemy t) (difficult t))
 	(let 
 		(
-			(button (add-button-to-exp-window :text "" :x x :y y :width size :height size
+			(button (add-button-to-exp-window :text "" :x (- x (/ size 2)) :y (- y (/ size 2)) :width size :height size
 				;; NOTE for some reason giving 'remove-button-after-delay directly doesn't work
 				:action (lambda (button) (remove-button-after-delay button))
 				;; if difficulty, make black. otherwise make red iff enemy
