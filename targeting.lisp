@@ -126,6 +126,8 @@
 		(setf (gethash button *button-colors*) (if enemy 'red 'green))
 		;; store that button is visible
 		(setf (gethash button *buttons-visible*) t)
+		;; store button movement
+		(set-button-movement (list x y) button)
 		button))
 
 ;; determine if a point is inside a circle
@@ -183,6 +185,37 @@
     		((point (get-point-in-screen)))
         	(when (is-elligible point)
         		(return point)))))
+
+;; generate a random point on a given circle
+(defun random-on-circle (circle)
+  	(let ((theta (* pi (random 2.0))))
+ 	   	(list
+ 	   		(+
+ 	   			(first circle)
+ 	   			(* (third circle) (cos theta)))
+ 	   		(+
+ 	   			(second circle)
+ 	   			(* (third circle) (sin theta))))))
+;; generate a random point on a given circle within a given rectangle
+(defun random-on-circle-in-rectangle (circle rectangle)
+	;; generate
+	(loop
+		;; random points on the circle
+   		(let ((point (random-on-circle circle)))
+   			;; until one is in the rectangle
+   			(when (not (outside-rect point rectangle))
+   				(return point)))))
+;; generate button movement based on an elligible start point
+(defun generate-button-movement (point)
+  	;; get a random point on a circle with the movement radius around the given point and within the screen
+	(let ((endpoint (random-on-circle-in-rectangle (append point (list 1200)) '(0 0 1920 1200))))
+   		;; return the vector scaled by the number of milliseconds the movement takes
+   		(list (coerce (/ (- (first endpoint) (first point)) 600) 'single-float)
+           	  (coerce (/ (- (second endpoint) (second point)) 600) 'single-float))))
+;; get and store the button movement based on an elligible start point
+(defun set-button-movement (point button)
+	(let ((movement (generate-button-movement point)))
+		(setf (gethash button *button-movements*) movement)))
 
 (defun create-buttons (num &optional (size *default-button-size*) (width *default-screen-size*) (height *default-screen-size*) (difficult t))
 	(let (buttons '())
@@ -308,7 +341,8 @@
 										(gethash button *buttons-visible*)
 										(when moving
 											(when show-motion (remove-items-from-exp-window button))
-											(when moving (setf (x-pos button) (+ 2 (x-pos button))))
+											(when moving (setf (x-pos button) (+ (first (gethash button *button-movements*)) (x-pos button))))
+											(when moving (setf (y-pos button) (+ (second (gethash button *button-movements*)) (y-pos button))))
 											(when show-motion (add-items-to-exp-window button)))
 
 										;; check if mouse is within target
