@@ -210,7 +210,7 @@
       value       =value
 ==>
    =goal>
-      state       read-second-operand
+      state       find-plus
    +imaginal>
       ISA         arithmetic-info
       second-ones =value
