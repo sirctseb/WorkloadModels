@@ -11,13 +11,9 @@
                                   :visible t
                                   :width 300
                                   :height 300)))
-    (add-text-to-exp-window :text "4"
-                            :width 40
+    (add-text-to-exp-window :text "1 4 + 2 7"
+                            :width 100
                             :x 100
-                            :y 140)
-    (add-text-to-exp-window :text "7"
-                            :width 40
-                            :x 200
                             :y 140)
           
     (install-device window)
