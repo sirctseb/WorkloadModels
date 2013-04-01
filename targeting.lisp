@@ -14,6 +14,8 @@
 (defvar *buttons-visible* (make-hash-table))
 ;; the underlying colors of each button
 (defvar *button-colors* (make-hash-table))
+;; the amount we move each button every hundredth of a second
+(defvar *button-movements* (make-hash-table))
 ;; the number of targets hit
 (defvar *hit-counter* 0)
 ;; the number of misses
@@ -115,7 +117,7 @@
 (defun create-button (x y &optional (size *default-button-size*) &key (enemy t) (difficult t))
 	(let 
 		(
-			(button (add-button-to-exp-window :text "" :x x :y y :width size :height size
+			(button (add-button-to-exp-window :text "" :x (- x (/ size 2)) :y (- y (/ size 2)) :width size :height size
 				;; NOTE for some reason giving 'remove-button-after-delay directly doesn't work
 				:action (lambda (button) (remove-button-after-delay button))
 				;; if difficulty, make black. otherwise make red iff enemy
@@ -124,19 +126,114 @@
 		(setf (gethash button *button-colors*) (if enemy 'red 'green))
 		;; store that button is visible
 		(setf (gethash button *buttons-visible*) t)
+		;; store button movement
+		(set-button-movement (list x y) button)
 		button))
+
+;; determine if a point is inside a circle
+(defun inside-circle (point circle)
+	(<
+		(+
+			(*
+				(-
+					(first point)
+					(first circle))
+				(-
+					(first point)
+					(first circle)))
+			(*
+				(-
+					(second point)
+					(second circle))
+				(-
+					(second point)
+					(second circle))))
+		(*
+			(third circle)
+			(third circle))))
+;; determine if a point is outside a rectangle
+(defun outside-rect (point rectangle)
+	(or
+		(< (first point) (first rectangle))
+		(> (first point) (third rectangle))
+		(< (second point) (second rectangle))
+		(> (second point) (fourth rectangle))))
+;; determine if a point is elligible to be a starting point
+(defun is-elligible (point)
+	(let
+		(
+			(c1 (list 0 0 1200))
+			(c2 (list 0 1200 1200))
+			(c3 (list 1920 0 1200))
+			(c4 (list 1920 1200 100))
+			(c5 (list 960 600 300)))
+		(not
+			(or (outside-rect point '(0 0 1856 1136))
+				(inside-circle point c5)
+				(and
+					(inside-circle point c1)
+					(inside-circle point c2)
+					(inside-circle point c3)
+					(inside-circle point c4))))))
+;; generate a point in the screen
+(defun get-point-in-screen()
+	(list (random 1920) (random 1200)))
+;; generate a starting location for a button
+(defun get-button-start-location ()
+	(loop
+		(let
+    		((point (get-point-in-screen)))
+        	(when (is-elligible point)
+        		(return point)))))
+
+;; generate a random point on a given circle
+(defun random-on-circle (circle)
+  	(let ((theta (* pi (random 2.0))))
+ 	   	(list
+ 	   		(+
+ 	   			(first circle)
+ 	   			(* (third circle) (cos theta)))
+ 	   		(+
+ 	   			(second circle)
+ 	   			(* (third circle) (sin theta))))))
+;; generate a random point on a given circle within a given rectangle
+(defun random-on-circle-in-rectangle (circle rectangle)
+	;; generate
+	(loop
+		;; random points on the circle
+   		(let ((point (random-on-circle circle)))
+   			;; until one is in the rectangle
+   			(when (not (outside-rect point rectangle))
+   				(return point)))))
+;; generate button movement based on an elligible start point
+(defun generate-button-movement (point)
+  	;; get a random point on a circle with the movement radius around the given point and within the screen
+	(let ((endpoint (random-on-circle-in-rectangle (append point (list 1200)) '(0 0 1920 1200))))
+   		;; return the vector scaled by the number of milliseconds the movement takes
+   		(list (coerce (/ (- (first endpoint) (first point)) 600) 'single-float)
+           	  (coerce (/ (- (second endpoint) (second point)) 600) 'single-float))))
+;; get and store the button movement based on an elligible start point
+(defun set-button-movement (point button)
+	(let ((movement (generate-button-movement point)))
+		(setf (gethash button *button-movements*) movement)))
 
 (defun create-buttons (num &optional (size *default-button-size*) (width *default-screen-size*) (height *default-screen-size*) (difficult t))
 	(let (buttons '())
 		(dotimes (n num buttons)
 			(setf buttons
 				(cons
-					(create-button
-						(random 100)
-						(+ (* n (round (/ height 3))) (random (- (round (/ height 3)) 150)))
-						size
-						:enemy (eq (mod n 2) 0)
-						:difficult difficult) buttons)))))
+					(let ((point (get-button-start-location)))
+						(create-button
+							; (random 100)
+							(first point)
+							; (+ (* n (round (/ height 3))) (random (- (round (/ height 3)) 150)))
+							(second point)
+							size
+							:enemy (eq (mod n 2) 0)
+							:difficult difficult)) buttons)))))
+(defun test-targets()
+	;; make a hundred buttons
+	(create-buttons 100 128 1920 1200 t))
 
 ;; condition function for stopping simulation:
 ;; stop once we have hit two targets or 6 seconds have passed
@@ -244,7 +341,8 @@
 										(gethash button *buttons-visible*)
 										(when moving
 											(when show-motion (remove-items-from-exp-window button))
-											(when moving (setf (x-pos button) (+ 2 (x-pos button))))
+											(when moving (setf (x-pos button) (+ (first (gethash button *button-movements*)) (x-pos button))))
+											(when moving (setf (y-pos button) (+ (second (gethash button *button-movements*)) (y-pos button))))
 											(when show-motion (add-items-to-exp-window button)))
 
 										;; check if mouse is within target
