@@ -186,10 +186,10 @@
       state       attend-second-ones
 )
 
-(P attend-first-operand
+(P attend-second-ones
    =goal>
       ISA         arithmetic-problem
-      state       find-first-location
+      state       attend-second-ones
    =visual-location>
       ISA         visual-location
    ?visual>
@@ -199,12 +199,12 @@
       ISA         move-attention
       screen-pos  =visual-location
    =goal>
-      state       attend-first-operand
+      state       encode-second-ones
 )
 (P encode-first-operand
    =goal>
       ISA         arithmetic-problem
-      state       attend-first-operand
+      state       encode-second-ones
    =visual>
       ISA         text
       value       =value
@@ -213,7 +213,7 @@
       state       read-second-operand
    +imaginal>
       ISA         arithmetic-info
-      value1      =value
+      second-ones =value
 )
 
 (P find-second-operand
