@@ -165,7 +165,7 @@
 			(c3 (list 1920 0 1200))
 			(c4 (list 1920 1200 100))
 			(c5 (list 960 600 300)))
-		(or (outside-rect point '(0 0 1920 1200))
+		(or (outside-rect point '(0 0 1856 1136))
       		(not (inside-circle point c5))
       		(and
           		(inside-circle point c1)
