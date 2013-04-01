@@ -201,7 +201,7 @@
    =goal>
       state       encode-second-ones
 )
-(P encode-first-operand
+(P encode-second-ones
    =goal>
       ISA         arithmetic-problem
       state       encode-second-ones
