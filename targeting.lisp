@@ -198,6 +198,9 @@
 							size
 							:enemy (eq (mod n 2) 0)
 							:difficult difficult)) buttons)))))
+(defun test-targets()
+	;; make a hundred buttons
+	(create-buttons 100 128 1920 1200 t))
 
 ;; condition function for stopping simulation:
 ;; stop once we have hit two targets or 6 seconds have passed
