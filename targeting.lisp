@@ -14,6 +14,8 @@
 (defvar *buttons-visible* (make-hash-table))
 ;; the underlying colors of each button
 (defvar *button-colors* (make-hash-table))
+;; the amount we move each button every hundredth of a second
+(defvar *button-movements* (make-hash-table))
 ;; the number of targets hit
 (defvar *hit-counter* 0)
 ;; the number of misses
@@ -126,17 +128,75 @@
 		(setf (gethash button *buttons-visible*) t)
 		button))
 
+;; determine if a point is inside a circle
+(defun inside-circle (point circle)
+	(<
+		(+
+			(*
+				(-
+					(first point)
+					(first circle))
+				(-
+					(first point)
+					(first circle)))
+			(*
+				(-
+					(second point)
+					(second circle))
+				(-
+					(second point)
+					(second circle))))
+		(*
+			(third circle)
+			(third circle))))
+;; determine if a point is outside a rectangle
+(defun outside-rect (point rectangle)
+	(or
+		(< (first point) (first rectangle))
+		(> (first point) (third rectangle))
+		(< (second point) (second rectangle))
+		(> (second point) (fourth rectangle))))
+;; determine if a point is elligible to be a starting point
+(defun is-elligible (point)
+	(let
+		(
+			(c1 (list 0 0 1200))
+			(c2 (list 0 1200 1200))
+			(c3 (list 1920 0 1200))
+			(c4 (list 1920 1200 100))
+			(c5 (list 960 600 300)))
+		(or (outside-rect point '(0 0 1920 1200))
+      		(not (inside-circle point c5))
+      		(and
+          		(inside-circle point c1)
+          		(inside-circle point c2)
+          		(inside-circle point c3)
+          		(inside-circle point c4)))))
+;; generate a point in the screen
+(defun get-point-in-screen()
+	(list (random 1920) (random 1200)))
+;; generate a starting location for a button
+(defun get-button-start-location ()
+	(loop
+		(let
+    		((point (get-point-in-screen)))
+        	(when (is-elligible point)
+        		(return point)))))
+
 (defun create-buttons (num &optional (size *default-button-size*) (width *default-screen-size*) (height *default-screen-size*) (difficult t))
 	(let (buttons '())
 		(dotimes (n num buttons)
 			(setf buttons
 				(cons
-					(create-button
-						(random 100)
-						(+ (* n (round (/ height 3))) (random (- (round (/ height 3)) 150)))
-						size
-						:enemy (eq (mod n 2) 0)
-						:difficult difficult) buttons)))))
+					(let ((point (get-button-start-location)))
+						(create-button
+							; (random 100)
+							(first point)
+							; (+ (* n (round (/ height 3))) (random (- (round (/ height 3)) 150)))
+							(second point)
+							size
+							:enemy (eq (mod n 2) 0)
+							:difficult difficult)) buttons)))))
 
 ;; condition function for stopping simulation:
 ;; stop once we have hit two targets or 6 seconds have passed
