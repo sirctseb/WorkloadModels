@@ -29,7 +29,7 @@
   (sgp :v t :show-focus t :trace-detail high)
 
   (chunk-type arithmetic first operator second result ones carry)
-  (chunk-type arithmetic-problem first operator second result state ones carry tens plus-x second-ones-x first-ones-x)
+  (chunk-type arithmetic-problem first operator second first-tens second-tens result state ones carry tens plus-x second-ones-x first-ones-x)
   (chunk-type arithmetic-info first-tens first-ones second-tens second-ones)
   (chunk-type successor value successor)
   (chunk-type number)
@@ -550,12 +550,6 @@
     ;; update goal
     =goal>
       state       find-first-tens
-
-    ;; put zero in second tens
-    ;; TODO this isn't really semantic
-    +imaginal>
-      ISA         arithmetic-info
-      second-tens "0"
     )
 
   ;; Production to encode value of tens place of second addend
@@ -577,6 +571,23 @@
     ;; request to store value in imaginal
     +imaginal>
       ISA         arithmetic-info
+      second-tens =value
+    )
+
+  ;; Production to copy second tens to goal after imaginal
+  (P store-second-tens
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      ;; no state check, store second ten whenever it is ready
+
+    ;; wait for imaginal
+    =imaginal>
+      ISA         arithmetic-info
+      second-tens =value
+  ==>
+    ;; update goal
+    =goal>
       second-tens =value
     )
 
@@ -636,22 +647,11 @@
     ;; check if vis-loc search failed
     ?visual-location>
       state       error
-
-    ;; get imaginal contents
-    =imaginal>
-      ISA         arithmetic-info
-      second-tens =second-tens
   ==>
     ;; skip to adding tens places
     ;; update goal
     =goal>
       state       add-tens
-
-    ;; store 0 as first tens value
-    +imaginal>
-      ISA         arithmetic-info
-      second-tens =second-tens
-      first-tens  "0"
     )
 
   ;; Production to encode value in tens place of first addend
@@ -666,21 +666,87 @@
       ISA         text
       value       =value
 
-    ;; match imaginal to keep state
-    ;; TODO case when second-tens was not found
-    =imaginal>
-      ISA         arithmetic-info
-      second-tens =second-tens
+    ;; wait for imaginal to be empty
+    ?imaginal>
+      buffer      empty
+      state       free
   ==>
     ;; update goal
     =goal>
-      state       add-tens
+      state       store-first-tens
     
     ;; request to store value in imaginal
     +imaginal>
       ISA         arithmetic-info
-      second-tens =second-tens
       first-tens  =value
+    )
+
+  ;; Production to store first tens value in goal after imaginal encoding
+  (P store-first-tens
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       store-first-tens
+    
+    ;; wait for encoding
+    =imaginal>
+      ISA         arithmetic-info
+      first-tens  =value
+  ==>
+    ;; update goal
+    =goal>
+      first-tens  =value
+      state       add-tens
+    )
+  
+  ;; Production to add tens when there are none
+  (P add-tens-nil-nil
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       add-tens
+      ;; check that neither has tens place
+      first-tens  nil
+      second-tens nil
+  ==>
+    ;; update goal
+    =goal>
+      tens        "0"
+      state       check-carry
+    )
+  
+  ;; Production to add tens when there is only tens place in first addend
+  (P add-tens-first-nil
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       add-tens
+      ;; check that only first has tens
+      - first-tens nil
+      first-tens  =first-tens
+      second-tens nil
+  ==>
+    ;; update goal
+    =goal>
+      tens        =first-tens
+      state       check-carry
+    )
+
+  ;; Production to add tens when there is only tens place in second addend
+  (P add-tens-nil-second
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       add-tens
+      ;; check that only second has tens
+      first-tens  nil
+      second-tens =second-tens
+      - second-tens nil
+  ==>
+    ;; update goal
+    =goal>
+      tens        =second-tens
+      state       check-carry
     )
 
   ;; Production to start adding tens values
@@ -689,17 +755,12 @@
     =goal>
       ISA         arithmetic-problem
       state       add-tens
-    
-    ;; get info from imaginal
-    =imaginal>
-      ISA         arithmetic-info
       first-tens  =first-tens
       second-tens =second-tens
+    
   ==>
-    ;; update state with values
+    ;; update goal
     =goal>
-      first       =first-tens
-      second      =second-tens
       state       retrieve-addition-tens
     )
 
@@ -709,8 +770,8 @@
     =goal>
       ISA         arithmetic-problem
       state       retrieve-addition-tens
-      first       =first
-      second      =second
+      first-tens  =first
+      second-tens =second
   ==>
     ;; update goal
     =goal>
@@ -730,8 +791,8 @@
     =goal>
       ISA         arithmetic-problem
       state       finish-retrieve-tens
-      first       =first
-      second      =second
+      first-tens  =first
+      second-tens =second
 
     ;; get retrieval results
     =retrieval>
