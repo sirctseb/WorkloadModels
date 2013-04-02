@@ -348,7 +348,7 @@
       state       store-second
     
     ;; wait for retrieval
-    =retrieval
+    =retrieval>
       ISA         number
       ones        =ones
       tens        =tens
