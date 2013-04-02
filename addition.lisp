@@ -360,6 +360,25 @@
       state       find-first
     )
 
+  ;; Production to get number chunk and store tens and ones when tens is nil
+  (P store-second-nil-tens
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       store-second
+      
+    ;; wait for retrieval
+    =retrieval>
+      ISA         number
+      ones        =ones
+      tens        nil
+  ==>
+    ;; update goal
+    =goal>
+      second-ones =ones
+      state       find-first
+    )
+
   ;; production to find the first addend
   (P find-first
     ;; check goal state
@@ -453,6 +472,25 @@
       first-ones  =ones
       first-tens  =tens
     )
+
+  ;; Production to get the number info from dm and store in goal when tens is nil
+  (P store-first-tens-nil
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       store-first
+    
+    ;; wait for retrieval
+    =retrieval>
+      ISA         number
+      ones        =ones
+      tens        nil
+  ==>
+    ;; update goal
+    =goal>
+      state       retrieve-addition-ones
+      first-ones  =ones
+  )
 
   ;; Production request addition fact retrieval
   (P retrieve-addition-ones
