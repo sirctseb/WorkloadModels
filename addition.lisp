@@ -737,7 +737,7 @@
       ISA         arithmetic-problem
       state       check-carry
       ;; check that there is a carry
-      carry       1
+      carry       (1)
       ;; match tens sum
       tens        =tens
   ==>
@@ -758,7 +758,7 @@
       ISA         arithmetic-problem
       state       check-carry
       ;; no carry
-      carry       0
+      carry       (0)
   ==>
     =goal>
       state       respond
