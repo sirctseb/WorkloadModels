@@ -723,6 +723,7 @@
       ISA         arithmetic-problem
       state       add-tens
       ;; check that only first has tens
+      - first-tens nil
       first-tens  =first-tens
       second-tens nil
   ==>
