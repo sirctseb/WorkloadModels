@@ -199,6 +199,8 @@
     ;; get vis-loc reference
     =visual-location>
       ISA         visual-location
+      ;; grab screen-x to record it
+      screen-x    =sx
 
     ;; check for free visual
     ?visual>
@@ -212,6 +214,7 @@
     ;; update goal
     =goal>
       state       encode-second-ones
+      second-ones-x =sx
     )
 
   ;; Production to encode and store the value of the ones place of the second addend
