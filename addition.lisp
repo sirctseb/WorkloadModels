@@ -172,45 +172,67 @@
 ;; retrieve sum
 ;; count up if retrieval fails // how?
 
+;; Production to search for the ones place of the second addend
 (P find-second-ones
+  ;; check goal state
    =goal>
       ISA         arithmetic-problem
       state       find-second-ones
 ==>
+  ;; perform search for right-most text
    +visual-location>
       ISA         visual-location
       :attended   nil
       type        text
       screen-x    highest
+
+  ;; update goal
    =goal>
       state       attend-second-ones
 )
 
+;; Production to move visual attention to ones place of second addend
 (P attend-second-ones
+  ;; check goal state
    =goal>
       ISA         arithmetic-problem
       state       attend-second-ones
+
+  ;; get vis-loc reference
    =visual-location>
       ISA         visual-location
+
+  ;; check for free visual
    ?visual>
       state       free
 ==>
+  ;; request to move attention to ones place of second addend
    +visual>
       ISA         move-attention
       screen-pos  =visual-location
+
+  ;; update goal
    =goal>
       state       encode-second-ones
 )
+
+;; Production to encode and store the value of the ones place of the second addend
 (P encode-second-ones
+  ;; chck goal state
    =goal>
       ISA         arithmetic-problem
       state       encode-second-ones
+
+  ;; wait for visual object
    =visual>
       ISA         text
       value       =value
 ==>
+  ;; update goal
    =goal>
       state       find-plus
+
+  ;; request to store info in imaginal
    +imaginal>
       ISA         arithmetic-info
       second-ones =value
