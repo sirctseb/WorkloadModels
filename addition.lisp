@@ -297,6 +297,8 @@
     ;; get vis-loc
     =visual-location>
       ISA         visual-location
+      ;; grab screen-x to store
+      screen-x    =sx
 
     ;; wait for visual system
     ;; TODO clear visual after last attend?
@@ -311,6 +313,8 @@
     ;; update goal
     =goal>
       state       encode-second-ones
+      ;; store ones location
+      first-ones-x =sx
     )
 
   ;; Production to encode value of ones place of first addend
