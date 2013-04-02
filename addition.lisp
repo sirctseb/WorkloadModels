@@ -291,6 +291,9 @@
       ISA         move-attention
       screen-pos  =visual-location
 
+    ;; keep vis-loc
+    =visual-location>
+
     ;; update goal
     =goal>
       state       find-plus-check
