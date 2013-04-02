@@ -327,7 +327,7 @@
   ==>
     ;; update goal
     =goal>
-      state       add-operands
+      state       add-ones
 
     ;; put info in imaginal buffer
     +imaginal>
@@ -336,20 +336,25 @@
       first-ones  =value2
     )
 
+  ;; Production to start adding the ones place
   (P add-operands
+    ;; check goal state
     =goal>
       ISA         arithmetic-problem
-      state       add-operands
+      state       add-ones
+
+    ;; grab imaginal buffer
     =imaginal>
       ISA         arithmetic-info
-      value1      =value1
-      value2      =value2
+      first-ones  =first-ones
+      second-ones =second-ones
   ==>
+    ;; update state with values
     =goal>
-      first       =value1
+      first       =first-ones
       operator    +
-      second      =value2
-      state      retrieve-addition
+      second      =second-ones
+      state      retrieve-addition-ones
     )
 
   (P retrieve-addition
