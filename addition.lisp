@@ -381,7 +381,7 @@
   ==>
     ;; update goal
     =goal>
-      operator    finish-retrieve-ones
+      state       finish-retrieve-ones
 
     ;; request dm retrieval
     +retrieval>
