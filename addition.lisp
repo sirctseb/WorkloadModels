@@ -308,24 +308,32 @@
       state       encode-second-ones
     )
 
+  ;; Production to encode value of ones place of first addend
   (P encode-second-operand
+    ;; check goal state
     =goal>
       ISA         arithmetic-problem
       state       attend-second-operand
+
+    ;; wait for visual attention to move
     =visual>
       ISA         text
       value       =value2
+
     ;; match imaginal to keep info about last number there
     =imaginal>
       ISA         arithmetic-info
-      value1      =value1
+      second-ones =second-ones
   ==>
+    ;; update goal
     =goal>
       state       add-operands
+
+    ;; put info in imaginal buffer
     +imaginal>
       ISA         arithmetic-info
-      value1      =value1
-      value2      =value2
+      second-ones =second-ones
+      first-ones  =value2
     )
 
   (P add-operands
