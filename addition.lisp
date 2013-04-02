@@ -165,7 +165,7 @@
     (s67 ISA SUCCESSOR VALUE (6) SUCCESSOR (7))
     (s78 ISA SUCCESSOR VALUE (7) SUCCESSOR (8))
     (s89 ISA SUCCESSOR VALUE (8) SUCCESSOR (9))
-    (addition-goal ISA arithmetic-problem operator + state read-first-operand)
+    (addition-goal ISA arithmetic-problem operator + state find-second-ones)
     )
 
 ;;; TODO rules:
@@ -191,7 +191,7 @@
     +visual-location>
       ISA         visual-location
       :attended   nil
-      type        text
+      kind        text
       screen-x    highest
 
     ;; update goal
@@ -264,7 +264,7 @@
     ;; search for plus sign
     +visual-location>
       ISA         visual-location
-      type        text
+      kind        text
       value       +
   )
 
@@ -278,7 +278,7 @@
     ;; check vis-loc
     =visual-location>
       ISA         visual-location
-      type        text
+      kind        text
       value       +
       ;; grab screen-x
       screen-x    =sx
@@ -287,7 +287,7 @@
     +visual-location>
       ISA         visual-location
       < screen-x  =sx
-      type        text
+      kind        text
       screen-x    highest
 
     ;; update goal
@@ -322,17 +322,17 @@
 
     ;; update goal
     =goal>
-      state       encode-second-ones
+      state       encode-first-ones
       ;; store ones location
       first-ones-x =sx
     )
 
   ;; Production to encode value of ones place of first addend
-  (P encode-second-ones
+  (P encode-first-ones
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
-      state       encode-second-ones
+      state       encode-first-ones
 
     ;; wait for visual attention to move
     =visual>
@@ -437,7 +437,7 @@
   ==>
     +visual-location>
       ISA         visual-location
-      type        text
+      kind        text
       ;; search right of plus
       > screen-x  =plus-x
       ;; search left of ones place
@@ -458,7 +458,7 @@
     ;; check for vis-loc
     =visual-location>
       ISA         visual-location
-      type        text
+      kind        text
 
     ;; wait for visual to be free
     ?visual>
@@ -526,8 +526,8 @@
     ;; search for location left of first ones place
     +visual-location>
       ISA         visual-location
-      type        text
-      <screen-x   =first-ones-x
+      kind        text
+      < screen-x   =first-ones-x
 
     ;; update goal
     =goal>
