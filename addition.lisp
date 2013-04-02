@@ -671,12 +671,6 @@
     =visual>
       ISA         text
       value       =value
-
-    ;; match imaginal to keep state
-    ;; TODO case when second-tens was not found
-    =imaginal>
-      ISA         arithmetic-info
-      second-tens =second-tens
   ==>
     ;; update goal
     =goal>
@@ -685,7 +679,6 @@
     ;; request to store value in imaginal
     +imaginal>
       ISA         arithmetic-info
-      second-tens =second-tens
       first-tens  =value
     )
 
