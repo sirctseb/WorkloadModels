@@ -398,7 +398,6 @@
       ISA         arithmetic-problem
       state       finish-retrieve-ones
       first       =first
-      operator    prevent-from-matching
       second      =second
     ;; get retrieval results
     =retrieval>
