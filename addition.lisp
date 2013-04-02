@@ -525,5 +525,31 @@
       state       attend-first-tens
     )
 
+  ;; Production to attend to tens place of first addend
+  (P attend-first-tens
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       attend-first-tens
+    
+    ;; get vis-loc
+    =visual-location>
+      ISA         visual-location
+      kind        text
+
+    ;; wait for visual to be free
+    ?visual>
+      state       free
+  ==>
+    ;; request move-attention
+    +visual>
+      ISA         move-attention
+      screen-pos  =visual-location
+      
+    ;; update goal
+    =goal>
+      state       encode-first-tens
+    )
+
   (goal-focus addition-goal)
 )
