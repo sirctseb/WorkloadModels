@@ -568,5 +568,34 @@
       state       add-tens
     )
 
+  ;; Production to encode value in tens place of first addend
+  (P encode-first-tens
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       encode-first-tens
+
+    ;; wait for visual attention
+    =visual>
+      ISA         text
+      value       =value
+
+    ;; match imaginal to keep state
+    ;; TODO case when second-tens was not found
+    =imaginal>
+      ISA         arithmetic-info
+      second-tens =second-tens
+  ==>
+    ;; update goal
+    =goal>
+      state       add-tens
+    
+    ;; request to store value in imaginal
+    +imaginal>
+      ISA         arithmetic-info
+      second-tens =second-tens
+      first-tens  =value
+    )
+
   (goal-focus addition-goal)
 )
