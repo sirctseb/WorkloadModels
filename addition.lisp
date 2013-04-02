@@ -479,5 +479,27 @@
       state       find-first-tens
     )
 
+  ;; Production to encode value of tens place of second addend
+  (P encode-second-tens
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       encode-second-tens
+    
+    ;; wait for attention to shift
+    =visual>
+      ISA         text
+      value       =value
+  ==>
+    ;; update state
+    =goal>
+      state       find-first-tens
+
+    ;; request to store value in imaginal
+    +imaginal>
+      ISA         arithmetic-info
+      second-tens =value
+    )
+
   (goal-focus addition-goal)
 )
