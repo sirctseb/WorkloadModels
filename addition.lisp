@@ -406,36 +406,10 @@
   ==>
     ;; update goal
     =goal>
-      state       add-ones
-
-    ;; put info in imaginal buffer
-    +imaginal>
-      ISA         arithmetic-info
-      second-ones =second-ones
-      first-ones  =value2
-    )
-
-  ;; Production to start adding the ones place
-  ;; TODO this should be combined into retrieve-addition-ones.
-  ;; TODO no need for intermediately copying state to goal
-  (P add-ones
-    ;; check goal state
-    =goal>
-      ISA         arithmetic-problem
-      state       add-ones
-
-    ;; grab imaginal buffer
-    =imaginal>
-      ISA         arithmetic-info
-      first-ones  =first-ones
-      second-ones =second-ones
-  ==>
-    ;; update state with values
-    =goal>
-      first       =first-ones
-      operator    +
+      state       retrieve-addition-ones
+      ;; put values into goal buffer
+      first       =value2
       second      =second-ones
-      state      retrieve-addition-ones
     )
 
   ;; Production request addition fact retrieval
