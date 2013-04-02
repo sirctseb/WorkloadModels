@@ -551,5 +551,22 @@
       state       encode-first-tens
     )
 
+  ;; Production to detect when there is no tens place for first addend
+  (P find-first-tens-fail
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       attend-first-tens
+    
+    ;; check if vis-loc search failed
+    ?visual-location>
+      state       error
+  ==>
+    ;; skip to adding tens places
+    ;; update goal
+    =goal>
+      state       add-tens
+    )
+
   (goal-focus addition-goal)
 )
