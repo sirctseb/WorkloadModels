@@ -236,6 +236,25 @@
       second-ones =value
     )
 
+  ;; Production to find the plus sign
+  ;; TODO the RHS of this could just be in encode-second-ones
+  (P find-plus
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       find-plus
+  ==>
+    ;; update goal
+    =goal>
+      state       find-first-ones
+
+    ;; search for plus sign
+    +visual-location>
+      ISA         visual-location
+      type        text
+      value       +
+  )
+
   (P find-second-operand
     =goal>
       ISA         arithmetic-problem
