@@ -616,5 +616,27 @@
       state       retrieve-addition-tens
     )
 
+  ;; Production to request retrieval of tens addition fact
+  (P retrieve-addition-tens
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       retrieve-addition-tens
+      first       =first
+      second      =second
+  ==>
+    ;; update goal
+    =goal>
+      state    finish-retrieve-tens
+
+    ;; request dm retrieval
+    +retrieval>
+      ISA         arithmetic
+      first       =first
+      second      =second
+      operator    +
+    )
+
+
   (goal-focus addition-goal)
 )
