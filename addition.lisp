@@ -566,12 +566,30 @@
   ==>
     ;; update state
     =goal>
-      state       find-first-tens
+      state       store-second-tens
 
     ;; request to store value in imaginal
     +imaginal>
       ISA         arithmetic-info
       second-tens =value
+    )
+  
+  ;; Production to copy second tens to goal after imaginal
+  (P store-second-tens
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       store-second-tens
+    
+    ;; wait for imaginal
+    =imaginal>
+      ISA         arithmetic-info
+      second-tens =value
+  ==>
+    ;; update goal
+    =goal>
+      second-tens =value
+      state       find-first-tens
     )
 
   ;; Production to find tens place of first addend
