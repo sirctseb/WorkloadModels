@@ -573,7 +573,7 @@
       ISA         arithmetic-info
       second-tens =value
     )
-  
+
   ;; Production to copy second tens to goal after imaginal
   (P store-second-tens
     ;; check goal state
@@ -658,12 +658,6 @@
     ;; update goal
     =goal>
       state       add-tens
-
-    ;; store 0 as first tens value
-    +imaginal>
-      ISA         arithmetic-info
-      second-tens =second-tens
-      first-tens  "0"
     )
 
   ;; Production to encode value in tens place of first addend
