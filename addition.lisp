@@ -778,7 +778,7 @@
       carry       "0"
   ==>
     =goal>
-      state       respond
+      state       response
     )
 
   ;; Production to set new tens place after incrementing for carry
