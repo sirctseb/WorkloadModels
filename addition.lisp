@@ -332,7 +332,7 @@
   ==>
     ;; update goal
     =goal>
-      state       store-second
+      state       find-first
 
     ;; request number info from retrieval
     +retrieval>
@@ -345,7 +345,7 @@
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
-      state       store-second
+      second-ones nil
     
     ;; wait for retrieval
     =retrieval>
@@ -357,7 +357,6 @@
     =goal>
       second-ones =ones
       second-tens =tens
-      state       find-first
     )
 
   ;; Production to get number chunk and store tens and ones when tens is nil
@@ -365,7 +364,7 @@
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
-      state       store-second
+      second-ones nil
       
     ;; wait for retrieval
     =retrieval>
@@ -376,7 +375,6 @@
     ;; update goal
     =goal>
       second-ones =ones
-      state       find-first
     )
 
   ;; production to find the first addend
