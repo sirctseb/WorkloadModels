@@ -637,6 +637,28 @@
       operator    +
     )
 
+  ;; Production to get results of addition retrieval
+  (P finish-retrieve-tens
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       finish-retrieve-tens
+      first       =first
+      second      =second
+
+    ;; get retrieval results
+    =retrieval>
+      ISA         arithmetic
+      first       =first
+      operator    +
+      second      =second
+      ones        =ones
+  ==>
+    ;; store ones and carry result in goal
+    =goal>
+      tens        =ones
+      state       check-carry
+    )
 
   (goal-focus addition-goal)
 )
