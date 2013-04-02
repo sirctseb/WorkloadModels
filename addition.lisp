@@ -477,41 +477,28 @@
     =goal>
       ISA         arithmetic-problem
       state       store-first
-    
+      second-ones =second-ones
+
     ;; wait for retrieval
     =retrieval>
       ISA         number
-      ones        =ones
+      ones        =first-ones
       tens        nil
+    ?retrieval>
+      state       free
   ==>
-    ;; update goal
-    =goal>
-      state       retrieve-addition-ones
-      first-ones  =ones
-  )
-
-  ;; Production request addition fact retrieval
-  (P retrieve-addition-ones
-    ;; check goal state
-    =goal>
-      ISA         arithmetic-problem
-      state       retrieve-addition-ones
-      first-ones  =first
+    ;; request addition dm retrieval
+    +retrieval>
+      ISA         arithmetic
+      first       =first-ones
+      second      =second-ones
       operator    +
-      second-ones =second
-      result      nil
-  ==>
+    
     ;; update goal
     =goal>
       state       finish-retrieve-ones
-
-    ;; request dm retrieval
-    +retrieval>
-      ISA         arithmetic
-      first       =first
-      second      =second
-      operator    +
-    )
+      first-ones  =first-ones
+  )
 
   ;; Production to get results of addition retrieval
   (P finish-retrieve-ones
