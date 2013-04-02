@@ -674,12 +674,30 @@
   ==>
     ;; update goal
     =goal>
-      state       add-tens
+      state       store-first-tens
     
     ;; request to store value in imaginal
     +imaginal>
       ISA         arithmetic-info
       first-tens  =value
+    )
+
+  ;; Production to store first tens value in goal after imaginal encoding
+  (P store-first-tens
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       store-first-tens
+    
+    ;; wait for encoding
+    =imaginal>
+      ISA         arithmetic-info
+      first-tens  =value
+  ==>
+    ;; update goal
+    =goal>
+      first-tens  =value
+      state       add-tens
     )
 
   ;; Production to start adding tens values
