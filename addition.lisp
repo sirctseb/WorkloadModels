@@ -360,16 +360,16 @@
       state       find-first
     )
 
-
-  ;; production to find ones place of the first addend
+  ;; production to find the first addend
   (P find-first
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
-      state       find-first-ones
+      state       find-first
 
   ==>
     ;; search for right-most text left of current vis-loc
+    ;; TODO this can just be leftmost now.
     +visual-location>
       ISA         visual-location
       ;; plus sign is at 105
@@ -379,62 +379,79 @@
 
     ;; update goal
     =goal>
-      state       attend-first-ones
+      state       attend-first
     )
 
-  ;; attend ones place of the first addend
-  (P attend-first-ones
+  ;; attend the first addend
+  (P attend-first
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
-      state       attend-first-ones
+      state       attend-first
 
     ;; get vis-loc
     =visual-location>
       ISA         visual-location
-      ;; grab screen-x to store
-      screen-x    =sx
 
     ;; wait for visual system
     ;; TODO clear visual after last attend?
     ?visual>
       state       free
   ==>
-    ;; request move-attention to ones place of first addend
+    ;; request move-attention to first addend
     +visual>
       ISA         move-attention
       screen-pos  =visual-location
 
     ;; update goal
     =goal>
-      state       encode-first-ones
-      ;; store ones location
-      first-ones-x =sx
+      state       encode-first
     )
 
-  ;; Production to encode value of ones place of first addend
+  ;; Production to encode value of first addend
   (P encode-first-ones
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
-      state       encode-first-ones
+      state       encode-first
 
     ;; wait for visual attention to move
     =visual>
       ISA         text
-      value       =value2
+      value       =value
 
-    ;; match imaginal to keep info about last number there
-    =imaginal>
-      ISA         arithmetic-info
-      second-ones =second-ones
+    ;; make sure retrieval is free
+    ?retrieval>
+      state       free
+  ==>
+    ;; request the dm of the number info
+    +retrieval>
+      ISA         number
+      value       =value
+
+    ;; update goal
+    =goal>
+      state       store-first
+    )
+
+  ;; Production to get the number info from dm and store in goal
+  (P store-first
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       store-first
+    
+    ;; wait for retrieval
+    =retrieval>
+      ISA         number
+      ones        =ones
+      tens        =tens
   ==>
     ;; update goal
     =goal>
       state       retrieve-addition-ones
-      ;; put values into goal buffer
-      first       =value2
-      second      =second-ones
+      first-ones  =ones
+      first-tens  =tens
     )
 
   ;; Production request addition fact retrieval
