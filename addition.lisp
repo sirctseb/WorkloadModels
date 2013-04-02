@@ -509,8 +509,8 @@
       state       add-tens
     )
   
-  ;; Production to add tens when there are none
-  (P add-tens-nil-nil
+  ;; Production to add tens when there are none and there is no carry
+  (P add-tens-nil-nil-no-carry
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
@@ -518,10 +518,30 @@
       ;; check that neither has tens place
       first-tens  nil
       second-tens nil
+      carry       "0"
   ==>
     ;; update goal
     =goal>
       tens        "0"
+      ;; skip straight to response
+      state       response
+    )
+
+  ;; Production to add tens where there are none but there is a carry
+  (P add-tens-nil-nil-carry
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       add-tens
+      ;; check that neither has tens place
+      first-tens  nil
+      second-tens nil
+      - carry     "0"
+  ==>
+    ;; update goal
+    =goal>
+      tens        "0"
+      ;; skip to carry check
       state       check-carry
     )
   
