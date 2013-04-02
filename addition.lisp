@@ -337,6 +337,8 @@
     )
 
   ;; Production to start adding the ones place
+  ;; TODO this should be combined into retrieve-addition-ones.
+  ;; TODO no need for intermediately copying state to goal
   (P add-operands
     ;; check goal state
     =goal>
@@ -357,17 +359,22 @@
       state      retrieve-addition-ones
     )
 
-  (P retrieve-addition
+  ;; Production request addition fact retrieval
+  (P retrieve-addition-ones
+    ;; check goal state
     =goal>
       ISA         arithmetic-problem
-      state       retrieve-addition
+      state       retrieve-addition-ones
       first       =first
       operator    +
       second      =second
       result      nil
   ==>
+    ;; update goal
     =goal>
-      operator    prevent-from-matching
+      operator    finish-retrieve-ones
+
+    ;; request dm retrieval
     +retrieval>
       ISA         arithmetic
       first       =first
