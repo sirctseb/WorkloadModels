@@ -28,7 +28,7 @@
   (sgp :esc t :lf .05)
   (sgp :v t :show-focus t :trace-detail high)
 
-  (chunk-type arithmetic first operator second result)
+  (chunk-type arithmetic first operator second result ones carry)
   (chunk-type arithmetic-problem first operator second result state)
   (chunk-type arithmetic-info first-tens first-ones second-tens second-ones)
   (chunk-type number)
