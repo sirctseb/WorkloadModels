@@ -808,6 +808,8 @@
       state       response
       ;; match tens value
       tens        =tens
+      ;; make sure tens not "0"
+      - tens      "0"
 
     ;; check for vocal preparation free
     ?vocal>
@@ -821,6 +823,31 @@
     ;; update goal
     =goal>
       state       response-ones
+    )
+
+  ;; Production to only speak ones value if tens is 0
+  (P respons-ones-no-tens
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       response
+      ;; make sure tens is 0
+      tens        "0"
+      ;; match ones
+      ones        =ones
+
+    ;; check for vocal prep free
+    ?vocal>
+      preparation free
+  ==>
+    ;; vocalize ones value
+    +vocal>
+      ISA         speak
+      string      =ones
+
+    ;; update goal
+    =goal>
+      state       done
     )
 
   ;; Production to speak the ones value
