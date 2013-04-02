@@ -566,7 +566,7 @@
   ==>
     ;; update state
     =goal>
-      state       store-second-tens
+      state       find-first-tens
 
     ;; request to store value in imaginal
     +imaginal>
@@ -579,8 +579,8 @@
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
-      state       store-second-tens
-    
+      ;; no state check, store second ten whenever it is ready
+
     ;; wait for imaginal
     =imaginal>
       ISA         arithmetic-info
@@ -589,7 +589,6 @@
     ;; update goal
     =goal>
       second-tens =value
-      state       find-first-tens
     )
 
   ;; Production to find tens place of first addend
@@ -666,6 +665,11 @@
     =visual>
       ISA         text
       value       =value
+
+    ;; wait for imaginal to be empty
+    ?imaginal>
+      buffer      empty
+      state       free
   ==>
     ;; update goal
     =goal>
