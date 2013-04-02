@@ -769,7 +769,7 @@
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
-      state       check-carry
+      state       increment-tens
 
     ;; match retrieval
     =retrieval>
