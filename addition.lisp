@@ -699,6 +699,22 @@
       first-tens  =value
       state       add-tens
     )
+  
+  ;; Production to add tens when there are none
+  (P add-tens-nil-nil
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       add-tens
+      ;; check that neither has tens place
+      first-tens  nil
+      second-tens nil
+  ==>
+    ;; update goal
+    =goal>
+      tens        "0"
+      state       check-carry
+    )
 
   ;; Production to start adding tens values
   (P add-tens
