@@ -7,12 +7,8 @@
   
   (let* ((lis (permute-list '("1" "2" "3" "4" "5" "6" "7")))
     (answers nil)   
-    (text1 (if (> addend1 9)
-            (format nil "~a ~a" (floor addend1 10) (mod addend1 10))
-            (format nil "~a" addend1)))
-    (text2 (if (> addend2 9)
-            (format nil "~a ~a" (floor addend2 10) (mod addend2 10))
-            (format nil "~a" addend2)))
+    (text1 (format nil "~a" addend1))
+    (text2 (format nil "~a" addend2))
     (window (open-exp-window "Addition Problem"
       :visible t
       :width 300
@@ -43,33 +39,14 @@
   (sgp :v t :show-focus t :trace-detail high)
 
   (chunk-type arithmetic first operator second result ones carry)
-  (chunk-type arithmetic-problem first operator second first-tens second-tens result state ones carry tens second-ones-x first-ones-x)
+  (chunk-type arithmetic-problem first-ones operator second-ones first-tens second-tens result state ones carry tens second-ones-x first-ones-x)
   (chunk-type arithmetic-info first-tens first-ones second-tens second-ones)
   (chunk-type successor value successor)
-  (chunk-type number)
+  (chunk-type number ones tens value)
 
   (add-dm
     (+ ISA CHUNK)
     (* ISA CHUNK)
-    (n0 ISA NUMBER)
-    (n1 ISA NUMBER)
-    (n2 ISA NUMBER)
-    (n3 ISA NUMBER)
-    (n4 ISA NUMBER)
-    (n5 ISA NUMBER)
-    (n6 ISA NUMBER)
-    (n7 ISA NUMBER)
-    (n8 ISA NUMBER)
-    (n9 ISA NUMBER)
-    (n10 ISA NUMBER)
-    (n11 ISA NUMBER)
-    (n12 ISA NUMBER)
-    (n13 ISA NUMBER)
-    (n14 ISA NUMBER)
-    (n15 ISA NUMBER)
-    (n16 ISA NUMBER)
-    (n17 ISA NUMBER)
-    (n18 ISA NUMBER)
     (a0+0 ISA ARITHMETIC FIRST "0" OPERATOR + SECOND "0" RESULT "0" ONES "0" CARRY "0")
     (a0+1 ISA ARITHMETIC FIRST "0" OPERATOR + SECOND "1" RESULT "1" ONES "1" CARRY "0")
     (a0+2 ISA ARITHMETIC FIRST "0" OPERATOR + SECOND "2" RESULT "2" ONES "2" CARRY "0")
@@ -170,6 +147,106 @@
     (a9+7 ISA ARITHMETIC FIRST "9" OPERATOR + SECOND "7" RESULT "16" ONES "6" CARRY "1")
     (a9+8 ISA ARITHMETIC FIRST "9" OPERATOR + SECOND "8" RESULT "17" ONES "7" CARRY "1")
     (a9+9 ISA ARITHMETIC FIRST "9" OPERATOR + SECOND "9" RESULT "18" ONES "8" CARRY "1")
+    (n00 ISA NUMBER VALUE "0" ONES "0" TENS nil)
+    (n01 ISA NUMBER VALUE "1" ONES "1" TENS nil)
+    (n02 ISA NUMBER VALUE "2" ONES "2" TENS nil)
+    (n03 ISA NUMBER VALUE "3" ONES "3" TENS nil)
+    (n04 ISA NUMBER VALUE "4" ONES "4" TENS nil)
+    (n05 ISA NUMBER VALUE "5" ONES "5" TENS nil)
+    (n06 ISA NUMBER VALUE "6" ONES "6" TENS nil)
+    (n07 ISA NUMBER VALUE "7" ONES "7" TENS nil)
+    (n08 ISA NUMBER VALUE "8" ONES "8" TENS nil)
+    (n09 ISA NUMBER VALUE "9" ONES "9" TENS nil)
+    (n10 ISA NUMBER VALUE "10" ONES "0" TENS "1")
+    (n11 ISA NUMBER VALUE "11" ONES "1" TENS "1")
+    (n12 ISA NUMBER VALUE "12" ONES "2" TENS "1")
+    (n13 ISA NUMBER VALUE "13" ONES "3" TENS "1")
+    (n14 ISA NUMBER VALUE "14" ONES "4" TENS "1")
+    (n15 ISA NUMBER VALUE "15" ONES "5" TENS "1")
+    (n16 ISA NUMBER VALUE "16" ONES "6" TENS "1")
+    (n17 ISA NUMBER VALUE "17" ONES "7" TENS "1")
+    (n18 ISA NUMBER VALUE "18" ONES "8" TENS "1")
+    (n19 ISA NUMBER VALUE "19" ONES "9" TENS "1")
+    (n20 ISA NUMBER VALUE "20" ONES "0" TENS "2")
+    (n21 ISA NUMBER VALUE "21" ONES "1" TENS "2")
+    (n22 ISA NUMBER VALUE "22" ONES "2" TENS "2")
+    (n23 ISA NUMBER VALUE "23" ONES "3" TENS "2")
+    (n24 ISA NUMBER VALUE "24" ONES "4" TENS "2")
+    (n25 ISA NUMBER VALUE "25" ONES "5" TENS "2")
+    (n26 ISA NUMBER VALUE "26" ONES "6" TENS "2")
+    (n27 ISA NUMBER VALUE "27" ONES "7" TENS "2")
+    (n28 ISA NUMBER VALUE "28" ONES "8" TENS "2")
+    (n29 ISA NUMBER VALUE "29" ONES "9" TENS "2")
+    (n30 ISA NUMBER VALUE "30" ONES "0" TENS "3")
+    (n31 ISA NUMBER VALUE "31" ONES "1" TENS "3")
+    (n32 ISA NUMBER VALUE "32" ONES "2" TENS "3")
+    (n33 ISA NUMBER VALUE "33" ONES "3" TENS "3")
+    (n34 ISA NUMBER VALUE "34" ONES "4" TENS "3")
+    (n35 ISA NUMBER VALUE "35" ONES "5" TENS "3")
+    (n36 ISA NUMBER VALUE "36" ONES "6" TENS "3")
+    (n37 ISA NUMBER VALUE "37" ONES "7" TENS "3")
+    (n38 ISA NUMBER VALUE "38" ONES "8" TENS "3")
+    (n39 ISA NUMBER VALUE "39" ONES "9" TENS "3")
+    (n40 ISA NUMBER VALUE "40" ONES "0" TENS "4")
+    (n41 ISA NUMBER VALUE "41" ONES "1" TENS "4")
+    (n42 ISA NUMBER VALUE "42" ONES "2" TENS "4")
+    (n43 ISA NUMBER VALUE "43" ONES "3" TENS "4")
+    (n44 ISA NUMBER VALUE "44" ONES "4" TENS "4")
+    (n45 ISA NUMBER VALUE "45" ONES "5" TENS "4")
+    (n46 ISA NUMBER VALUE "46" ONES "6" TENS "4")
+    (n47 ISA NUMBER VALUE "47" ONES "7" TENS "4")
+    (n48 ISA NUMBER VALUE "48" ONES "8" TENS "4")
+    (n49 ISA NUMBER VALUE "49" ONES "9" TENS "4")
+    (n50 ISA NUMBER VALUE "50" ONES "0" TENS "5")
+    (n51 ISA NUMBER VALUE "51" ONES "1" TENS "5")
+    (n52 ISA NUMBER VALUE "52" ONES "2" TENS "5")
+    (n53 ISA NUMBER VALUE "53" ONES "3" TENS "5")
+    (n54 ISA NUMBER VALUE "54" ONES "4" TENS "5")
+    (n55 ISA NUMBER VALUE "55" ONES "5" TENS "5")
+    (n56 ISA NUMBER VALUE "56" ONES "6" TENS "5")
+    (n57 ISA NUMBER VALUE "57" ONES "7" TENS "5")
+    (n58 ISA NUMBER VALUE "58" ONES "8" TENS "5")
+    (n59 ISA NUMBER VALUE "59" ONES "9" TENS "5")
+    (n60 ISA NUMBER VALUE "60" ONES "0" TENS "6")
+    (n61 ISA NUMBER VALUE "61" ONES "1" TENS "6")
+    (n62 ISA NUMBER VALUE "62" ONES "2" TENS "6")
+    (n63 ISA NUMBER VALUE "63" ONES "3" TENS "6")
+    (n64 ISA NUMBER VALUE "64" ONES "4" TENS "6")
+    (n65 ISA NUMBER VALUE "65" ONES "5" TENS "6")
+    (n66 ISA NUMBER VALUE "66" ONES "6" TENS "6")
+    (n67 ISA NUMBER VALUE "67" ONES "7" TENS "6")
+    (n68 ISA NUMBER VALUE "68" ONES "8" TENS "6")
+    (n69 ISA NUMBER VALUE "69" ONES "9" TENS "6")
+    (n70 ISA NUMBER VALUE "70" ONES "0" TENS "7")
+    (n71 ISA NUMBER VALUE "71" ONES "1" TENS "7")
+    (n72 ISA NUMBER VALUE "72" ONES "2" TENS "7")
+    (n73 ISA NUMBER VALUE "73" ONES "3" TENS "7")
+    (n74 ISA NUMBER VALUE "74" ONES "4" TENS "7")
+    (n75 ISA NUMBER VALUE "75" ONES "5" TENS "7")
+    (n76 ISA NUMBER VALUE "76" ONES "6" TENS "7")
+    (n77 ISA NUMBER VALUE "77" ONES "7" TENS "7")
+    (n78 ISA NUMBER VALUE "78" ONES "8" TENS "7")
+    (n79 ISA NUMBER VALUE "79" ONES "9" TENS "7")
+    (n80 ISA NUMBER VALUE "80" ONES "0" TENS "8")
+    (n81 ISA NUMBER VALUE "81" ONES "1" TENS "8")
+    (n82 ISA NUMBER VALUE "82" ONES "2" TENS "8")
+    (n83 ISA NUMBER VALUE "83" ONES "3" TENS "8")
+    (n84 ISA NUMBER VALUE "84" ONES "4" TENS "8")
+    (n85 ISA NUMBER VALUE "85" ONES "5" TENS "8")
+    (n86 ISA NUMBER VALUE "86" ONES "6" TENS "8")
+    (n87 ISA NUMBER VALUE "87" ONES "7" TENS "8")
+    (n88 ISA NUMBER VALUE "88" ONES "8" TENS "8")
+    (n89 ISA NUMBER VALUE "89" ONES "9" TENS "8")
+    (n90 ISA NUMBER VALUE "90" ONES "0" TENS "9")
+    (n91 ISA NUMBER VALUE "91" ONES "1" TENS "9")
+    (n92 ISA NUMBER VALUE "92" ONES "2" TENS "9")
+    (n93 ISA NUMBER VALUE "93" ONES "3" TENS "9")
+    (n94 ISA NUMBER VALUE "94" ONES "4" TENS "9")
+    (n95 ISA NUMBER VALUE "95" ONES "5" TENS "9")
+    (n96 ISA NUMBER VALUE "96" ONES "6" TENS "9")
+    (n97 ISA NUMBER VALUE "97" ONES "7" TENS "9")
+    (n98 ISA NUMBER VALUE "98" ONES "8" TENS "9")
+    (n99 ISA NUMBER VALUE "99" ONES "9" TENS "9")
     (s01 ISA SUCCESSOR VALUE "0" SUCCESSOR "1")
     (s12 ISA SUCCESSOR VALUE "1" SUCCESSOR "2")
     (s23 ISA SUCCESSOR VALUE "2" SUCCESSOR "3")
@@ -179,7 +256,7 @@
     (s67 ISA SUCCESSOR VALUE "6" SUCCESSOR "7")
     (s78 ISA SUCCESSOR VALUE "7" SUCCESSOR "8")
     (s89 ISA SUCCESSOR VALUE "8" SUCCESSOR "9")
-    (addition-goal ISA arithmetic-problem operator + state find-second-ones)
+    (addition-goal ISA arithmetic-problem operator + state find-second)
     )
 
 ;;; TODO rules:
@@ -194,12 +271,12 @@
 ;; retrieve sum
 ;; count up if retrieval fails // how?
 
-  ;; Production to search for the ones place of the second addend
-  (P find-second-ones
+  ;; Production to search for the second addend
+  (P find-second
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
-      state       find-second-ones
+      state       find-second
   ==>
     ;; perform search for right-most text
     +visual-location>
@@ -210,69 +287,106 @@
 
     ;; update goal
     =goal>
-      state       attend-second-ones
+      state       attend-second
     )
 
-  ;; Production to move visual attention to ones place of second addend
-  (P attend-second-ones
+  ;; Production to move visual attention to second addend
+  (P attend-second
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
-      state       attend-second-ones
+      state       attend-second
 
     ;; get vis-loc reference
     =visual-location>
       ISA         visual-location
-      ;; grab screen-x to record it
-      screen-x    =sx
 
     ;; check for free visual
     ?visual>
       state       free
   ==>
-    ;; request to move attention to ones place of second addend
+    ;; request to move attention to second addend
     +visual>
       ISA         move-attention
       screen-pos  =visual-location
 
     ;; update goal
     =goal>
-      state       encode-second-ones
-      second-ones-x =sx
+      state       encode-second
     )
 
-  ;; Production to encode and store the value of the ones place of the second addend
-  (P encode-second-ones
+  ;; Production to encode and store the value of the second addend
+  (P encode-second
     ;; chck goal state
     =goal>
       ISA         arithmetic-problem
-      state       encode-second-ones
+      state       encode-second
 
     ;; wait for visual object
     =visual>
       ISA         text
       value       =value
+
+    ?retrieval>
+      state       free
   ==>
     ;; update goal
     =goal>
-      state       find-first-ones
+      state       find-first
 
-    ;; request to store info in imaginal
-    +imaginal>
-      ISA         arithmetic-info
-      second-ones =value
+    ;; request number info from retrieval
+    +retrieval>
+      ISA         number
+      value       =value
     )
 
-
-  ;; production to find ones place of the first addend
-  (P find-first-ones
+  ;; Production to get number chunk and store tens and ones
+  (P store-second
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
-      state       find-first-ones
+      second-ones nil
+    
+    ;; wait for retrieval
+    =retrieval>
+      ISA         number
+      ones        =ones
+      tens        =tens
+  ==>
+    ;; update goal
+    =goal>
+      second-ones =ones
+      second-tens =tens
+    )
+
+  ;; Production to get number chunk and store tens and ones when tens is nil
+  (P store-second-nil-tens
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      second-ones nil
+      
+    ;; wait for retrieval
+    =retrieval>
+      ISA         number
+      ones        =ones
+      tens        nil
+  ==>
+    ;; update goal
+    =goal>
+      second-ones =ones
+    )
+
+  ;; production to find the first addend
+  (P find-first
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       find-first
 
   ==>
     ;; search for right-most text left of current vis-loc
+    ;; TODO this can just be leftmost now.
     +visual-location>
       ISA         visual-location
       ;; plus sign is at 105
@@ -282,63 +396,99 @@
 
     ;; update goal
     =goal>
-      state       attend-first-ones
+      state       attend-first
     )
 
-  ;; attend ones place of the first addend
-  (P attend-first-ones
+  ;; attend the first addend
+  (P attend-first
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
-      state       attend-first-ones
+      state       attend-first
 
     ;; get vis-loc
     =visual-location>
       ISA         visual-location
-      ;; grab screen-x to store
-      screen-x    =sx
 
     ;; wait for visual system
     ;; TODO clear visual after last attend?
     ?visual>
       state       free
   ==>
-    ;; request move-attention to ones place of first addend
+    ;; request move-attention to first addend
     +visual>
       ISA         move-attention
       screen-pos  =visual-location
 
     ;; update goal
     =goal>
-      state       encode-first-ones
-      ;; store ones location
-      first-ones-x =sx
+      state       encode-first
     )
 
-  ;; Production to encode value of ones place of first addend
+  ;; Production to encode value of first addend
   (P encode-first-ones
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
-      state       encode-first-ones
+      state       encode-first
 
     ;; wait for visual attention to move
     =visual>
       ISA         text
-      value       =value2
+      value       =value
 
-    ;; match imaginal to keep info about last number there
-    =imaginal>
-      ISA         arithmetic-info
-      second-ones =second-ones
+    ;; make sure retrieval is free
+    ?retrieval>
+      state       free
+  ==>
+    ;; request the dm of the number info
+    +retrieval>
+      ISA         number
+      value       =value
+
+    ;; update goal
+    =goal>
+      state       store-first
+    )
+
+  ;; Production to get the number info from dm and store in goal
+  (P store-first
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       store-first
+    
+    ;; wait for retrieval
+    =retrieval>
+      ISA         number
+      ones        =ones
+      tens        =tens
   ==>
     ;; update goal
     =goal>
       state       retrieve-addition-ones
-      ;; put values into goal buffer
-      first       =value2
-      second      =second-ones
+      first-ones  =ones
+      first-tens  =tens
     )
+
+  ;; Production to get the number info from dm and store in goal when tens is nil
+  (P store-first-tens-nil
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       store-first
+    
+    ;; wait for retrieval
+    =retrieval>
+      ISA         number
+      ones        =ones
+      tens        nil
+  ==>
+    ;; update goal
+    =goal>
+      state       retrieve-addition-ones
+      first-ones  =ones
+  )
 
   ;; Production request addition fact retrieval
   (P retrieve-addition-ones
@@ -346,9 +496,9 @@
     =goal>
       ISA         arithmetic-problem
       state       retrieve-addition-ones
-      first       =first
+      first-ones  =first
       operator    +
-      second      =second
+      second-ones =second
       result      nil
   ==>
     ;; update goal
@@ -369,8 +519,8 @@
     =goal>
       ISA         arithmetic-problem
       state       finish-retrieve-ones
-      first       =first
-      second      =second
+      first-ones  =first
+      second-ones      =second
     ;; get retrieval results
     =retrieval>
       ISA         arithmetic
@@ -384,219 +534,6 @@
     =goal>
       ones        =ones
       carry       =carry
-      state       find-second-tens
-    )
-  
-  ;; Production to search for tens place of second addend
-  (P find-second-tens
-    ;; check goal state
-    =goal>
-      ISA         arithmetic-problem
-      state       find-second-tens
-      ;; get x of second addend ones place
-      second-ones-x =second-ones-x
-  ==>
-    +visual-location>
-      ISA         visual-location
-      kind        text
-      ;; search right of plus
-      > screen-x  105
-      ;; search left of ones place
-      < screen-x  =second-ones-x
-
-    ;; update goal
-    =goal>
-      state       attend-second-tens
-    )
-  
-  ;; Production to attend to tens place of second addend
-  (P attend-second-tens
-    ;; check goal state
-    =goal>
-      ISA         arithmetic-problem
-      state       attend-second-tens
-
-    ;; check for vis-loc
-    =visual-location>
-      ISA         visual-location
-      kind        text
-
-    ;; wait for visual to be free
-    ?visual>
-      state       free
-  ==>
-    ;; request to move attention
-    +visual>
-      ISA         move-attention
-      screen-pos  =visual-location
-
-    ;; update goal
-    =goal>
-      state       encode-second-tens
-    )
-
-  ;; Production to skip tens place of second operand if it doesn't exist
-  (P find-second-tens-fail
-    ;; check goal state
-    =goal>
-      ISA         arithmetic-problem
-      state       attend-second-tens
-
-    ;; check if vis-loc request failed
-    ?visual-location>
-      state       error
-
-  ==>
-    ;; skip to searching for first addend tens place
-    ;; update goal
-    =goal>
-      state       find-first-tens
-    )
-
-  ;; Production to encode value of tens place of second addend
-  (P encode-second-tens
-    ;; check goal state
-    =goal>
-      ISA         arithmetic-problem
-      state       encode-second-tens
-    
-    ;; wait for attention to shift
-    =visual>
-      ISA         text
-      value       =value
-  ==>
-    ;; update state
-    =goal>
-      state       find-first-tens
-
-    ;; request to store value in imaginal
-    +imaginal>
-      ISA         arithmetic-info
-      second-tens =value
-    )
-
-  ;; Production to copy second tens to goal after imaginal
-  (P store-second-tens
-    ;; check goal state
-    =goal>
-      ISA         arithmetic-problem
-      ;; no state check, store second ten whenever it is ready
-
-    ;; wait for imaginal
-    =imaginal>
-      ISA         arithmetic-info
-      second-tens =value
-  ==>
-    ;; update goal
-    =goal>
-      second-tens =value
-    )
-
-  ;; Production to find tens place of first addend
-  (P find-first-tens
-    ;; check goal state
-    =goal>
-      ISA         arithmetic-problem
-      state       find-first-tens
-      ;; match first ones place to compare
-      first-ones-x  =first-ones-x
-  ==>
-    ;; search for location left of first ones place
-    +visual-location>
-      ISA         visual-location
-      kind        text
-      < screen-x   =first-ones-x
-
-    ;; update goal
-    =goal>
-      state       attend-first-tens
-    )
-
-  ;; Production to attend to tens place of first addend
-  (P attend-first-tens
-    ;; check goal state
-    =goal>
-      ISA         arithmetic-problem
-      state       attend-first-tens
-    
-    ;; get vis-loc
-    =visual-location>
-      ISA         visual-location
-      kind        text
-
-    ;; wait for visual to be free
-    ?visual>
-      state       free
-  ==>
-    ;; request move-attention
-    +visual>
-      ISA         move-attention
-      screen-pos  =visual-location
-      
-    ;; update goal
-    =goal>
-      state       encode-first-tens
-    )
-
-  ;; Production to detect when there is no tens place for first addend
-  (P find-first-tens-fail
-    ;; check goal state
-    =goal>
-      ISA         arithmetic-problem
-      state       attend-first-tens
-    
-    ;; check if vis-loc search failed
-    ?visual-location>
-      state       error
-  ==>
-    ;; skip to adding tens places
-    ;; update goal
-    =goal>
-      state       add-tens
-    )
-
-  ;; Production to encode value in tens place of first addend
-  (P encode-first-tens
-    ;; check goal state
-    =goal>
-      ISA         arithmetic-problem
-      state       encode-first-tens
-
-    ;; wait for visual attention
-    =visual>
-      ISA         text
-      value       =value
-
-    ;; wait for imaginal to be empty
-    ?imaginal>
-      buffer      empty
-      state       free
-  ==>
-    ;; update goal
-    =goal>
-      state       store-first-tens
-    
-    ;; request to store value in imaginal
-    +imaginal>
-      ISA         arithmetic-info
-      first-tens  =value
-    )
-
-  ;; Production to store first tens value in goal after imaginal encoding
-  (P store-first-tens
-    ;; check goal state
-    =goal>
-      ISA         arithmetic-problem
-      state       store-first-tens
-    
-    ;; wait for encoding
-    =imaginal>
-      ISA         arithmetic-info
-      first-tens  =value
-  ==>
-    ;; update goal
-    =goal>
-      first-tens  =value
       state       add-tens
     )
   
