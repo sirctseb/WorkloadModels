@@ -715,6 +715,22 @@
       tens        "0"
       state       check-carry
     )
+  
+  ;; Production to add tens when there is only tens place in first addend
+  (P add-tens-first-nil
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       add-tens
+      ;; check that only first has tens
+      first-tens  =first-tens
+      second-tens nil
+  ==>
+    ;; update goal
+    =goal>
+      tens        =first-tens
+      state       check-carry
+    )
 
   ;; Production to start adding tens values
   (P add-tens
