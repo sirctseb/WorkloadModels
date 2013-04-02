@@ -1,7 +1,7 @@
 
 (clear-all)
 
-(defun do-arithmetic-trial ()
+(defun do-arithmetic-trial (&key (text "1 4 + 2 7"))
 
   (reset)
   
@@ -11,7 +11,7 @@
       :visible t
       :width 300
       :height 300)))
-  (add-text-to-exp-window :text "1 4 + 2 7"
+  (add-text-to-exp-window :text text
     :width 100
     :x 100
     :y 140)
