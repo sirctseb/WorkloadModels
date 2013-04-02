@@ -341,7 +341,7 @@
     ;; check visual for plus
     =visual>
       ISA         text
-      value       +
+      value       "+"
   ==>
     ;; search for right-most text left of current vis-loc
     +visual-location>
