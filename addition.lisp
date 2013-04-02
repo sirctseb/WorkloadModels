@@ -550,12 +550,6 @@
     ;; update goal
     =goal>
       state       find-first-tens
-
-    ;; put zero in second tens
-    ;; TODO this isn't really semantic
-    +imaginal>
-      ISA         arithmetic-info
-      second-tens "0"
     )
 
   ;; Production to encode value of tens place of second addend
