@@ -636,11 +636,22 @@
     ;; check if vis-loc search failed
     ?visual-location>
       state       error
+
+    ;; get imaginal contents
+    =imaginal>
+      ISA         arithmetic-info
+      second-tens =second-tens
   ==>
     ;; skip to adding tens places
     ;; update goal
     =goal>
       state       add-tens
+
+    ;; store 0 as first tens value
+    +imaginal>
+      ISA         arithmetic-info
+      second-tens =second-tens
+      first-tens  "0"
     )
 
   ;; Production to encode value in tens place of first addend
