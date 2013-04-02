@@ -690,7 +690,19 @@
     =goal>
       state       increment-tens
     )
-  
+
+  ;; Production to move on to response if there is no carry
+  (P check-no-carry
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       check-carry
+      ;; no carry
+      carry       0
+  ==>
+    =goal>
+      state       respond
+    )
 
   (goal-focus addition-goal)
 )
