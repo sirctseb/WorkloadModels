@@ -1,19 +1,33 @@
 
 (clear-all)
 
-(defun do-arithmetic-trial (&key (text "1 4 + 2 7"))
+(defun do-arithmetic-trial (&optional (addend1 14) (addend2 7))
 
   (reset)
   
   (let* ((lis (permute-list '("1" "2" "3" "4" "5" "6" "7")))
     (answers nil)   
+    (text1 (if (> addend1 9)
+            (format nil "~a ~a" (floor addend1 10) (mod addend1 10))
+            (format nil "~a" addend1)))
+    (text2 (if (> addend2 9)
+            (format nil "~a ~a" (floor addend2 10) (mod addend2 10))
+            (format nil "~a" addend2)))
     (window (open-exp-window "Addition Problem"
       :visible t
       :width 300
       :height 300)))
-  (add-text-to-exp-window :text text
-    :width 100
+  (add-text-to-exp-window :text text1
+    :width 25
+    :x 75
+    :y 140)
+  (add-text-to-exp-window :text "+"
+    :width 5
     :x 100
+    :y 140)
+  (add-text-to-exp-window :text text2
+    :width 25
+    :x 110
     :y 140)
 
   (install-device window)
