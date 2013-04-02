@@ -279,7 +279,7 @@
 
     ;; update goal
     =goal>
-      state       find-second-location
+      state       attend-first-ones
     )
 
   (P attend-second-operand
