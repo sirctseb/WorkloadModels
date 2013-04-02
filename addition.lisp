@@ -256,7 +256,7 @@
     (s67 ISA SUCCESSOR VALUE "6" SUCCESSOR "7")
     (s78 ISA SUCCESSOR VALUE "7" SUCCESSOR "8")
     (s89 ISA SUCCESSOR VALUE "8" SUCCESSOR "9")
-    (addition-goal ISA arithmetic-problem operator + state find-second-ones)
+    (addition-goal ISA arithmetic-problem operator + state find-second)
     )
 
 ;;; TODO rules:
@@ -271,12 +271,12 @@
 ;; retrieve sum
 ;; count up if retrieval fails // how?
 
-  ;; Production to search for the ones place of the second addend
-  (P find-second-ones
+  ;; Production to search for the second addend
+  (P find-second
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
-      state       find-second-ones
+      state       find-second
   ==>
     ;; perform search for right-most text
     +visual-location>
@@ -287,62 +287,82 @@
 
     ;; update goal
     =goal>
-      state       attend-second-ones
+      state       attend-second
     )
 
-  ;; Production to move visual attention to ones place of second addend
-  (P attend-second-ones
+  ;; Production to move visual attention to second addend
+  (P attend-second
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
-      state       attend-second-ones
+      state       attend-second
 
     ;; get vis-loc reference
     =visual-location>
       ISA         visual-location
-      ;; grab screen-x to record it
-      screen-x    =sx
 
     ;; check for free visual
     ?visual>
       state       free
   ==>
-    ;; request to move attention to ones place of second addend
+    ;; request to move attention to second addend
     +visual>
       ISA         move-attention
       screen-pos  =visual-location
 
     ;; update goal
     =goal>
-      state       encode-second-ones
-      second-ones-x =sx
+      state       encode-second
     )
 
-  ;; Production to encode and store the value of the ones place of the second addend
-  (P encode-second-ones
+  ;; Production to encode and store the value of the second addend
+  (P encode-second
     ;; chck goal state
     =goal>
       ISA         arithmetic-problem
-      state       encode-second-ones
+      state       encode-second
 
     ;; wait for visual object
     =visual>
       ISA         text
       value       =value
+
+    ?retrieval>
+      state       free
   ==>
     ;; update goal
     =goal>
-      state       find-first-ones
+      state       store-second
 
-    ;; request to store info in imaginal
-    +imaginal>
-      ISA         arithmetic-info
-      second-ones =value
+    ;; request number info from retrieval
+    +retrieval>
+      ISA         number
+      value       =value
+    )
+
+  ;; Production to get number chunk and store tens and ones
+  (P store-second
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       store-second
+    
+    ;; wait for retrieval
+    =retrieval
+      ISA         number
+      ones        =ones
+      tens        =tens
+  ==>
+    ;; update goal
+    =goal>
+      second-ones =ones
+      second-tens =tens
+      state       find-first
     )
 
 
   ;; production to find ones place of the first addend
-  (P find-first-ones
+  (P find-first
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
