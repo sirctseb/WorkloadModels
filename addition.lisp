@@ -255,14 +255,29 @@
       value       +
   )
 
-  (P find-second-operand
+  ;; production to find ones place of the first addend
+  (P find-first-ones
+    ;; check goal state
     =goal>
       ISA         arithmetic-problem
-      state       read-second-operand
+      state       find-first-ones
+
+    ;; check vis-loc
+    =visual-location>
+      ISA         visual-location
+      type        text
+      value       +
+      ;; grab screen-x
+      screen-x    =sx
   ==>
+    ;; search for right-most text left of current vis-loc
     +visual-location>
       ISA         visual-location
-      :attended   nil
+      < screen-x  =sx
+      type        text
+      screen-x    highest
+
+    ;; update goal
     =goal>
       state       find-second-location
     )
