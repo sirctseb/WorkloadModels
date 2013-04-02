@@ -39,7 +39,7 @@
   (sgp :v t :show-focus t :trace-detail high)
 
   (chunk-type arithmetic first operator second result ones carry)
-  (chunk-type arithmetic-problem first operator second first-tens second-tens result state ones carry tens second-ones-x first-ones-x)
+  (chunk-type arithmetic-problem first-ones operator second-ones first-tens second-tens result state ones carry tens second-ones-x first-ones-x)
   (chunk-type arithmetic-info first-tens first-ones second-tens second-ones)
   (chunk-type successor value successor)
   (chunk-type number ones tens value)
