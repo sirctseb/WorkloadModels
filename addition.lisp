@@ -461,5 +461,23 @@
       state       encode-second-tens
     )
 
+  ;; Production to skip tens place of second operand if it doesn't exist
+  (P find-second-tens-fail
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       attend-second-tens
+
+    ;; check if vis-loc request failed
+    ?visual-location>
+      state       error
+
+  ==>
+    ;; skip to searching for first addend tens place
+    ;; update goal
+    =goal>
+      state       find-first-tens
+    )
+
   (goal-focus addition-goal)
 )
