@@ -704,5 +704,24 @@
       state       respond
     )
 
+  ;; Production to set new tens place after incrementing for carry
+  (P increment-tens
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       check-carry
+
+    ;; match retrieval
+    =retrieval>
+      ISA         SUCCESSOR
+      SUCCESSOR   =value
+  ==>
+    ;; set new tens value
+    ;; update goal
+    =goal>
+      tens        =value
+      state       response
+    )
+
   (goal-focus addition-goal)
 )
