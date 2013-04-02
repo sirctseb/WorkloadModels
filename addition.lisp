@@ -756,17 +756,12 @@
     =goal>
       ISA         arithmetic-problem
       state       add-tens
-    
-    ;; get info from imaginal
-    =imaginal>
-      ISA         arithmetic-info
       first-tens  =first-tens
       second-tens =second-tens
+    
   ==>
-    ;; update state with values
+    ;; update goal
     =goal>
-      first       =first-tens
-      second      =second-tens
       state       retrieve-addition-tens
     )
 
@@ -776,8 +771,8 @@
     =goal>
       ISA         arithmetic-problem
       state       retrieve-addition-tens
-      first       =first
-      second      =second
+      first-tens  =first
+      second-tens =second
   ==>
     ;; update goal
     =goal>
@@ -797,8 +792,8 @@
     =goal>
       ISA         arithmetic-problem
       state       finish-retrieve-tens
-      first       =first
-      second      =second
+      first-tens  =first
+      second-tens =second
 
     ;; get retrieval results
     =retrieval>
