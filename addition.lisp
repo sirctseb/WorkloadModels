@@ -505,5 +505,25 @@
       second-tens =value
     )
 
+  ;; Production to find tens place of first addend
+  (P find-first-tens
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       find-first-tens
+      ;; match first ones place to compare
+      first-ones-x  =first-ones-x
+  ==>
+    ;; search for location left of first ones place
+    +visual-location>
+      ISA         visual-location
+      type        text
+      <screen-x   =first-ones-x
+
+    ;; update goal
+    =goal>
+      state       attend-first-tens
+    )
+
   (goal-focus addition-goal)
 )
