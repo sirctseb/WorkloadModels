@@ -31,6 +31,7 @@
   (chunk-type arithmetic first operator second result ones carry)
   (chunk-type arithmetic-problem first operator second result state ones carry tens plus-x second-ones-x first-ones-x)
   (chunk-type arithmetic-info first-tens first-ones second-tens second-ones)
+  (chunk-type successor value successor)
   (chunk-type number)
 
   (add-dm
@@ -155,6 +156,15 @@
     (a9+7 ISA ARITHMETIC FIRST "9" OPERATOR + SECOND "7" RESULT (16) ONES (6) CARRY (1))
     (a9+8 ISA ARITHMETIC FIRST "9" OPERATOR + SECOND "8" RESULT (17) ONES (7) CARRY (1))
     (a9+9 ISA ARITHMETIC FIRST "9" OPERATOR + SECOND "9" RESULT (18) ONES (8) CARRY (1))
+    (s01 ISA SUCCESSOR VALUE (0) SUCCESSOR (1))
+    (s12 ISA SUCCESSOR VALUE (1) SUCCESSOR (2))
+    (s23 ISA SUCCESSOR VALUE (2) SUCCESSOR (3))
+    (s34 ISA SUCCESSOR VALUE (3) SUCCESSOR (4))
+    (s45 ISA SUCCESSOR VALUE (4) SUCCESSOR (5))
+    (s56 ISA SUCCESSOR VALUE (5) SUCCESSOR (6))
+    (s67 ISA SUCCESSOR VALUE (6) SUCCESSOR (7))
+    (s78 ISA SUCCESSOR VALUE (7) SUCCESSOR (8))
+    (s89 ISA SUCCESSOR VALUE (8) SUCCESSOR (9))
     (addition-goal ISA arithmetic-problem operator + state read-first-operand)
     )
 
