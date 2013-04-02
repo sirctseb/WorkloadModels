@@ -460,9 +460,9 @@
     =goal>
       ISA         arithmetic-problem
       state       retrieve-addition-ones
-      first       =first
+      first-ones  =first
       operator    +
-      second      =second
+      second-ones =second
       result      nil
   ==>
     ;; update goal
@@ -483,8 +483,8 @@
     =goal>
       ISA         arithmetic-problem
       state       finish-retrieve-ones
-      first       =first
-      second      =second
+      first-ones  =first
+      second-ones =second
     ;; get retrieval results
     =retrieval>
       ISA         arithmetic
