@@ -670,5 +670,27 @@
       state       check-carry
     )
 
+  ;; Production to increment tens if there is a carry
+  (P check-carry
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       check-carry
+      ;; check that there is a carry
+      carry       1
+      ;; match tens sum
+      tens        =tens
+  ==>
+    ;; request retrieval of successor
+    +retrieval>
+      ISA         SUCCESSOR
+      value       =tens
+
+    ;; update goal
+    =goal>
+      state       increment-tens
+    )
+  
+
   (goal-focus addition-goal)
 )
