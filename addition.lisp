@@ -411,6 +411,29 @@
       carry       =carry
       state       find-second-tens
     )
+  
+  ;; Production to search for tens place of second addend
+  (P find-second-tens
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       find-second-tens
+      ;; get x pos of plus and second addend ones place
+      plus-x      =plus-x
+      second-ones-x =second-ones-x
+  ==>
+    +visual-location>
+      ISA         visual-location
+      type        text
+      ;; search right of plus
+      > screen-x  =plus-x
+      ;; search left of ones place
+      < screen-x  =second-ones-x
+
+    ;; update goal
+    =goal>
+      state       attend-second-tens
+    )
 
   (goal-focus addition-goal)
 )
