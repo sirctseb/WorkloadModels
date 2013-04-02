@@ -7,12 +7,8 @@
   
   (let* ((lis (permute-list '("1" "2" "3" "4" "5" "6" "7")))
     (answers nil)   
-    (text1 (if (> addend1 9)
-            (format nil "~a ~a" (floor addend1 10) (mod addend1 10))
-            (format nil "~a" addend1)))
-    (text2 (if (> addend2 9)
-            (format nil "~a ~a" (floor addend2 10) (mod addend2 10))
-            (format nil "~a" addend2)))
+    (text1 (format nil "~a" addend1))
+    (text2 (format nil "~a" addend2))
     (window (open-exp-window "Addition Problem"
       :visible t
       :width 300
