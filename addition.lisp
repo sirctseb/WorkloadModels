@@ -310,6 +310,11 @@
       ISA         move-attention
       screen-pos  =visual-location
 
+    ;; request visual location of first addend
+    +visual-location>
+      ISA         visual-location
+      screen-x    lowest
+
     ;; update goal
     =goal>
       state       encode-second
@@ -332,7 +337,7 @@
   ==>
     ;; update goal
     =goal>
-      state       find-first
+      state       attend-first
 
     ;; request number info from retrieval
     +retrieval>
@@ -377,27 +382,7 @@
       second-ones =ones
     )
 
-  ;; production to find the first addend
-  (P find-first
-    ;; check goal state
-    =goal>
-      ISA         arithmetic-problem
-      state       find-first
-
-  ==>
-    ;; search for right-most text left of current vis-loc
-    ;; TODO this can just be leftmost now.
-    +visual-location>
-      ISA         visual-location
-      ;; plus sign is at 105
-      < screen-x  105
-      kind        text
-      screen-x    highest
-
-    ;; update goal
-    =goal>
-      state       attend-first
-    )
+  ;; TODO production to do vis-loc in case there isn't one ready?
 
   ;; attend the first addend
   (P attend-first
