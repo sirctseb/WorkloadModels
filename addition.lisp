@@ -597,5 +597,25 @@
       first-tens  =value
     )
 
+  ;; Production to start adding tens values
+  (P add-tens
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       add-tens
+    
+    ;; get info from imaginal
+    =imaginal>
+      ISA         arithmetic-info
+      first-tens  =first-tens
+      second-tens =second-tens
+  ==>
+    ;; update state with values
+    =goal>
+      first       =first-tens
+      second      =second-tens
+      state       retrieve-addition-tens
+    )
+
   (goal-focus addition-goal)
 )
