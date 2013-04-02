@@ -783,5 +783,50 @@
       state       response
     )
 
+  ;; Production to speak the tens value
+  (P respond-tens
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       response
+      ;; match tens value
+      tens        =tens
+
+    ;; check for vocal preparation free
+    ?vocal>
+      preparation free
+  ==>
+    ;; vocalize the tens value
+    +vocal>
+      ISA         speak
+      string      =tens
+
+    ;; update goal
+    =goal>
+      state       response-ones
+    )
+
+  ;; Production to speak the ones value
+  (P respond-ones
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       response-ones
+      ;; match ones value
+      ones        =ones
+
+    ;; wait for vocal prep free
+    ?vocal>
+      preparation free
+  ==>
+    ;; vocalize ones value
+    +vocal>
+      ISA         speak
+      string      =ones
+    ;; update goal
+    =goal>
+      state       done
+    )
+
   (goal-focus addition-goal)
 )
