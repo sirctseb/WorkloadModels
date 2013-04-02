@@ -318,11 +318,11 @@
     )
 
   ;; Production to encode value of ones place of first addend
-  (P encode-second-operand
+  (P encode-second-ones
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
-      state       attend-second-operand
+      state       encode-second-ones
 
     ;; wait for visual attention to move
     =visual>
