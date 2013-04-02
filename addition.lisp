@@ -43,7 +43,7 @@
   (sgp :v t :show-focus t :trace-detail high)
 
   (chunk-type arithmetic first operator second result ones carry)
-  (chunk-type arithmetic-problem first operator second first-tens second-tens result state ones carry tens plus-x second-ones-x first-ones-x)
+  (chunk-type arithmetic-problem first operator second first-tens second-tens result state ones carry tens second-ones-x first-ones-x)
   (chunk-type arithmetic-info first-tens first-ones second-tens second-ones)
   (chunk-type successor value successor)
   (chunk-type number)
@@ -255,7 +255,7 @@
   ==>
     ;; update goal
     =goal>
-      state       find-plus
+      state       find-first-ones
 
     ;; request to store info in imaginal
     +imaginal>
@@ -263,112 +263,26 @@
       second-ones =value
     )
 
-  ;; Production to find the plus sign
-  ;; TODO the RHS of this could just be in encode-second-ones
-  (P find-plus-search
-    ;; check goal state
-    =goal>
-      ISA         arithmetic-problem
-      state       find-plus
-
-  ==>
-    ;; update goal
-    =goal>
-      state       find-plus-attend
-
-    ;; search for plus sign
-    +visual-location>
-      ISA         visual-location
-      kind        text
-      < screen-x  current
-      screen-x    highest
-  )
-
-  ;; Production to attend to location we think may be the plus
-  (P find-plus-attend
-    ;; check goal state
-    =goal>
-      ISA         arithmetic-problem
-      state       find-plus-attend
-
-    ;; get vis-loc
-    =visual-location>
-      ISA         visual-location
-      kind        text
-
-    ;; wait until visual is free
-    ?visual>
-      state       free
-  ==>
-    ;; attend to location that may be plus
-    +visual>
-      ISA         move-attention
-      screen-pos  =visual-location
-
-    ;; keep vis-loc
-    =visual-location>
-
-    ;; update goal
-    =goal>
-      state       find-plus-check
-    )
-
-  ;; Production to loop when object isn't the plus sign
-  (P find-plus-check
-    ;; check goal state
-    =goal>
-      ISA         arithmetic-problem
-      state       find-plus-check
-    
-    ;; match not plus
-    =visual>
-      ISA         text
-      - value     "+"
-  ==>
-    ;; do search again
-    ;; search for plus sign
-    +visual-location>
-      ISA         visual-location
-      kind        text
-      < screen-x  current
-      screen-x    highest
-
-    ;; update goal
-    =goal>
-      state       find-plus-attend
-    )
 
   ;; production to find ones place of the first addend
   (P find-first-ones
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
-      state       find-plus-check
+      state       find-first-ones
 
-    ;; check vis-loc for location
-    =visual-location>
-      ISA         visual-location
-      kind        text
-      ;; grab screen-x
-      screen-x    =sx
-
-    ;; check visual for plus
-    =visual>
-      ISA         text
-      value       "+"
   ==>
     ;; search for right-most text left of current vis-loc
     +visual-location>
       ISA         visual-location
-      < screen-x  =sx
+      ;; plus sign is at 105
+      < screen-x  105
       kind        text
       screen-x    highest
 
     ;; update goal
     =goal>
       state       attend-first-ones
-      ;; store x-pos of plus
-      plus-x      =sx
     )
 
   ;; attend ones place of the first addend
@@ -479,15 +393,14 @@
     =goal>
       ISA         arithmetic-problem
       state       find-second-tens
-      ;; get x pos of plus and second addend ones place
-      plus-x      =plus-x
+      ;; get x of second addend ones place
       second-ones-x =second-ones-x
   ==>
     +visual-location>
       ISA         visual-location
       kind        text
       ;; search right of plus
-      > screen-x  =plus-x
+      > screen-x  105
       ;; search left of ones place
       < screen-x  =second-ones-x
 
