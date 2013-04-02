@@ -283,6 +283,8 @@
     ;; update goal
     =goal>
       state       attend-first-ones
+      ;; store x-pos of plus
+      plus-x      =sx
     )
 
   ;; attend ones place of the first addend
