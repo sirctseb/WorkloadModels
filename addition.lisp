@@ -382,23 +382,29 @@
       operator    +
     )
 
-  (P finish-retrieve
+  ;; Production to get results of addition retrieval
+  (P finish-retrieve-ones
+    ;; check goal state
     =goal>
       ISA         arithmetic-problem
+      state       finish-retrieve-ones
       first       =first
       operator    prevent-from-matching
       second      =second
-      result      nil
+    ;; get retrieval results
     =retrieval>
       ISA         arithmetic
       first       =first
       operator    +
       second      =second
-      result      =answer
+      ones        =ones
+      carry       =carry
   ==>
+    ;; store ones and carry result in goal
     =goal>
-      result      =answer
-      !output!       (=answer)
+      ones        =ones
+      carry       =carry
+      state       find-second-tens
     )
 
   (goal-focus addition-goal)
