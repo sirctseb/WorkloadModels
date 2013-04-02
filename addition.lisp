@@ -251,37 +251,94 @@
 
   ;; Production to find the plus sign
   ;; TODO the RHS of this could just be in encode-second-ones
-  (P find-plus
+  (P find-plus-search
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
       state       find-plus
+
   ==>
     ;; update goal
     =goal>
-      state       find-first-ones
+      state       find-plus-attend
 
     ;; search for plus sign
     +visual-location>
       ISA         visual-location
       kind        text
-      value       +
+      < screen-x  current
+      screen-x    highest
   )
+
+  ;; Production to attend to location we think may be the plus
+  (P find-plus-attend
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       find-plus-attend
+
+    ;; get vis-loc
+    =visual-location>
+      ISA         visual-location
+      kind        text
+
+    ;; wait until visual is free
+    ?visual>
+      state       free
+  ==>
+    ;; attend to location that may be plus
+    +visual>
+      ISA         move-attention
+      screen-pos  =visual-location
+
+    ;; update goal
+    =goal>
+      state       find-plus-check
+    )
+
+  ;; Production to loop when object isn't the plus sign
+  (P find-plus-check
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       find-plus-check
+    
+    ;; match not plus
+    =visual>
+      ISA         text
+      - value     "+"
+  ==>
+    ;; do search again
+    ;; search for plus sign
+    +visual-location>
+      ISA         visual-location
+      kind        text
+      < screen-x  current
+      screen-x    highest
+
+    ;; update goal
+    =goal>
+      state       find-plus-attend
+    )
 
   ;; production to find ones place of the first addend
   (P find-first-ones
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
-      state       find-first-ones
+      state       find-plus-check
 
-    ;; check vis-loc
+    ;; check vis-loc for location
     =visual-location>
       ISA         visual-location
       kind        text
-      value       +
       ;; grab screen-x
       screen-x    =sx
+
+    ;; check visual for plus
+    =visual>
+      ISA         text
+      value       +
   ==>
     ;; search for right-most text left of current vis-loc
     +visual-location>
