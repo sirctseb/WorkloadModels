@@ -348,7 +348,7 @@
   ;; Production to start adding the ones place
   ;; TODO this should be combined into retrieve-addition-ones.
   ;; TODO no need for intermediately copying state to goal
-  (P add-operands
+  (P add-ones
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
