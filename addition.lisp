@@ -434,6 +434,32 @@
     =goal>
       state       attend-second-tens
     )
+  
+  ;; Production to attend to tens place of second addend
+  (P attend-second-tens
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       attend-second-tens
+
+    ;; check for vis-loc
+    =visual-location>
+      ISA         visual-location
+      type        text
+
+    ;; wait for visual to be free
+    ?visual>
+      state       free
+  ==>
+    ;; request to move attention
+    +visual>
+      ISA         move-attention
+      screen-pos  =visual-location
+
+    ;; update goal
+    =goal>
+      state       encode-second-tens
+    )
 
   (goal-focus addition-goal)
 )
