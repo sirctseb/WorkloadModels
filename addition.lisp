@@ -332,17 +332,32 @@
       ISA         text
       value       =value
 
+    ;; make sure retrieval is free so we can request dm
     ?retrieval>
       state       free
-  ==>
-    ;; update goal
-    =goal>
-      state       attend-first
 
+    ;; get vis-loc
+    =visual-location>
+      ISA         visual-location
+
+    ;; make sure visual is free so we can request move-attention
+    ;; TODO clear visual after last attend?
+    ?visual>
+      state       free
+  ==>
     ;; request number info from retrieval
     +retrieval>
       ISA         number
       value       =value
+
+    ;; request move-attention to first addend
+    +visual>
+      ISA         move-attention
+      screen-pos  =visual-location
+
+    ;; update goal
+    =goal>
+      state       encode-first
     )
 
   ;; Production to get number chunk and store tens and ones
@@ -383,32 +398,7 @@
     )
 
   ;; TODO production to do vis-loc in case there isn't one ready?
-
-  ;; attend the first addend
-  (P attend-first
-    ;; check goal state
-    =goal>
-      ISA         arithmetic-problem
-      state       attend-first
-
-    ;; get vis-loc
-    =visual-location>
-      ISA         visual-location
-
-    ;; wait for visual system
-    ;; TODO clear visual after last attend?
-    ?visual>
-      state       free
-  ==>
-    ;; request move-attention to first addend
-    +visual>
-      ISA         move-attention
-      screen-pos  =visual-location
-
-    ;; update goal
-    =goal>
-      state       encode-first
-    )
+  ;; TODO production to do move-attend?
 
   ;; Production to encode value of first addend
   (P encode-first-ones
