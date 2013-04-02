@@ -282,20 +282,30 @@
       state       attend-first-ones
     )
 
-  (P attend-second-operand
+  ;; attend ones place of the first addend
+  (P attend-first-ones
+    ;; check goal state
     =goal>
       ISA         arithmetic-problem
-      state       find-second-location
+      state       attend-first-ones
+
+    ;; get vis-loc
     =visual-location>
       ISA         visual-location
+
+    ;; wait for visual system
+    ;; TODO clear visual after last attend?
     ?visual>
       state       free
   ==>
+    ;; request move-attention to ones place of first addend
     +visual>
       ISA         move-attention
       screen-pos  =visual-location
+
+    ;; update goal
     =goal>
-      state       attend-second-operand
+      state       encode-second-ones
     )
 
   (P encode-second-operand
