@@ -648,11 +648,6 @@
     ;; check if vis-loc search failed
     ?visual-location>
       state       error
-
-    ;; get imaginal contents
-    =imaginal>
-      ISA         arithmetic-info
-      second-tens =second-tens
   ==>
     ;; skip to adding tens places
     ;; update goal
