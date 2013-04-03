@@ -432,18 +432,26 @@
     =goal>
       ISA         arithmetic-problem
       state       store-first
+      second-ones =second-ones
     
     ;; wait for retrieval
     =retrieval>
       ISA         number
-      ones        =ones
-      tens        =tens
+      ones        =first-ones
+      tens        =first-tens
   ==>
     ;; update goal
     =goal>
-      state       retrieve-addition-ones
-      first-ones  =ones
-      first-tens  =tens
+      state       finish-retrieve-ones
+      first-ones  =first-ones
+      first-tens  =first-tens
+
+    ;; request addition dm retrieval
+    +retrieval>
+      ISA         arithmetic
+      first       =first-ones
+      second      =second-ones
+      operator    +
     )
 
   ;; Production to get the number info from dm and store in goal when tens is nil
