@@ -2,7 +2,16 @@
 (define-model targeting-easy-fast
 
   ;; sgp section
-  (sgp :needs-mouse nil :show-focus t :trace-detail high :cursor-noise t :vwt t :incremental-mouse-moves 0.01 :randomize-time nil :visual-movement-tolerance 10 :pixels-per-inch 96 :viewing-distance 96)
+  (sgp :needs-mouse nil
+    :show-focus t
+    :trace-detail high
+    :cursor-noise t
+    :vwt t
+    :incremental-mouse-moves 0.01
+    :randomize-time nil
+    :visual-movement-tolerance 10
+    :pixels-per-inch 96
+    :viewing-distance 96)
 
   ;; chunk-types
   (chunk-type targeting state target-x target-y projected-x projected-y)
