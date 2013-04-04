@@ -45,19 +45,6 @@
       state       move-cursor
   )
 
-  (P on-move
-    =goal>
-      ISA         targeting
-      state       find-red-target
-    ?visual-location>
-      state       error
-  ==>
-    +visual-location>
-      ISA         visual-location
-      kind        OVAL
-    !eval!          (dolog "failed to attend to target location in find black target~%")
-    !eval!          (incf *vis-fails*)
-  )
   (P on-move-move-cursor
     =goal>
       ISA           targeting
