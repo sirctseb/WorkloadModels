@@ -1,5 +1,5 @@
 ;;; Implementation of the targeting task for the experiment in the hard - slow condition
-(define-model simple-tracking
+(define-model targeting-hard-slow
 
   ;; sgp section
   (sgp :needs-mouse nil :show-focus t :trace-detail high :cursor-noise t :vwt t :incremental-mouse-moves 0.01 :randomize-time nil
