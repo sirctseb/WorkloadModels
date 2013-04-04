@@ -4,13 +4,13 @@
 (defun do-arithmetic-trial (&optional (addend1 14) (addend2 7))
 
   (reset)
-  
+
   (let* ((lis (permute-list '("1" "2" "3" "4" "5" "6" "7")))
     (answers nil)   
     (text1 (format nil "~a" addend1))
     (text2 (format nil "~a" addend2))
     (window (open-exp-window "Addition Problem"
-      :visible t
+      :visible nil
       :width 300
       :height 300)))
   (add-text-to-exp-window :text text1
@@ -34,16 +34,19 @@
 
 
 (define-model addition
-
+  
+  ;; sgp section
   (sgp :esc t :lf .05)
   (sgp :v t :show-focus t :trace-detail high)
 
+  ;; chunk types
   (chunk-type arithmetic first operator second result ones carry)
   (chunk-type arithmetic-problem first-ones operator second-ones first-tens second-tens result state ones carry tens second-ones-x first-ones-x)
   (chunk-type arithmetic-info first-tens first-ones second-tens second-ones)
   (chunk-type successor value successor)
   (chunk-type number ones tens value)
 
+  ;; dms
   (add-dm
     (+ ISA CHUNK)
     (* ISA CHUNK)
@@ -259,6 +262,9 @@
     (addition-goal ISA arithmetic-problem operator + state find-second)
     )
 
+  ;; goal focus
+  (goal-focus addition-goal)
+
 ;;; TODO rules:
 ;; monitor for appearance of problems
 ;; - can limit to middle of screen because people will know that's where they are
@@ -270,6 +276,8 @@
 ;; store second operand
 ;; retrieve sum
 ;; count up if retrieval fails // how?
+
+  ;; Productions
 
   ;; Production to search for the second addend
   (P find-second
@@ -760,6 +768,4 @@
     =goal>
       state       done
     )
-
-  (goal-focus addition-goal)
 )
