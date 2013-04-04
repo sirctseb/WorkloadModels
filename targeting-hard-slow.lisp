@@ -1,17 +1,24 @@
 ;;; Implementation of the targeting task for the experiment in the hard - slow condition
 (define-model simple-tracking
 
+  ;; sgp section
   (sgp :needs-mouse nil :show-focus t :trace-detail high :cursor-noise t :vwt t :incremental-mouse-moves 0.01 :randomize-time nil
     :visual-movement-tolerance 0.5 :pixels-per-inch 96 :viewing-distance 96)
+
+  ;; chunk types
   (chunk-type targeting state target-x target-y cursor-diff-x cursor-diff-y target-location)
   (chunk-type friend-target x y)
 
-  (suppress-warnings (add-dm (track isa chunk) (attend-letter isa chunk)
-      (goal isa targeting state find-black-target)))
-  
-  ;; adding this setting to the model will avoid the deleted chunk
-  ;; warnings in the object tracking case.
-  ;; (sgp :delete-visicon-chunks nil)
+  ;; dms
+  (suppress-warnings
+    (add-dm (track isa chunk) (attend-letter isa chunk)
+      (goal isa targeting state find-black-target))
+    )
+
+  ;; goal focus
+  (goal-focus goal)
+
+  ;; Productions
 
   ;; Rule to start searching for a target  
   (P find-black-target
@@ -324,6 +331,4 @@
   ==>
     !stop!
   )
-
-  (goal-focus goal)
 )

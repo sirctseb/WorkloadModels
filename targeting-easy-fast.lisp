@@ -1,15 +1,23 @@
 ;;; Implementation of the targeting task for the experiment in the easy - fast condition
 (define-model simple-tracking
+
+  ;; sgp section
   (sgp :needs-mouse nil :show-focus t :trace-detail high :cursor-noise t :vwt t :incremental-mouse-moves 0.01 :randomize-time nil :visual-movement-tolerance 10 :pixels-per-inch 96 :viewing-distance 96)
+
+  ;; chunk-types
   (chunk-type targeting state target-x target-y projected-x projected-y)
   (chunk-type friend-target x y x-diff y-diff)
 
-  (suppress-warnings (add-dm (track isa chunk) (attend-letter isa chunk)
-    (goal isa targeting state find-red-target)))
-  
-  ;; adding this setting to the model will avoid the deleted chunk
-  ;; warnings in the object tracking case.
-  ;; (sgp :delete-visicon-chunks nil)
+  ;; dms
+  (suppress-warnings
+    (add-dm (track isa chunk) (attend-letter isa chunk)
+    (goal isa targeting state find-red-target))
+    )
+
+  ;; goal focus
+  (goal-focus goal)
+
+  ;; Productions
 
   ;; Rule to start searching for a target  
   (P find-red-target
@@ -191,6 +199,4 @@
     ;; increment the number of targets checked
     !eval!          (incf *check-order*)
   )
-
-  (goal-focus goal)
 )
