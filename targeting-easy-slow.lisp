@@ -68,6 +68,7 @@
     +visual-location>
       ISA           visual-location
       kind          OVAL
+      color         red
     !eval!          (dolog "failed to attend to target location in move cursor~%")
     !eval!          (incf *vis-fails*)
   )
