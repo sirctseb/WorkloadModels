@@ -84,11 +84,13 @@
       state         lead-target
       target-x      =tx
       target-y      =ty
+
     ;; get the new location
     =visual-location>
       ISA           visual-location
       screen-x      =sx
       screen-y      =sy
+
     ;; get elapsed time
     =temporal>
       ISA           time
@@ -105,12 +107,13 @@
     !eval!          (format t "speed: ~a~%" (/ =x-diff =elapsed-ticks))
     !eval!          (format t "projecting move from ~a to ~a by ~a ~%" =tx =projected-x (* *target-projection* (/ =x-diff =elapsed-ticks)))
     !eval!          (format t "projecting at x: ~a y: ~a, ticks: ~a~%" =projected-x =projected-y =elapsed-ticks)
+
     ;; store projected location in visual location buffer
     =visual-location>
       screen-x      =projected-x
       screen-y      =projected-y
     ;; and move to next state
-    ;; TODO move move request here to speed up?
+    ;; TODO could move move request here to speed up
     =goal>
       state         move-cursor
 
@@ -142,6 +145,7 @@
     +manual>
       ISA           move-cursor
       loc           =visual-location
+
     ;; request to attend to visual object so that we can search for nearest when
     ;; distinguishing between friend and enemy targets
     ; TODO it may be better to just keep the visual-location buffer full
@@ -165,7 +169,6 @@
       preparation   free
   ==>
     ;; prepare the mouse-click
-    ;; TODO there is no prepare mouse-click, hopefully manually doing the punch right index works
     +manual>
       ISA           prepare
       style         punch
@@ -196,7 +199,6 @@
 
     ;; submit click request
     +manual>
-      ;ISA           click-mouse
       ISA           execute
 
     ;; clear visual buffer so that it doesn't keep re-encoding and slowing down future searches
