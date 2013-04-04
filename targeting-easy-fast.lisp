@@ -188,7 +188,7 @@
     ;; TODO we could just put a flag in goal
     ?manual>
       last-command  prepare
-      state         free
+      preparation   free
 
     ;; wait for visual to be free so we can clear it
     ?visual>
