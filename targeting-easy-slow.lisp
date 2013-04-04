@@ -1,9 +1,17 @@
 ;;; Implementation of the targeting task for the experiment in the easy - slow condition
-(define-model simple-tracking
+(define-model targeting-easy-slow
 
   ;; sgp section
-  (sgp :needs-mouse nil :show-focus t :trace-detail high :cursor-noise t :vwt t :incremental-mouse-moves 0.01 :randomize-time nil
-    :visual-movement-tolerance 0.5 :pixels-per-inch 96 :viewing-distance 96)
+  (sgp :needs-mouse nil
+    :show-focus t
+    :trace-detail high
+    :cursor-noise t
+    :vwt t
+    :incremental-mouse-moves 0.01
+    :randomize-time nil
+    :visual-movement-tolerance 0.5
+    :pixels-per-inch 96
+    :viewing-distance 96)
 
   ;; chunk types
   (chunk-type targeting state target-x target-y cursor-diff-x cursor-diff-y target-location)
@@ -28,7 +36,7 @@
     ?visual>
         state       free
   ==>
-  +visual-location>
+    +visual-location>
       ISA         visual-location
       :attended   nil
       kind        OVAL
@@ -76,13 +84,6 @@
     =visual-location>
       ISA           visual-location
       kind          OVAL
-  ;    screen-pos    =target-location
-
-    ;; request to move cursor
-    ;; TODO :cursor-noise should probably be enabled
-    ;; TODO also, :default-target-width
-    ;; TODO :incremental-mouse-moves?
-    ;; TODO just look at all the parameters
 
     ;; make sure motor system is free
     ?manual>
@@ -92,14 +93,8 @@
     ;; request to move the cursor
     +manual>
       ISA           move-cursor
-      ;; TODO i guess we don't need the comparison rules
-      ;; TODO do we even need to move visual attention to cursor?
-      ;; TODO I think a better model is,
-      ;; 1. find target
-      ;; 2. move mouse
-      ;; 3. while manual busy, track cursor
-      ;; 4. if cursor within target, click button
       loc           =visual-location
+
     ;; request to attend to visual object so that we can search for nearest when
     ;; distinguishing between friend and enemy targets
     ; TODO it may be better to just keep the visual-location buffer full
@@ -120,6 +115,7 @@
     ;; wait until we attended the target
     =visual>
       ISA           OVAL
+
     ;; make sure motor module is free
     ?manual>
       state         free

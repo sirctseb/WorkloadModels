@@ -1,9 +1,17 @@
 ;;; Implementation of the targeting task for the experiment in the hard - slow condition
-(define-model simple-tracking
+(define-model targeting-hard-slow
 
   ;; sgp section
-  (sgp :needs-mouse nil :show-focus t :trace-detail high :cursor-noise t :vwt t :incremental-mouse-moves 0.01 :randomize-time nil
-    :visual-movement-tolerance 0.5 :pixels-per-inch 96 :viewing-distance 96)
+  (sgp :needs-mouse nil
+    :show-focus t
+    :trace-detail high
+    :cursor-noise t
+    :vwt t
+    :incremental-mouse-moves 0.01
+    :randomize-time nil
+    :visual-movement-tolerance 0.5
+    :pixels-per-inch 96
+    :viewing-distance 96)
 
   ;; chunk types
   (chunk-type targeting state target-x target-y cursor-diff-x cursor-diff-y target-location)
@@ -120,13 +128,6 @@
     =visual-location>
       ISA           visual-location
       kind          OVAL
-  ;    screen-pos    =target-location
-
-    ;; request to move cursor
-    ;; TODO :cursor-noise should probably be enabled
-    ;; TODO also, :default-target-width
-    ;; TODO :incremental-mouse-moves?
-    ;; TODO just look at all the parameters
 
     ;; make sure motor system is free
     ?manual>
@@ -136,14 +137,8 @@
     ;; request to move the cursor
     +manual>
       ISA           move-cursor
-      ;; TODO i guess we don't need the comparison rules
-      ;; TODO do we even need to move visual attention to cursor?
-      ;; TODO I think a better model is,
-      ;; 1. find target
-      ;; 2. move mouse
-      ;; 3. while manual busy, track cursor
-      ;; 4. if cursor within target, click button
       loc           =visual-location
+
     ;; request to attend to visual object so that we can search for nearest when
     ;; distinguishing between friend and enemy targets
     ; TODO it may be better to just keep the visual-location buffer full
@@ -242,6 +237,7 @@
     =goal>
       ISA           targeting
       state         distinguish-target
+
     ;; wait until visual location is found
     =visual-location>
       ISA           visual-location
@@ -277,6 +273,7 @@
     =goal>
       ISA           targeting
       state         distinguish-target
+
     ;; wait until visual location is found
     =visual-location>
       ISA           visual-location
@@ -309,7 +306,9 @@
     ;; wait until we attended the target
     =visual>
       ISA           OVAL
+
     ;; make sure motor module is free
+    ;; TODO only preparation needs to be free
     ?manual>
       state         free
   ==>
@@ -320,15 +319,5 @@
 
     =goal>
       state         find-black-target
-  )
-
-  (P after-click
-    =goal>
-      ISA           targeting
-      state         after-click
-    ?manual>
-      state         free
-  ==>
-    !stop!
   )
 )

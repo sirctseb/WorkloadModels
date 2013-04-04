@@ -1,9 +1,17 @@
 ;;; Implementation of the targeting task for the experiment in the hard - fast condition
-(define-model simple-tracking
+(define-model targeting-hard-fast
 
   ;; sgp section
-  (sgp :needs-mouse nil :show-focus t :trace-detail high :cursor-noise t :vwt t :incremental-mouse-moves 0.01 :randomize-time nil
-    :visual-movement-tolerance 10 :pixels-per-inch 96 :viewing-distance 96)
+  (sgp :needs-mouse nil
+    :show-focus t
+    :trace-detail high
+    :cursor-noise t
+    :vwt t
+    :incremental-mouse-moves 0.01
+    :randomize-time nil
+    :visual-movement-tolerance 10
+    :pixels-per-inch 96
+    :viewing-distance 96)
 
   ;; chunk types
   (chunk-type targeting state target-x target-y projected-x projected-y)
@@ -34,7 +42,6 @@
     =goal>
       state       cap-first-location
     ;; reset timer
-    ;; TODO we could do this in find-black-target and get 0.005 or so more on the timer
     +temporal>
       ISA           time
   )
@@ -135,7 +142,7 @@
     ?visual>
       state         free
 
-    ;; check that there is nothing in imaginal
+    ;; check that friend info is in imaginal
     =imaginal>
       isa           friend-target
       x             =fx
@@ -172,11 +179,13 @@
       state         lead-target
       target-x      =tx
       target-y      =ty
+
     ;; get the new location
     =visual-location>
       ISA           visual-location
       screen-x      =sx
       screen-y      =sy
+
     ;; get elapsed time
     =temporal>
       ISA           time
@@ -198,7 +207,7 @@
       screen-x      =projected-x
       screen-y      =projected-y
     ;; and move to next state
-    ;; TODO move move request here to speed up?
+    ;; could move move request here to speed up
     =goal>
       state         move-cursor
 
@@ -302,7 +311,6 @@
       preparation   free
   ==>
     ;; prepare the mouse-click
-    ;; TODO there is no prepare mouse-click, hopefully manually doing the punch right index works
     +manual>
       ISA           prepare
       style         punch
@@ -341,7 +349,6 @@
 
     ;; submit click request
     +manual>
-      ;ISA           click-mouse
       ISA           execute
 
     ;; clear visual buffer so that it doesn't keep re-encoding and slowing down future searches
@@ -423,7 +430,7 @@
       ISA           targeting
       state         distinguish-target
 
-    ;; wait until 5 ticks have gone by
+    ;; wait until a number of ticks have gone by
     !bind!          =whiff-wait-time *whiff-wait-time*
     =temporal>
       ISA           time
@@ -443,13 +450,15 @@
     =goal>
       ISA           targeting
       state         distinguish-target
+
+    ;; wait until visual location is found
     =visual-location>
       ISA           visual-location
-      ;; wait until visual location is found
       ;; check for oval
       kind            OVAL
       ;; check for green
       color           green
+
     =imaginal>
       ISA           friend-target
   ==>
@@ -459,11 +468,13 @@
     =goal>
       state         find-black-target
   )
+
   ;; after a rescan of the target, check if the target is green
   (P distinguish-target-friend
     =goal>
       ISA           targeting
       state         distinguish-target
+
     ;; wait until visual location is found
     =visual-location>
       ISA           visual-location
@@ -486,10 +497,12 @@
       isa           friend-target
       x             =sx
       y             =sy
+
     ;; scan for same location
     +visual-location>
       ISA           visual-location
       :nearest      =visual-location
+
     ;; remember motion
     =goal>
       state         remember-friend-motion
@@ -500,6 +513,7 @@
     ;; set the order in which the friend was checked if it hasn't been set yet
     !eval!          (when (eq -1 *friend-order*) (setf *friend-order* *check-order*))
   )
+
   ;; get motion of friend target and store
   (P remember-friend-motion
     =goal>
@@ -549,6 +563,7 @@
     =goal>
       ISA           targeting
       state         distinguish-target
+
     ;; wait until visual location is found
     =visual-location>
       ISA           visual-location
@@ -556,6 +571,7 @@
       kind          OVAL
       ;; check for black
       color         black
+
     ;; only loop when the move is not complete
     ?manual>
       state         busy
@@ -573,18 +589,9 @@
       kind          OVAL
       ;; nearest the current location
       :nearest      current
+
     =goal>
       ;; move to the state where we distinguish between red and green targets
       state         distinguish-target
-  )
-
-  (P after-click
-    =goal>
-      ISA           targeting
-      state         after-click
-    ?manual>
-      state         free
-  ==>
-    !stop!
   )
 )
