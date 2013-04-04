@@ -100,10 +100,6 @@
       ISA           targeting
       state         click-mouse
 
-    ;; wait until we attended the target
-    =visual>
-      ISA           OVAL
-
     ;; make sure motor module is free
     ?manual>
       state         free
