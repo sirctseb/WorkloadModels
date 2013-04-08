@@ -117,6 +117,12 @@
     ;; make sure motor module is free
     ?manual>
       state         free
+
+    ;; harvest visual
+    ;; TODO we don't actually want to wait for this here though,
+    ;; TODO we should make a parallel production that just harvests visual
+    =visual>
+      ISA           OVAL
   ==>
     
     ;; submit click request
