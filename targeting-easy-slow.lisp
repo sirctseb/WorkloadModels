@@ -37,8 +37,12 @@
     =goal>
       ISA         targeting
       state       find-red-target
+    ;; TODO there's no reason to check this here
     ?visual>
-        state       free
+      state       free
+    ;; check for empty vis-loc
+    ?visual-location>
+      buffer      empty
   ==>
     +visual-location>
       ISA         visual-location
@@ -49,6 +53,7 @@
       state       move-cursor
   )
 
+  ;; TODO does this production ever fire?
   (P on-move-move-cursor
     =goal>
       ISA           targeting
@@ -76,6 +81,11 @@
     =visual-location>
       ISA           visual-location
       kind          OVAL
+
+    ;; check that visual is free and empty
+    ?visual>
+      state         free
+      buffer        empty
 
     ;; make sure motor system is free
     ?manual>
@@ -107,6 +117,12 @@
     ;; make sure motor module is free
     ?manual>
       state         free
+
+    ;; harvest visual
+    ;; TODO we don't actually want to wait for this here though,
+    ;; TODO we should make a parallel production that just harvests visual
+    =visual>
+      ISA           OVAL
   ==>
     
     ;; submit click request
