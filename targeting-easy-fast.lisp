@@ -37,6 +37,7 @@
     =goal>
       ISA         targeting
       state       find-red-target
+
     ;; require manual to be free before searching for a target
     ;; TODO this is not really semantic. it resolves a problem where
     ;; TODO this +vis-loc can find a target that will be clicked on in about 200ms
@@ -46,15 +47,27 @@
     ;; TODO this costs us about 200ms in mean completion time for 0 misses
     ?manual>
       state       free
+
+    ;; check for empty vis-loc
+    ?visual-location>
+      buffer      empty
+
+    ;; check for empty temporal
+    ?temporal>
+      buffer      empty
   ==>
+    ;; do search for enemy target
     +visual-location>
       ISA         visual-location
       :attended   nil
       kind        OVAL
       color       red
+
+    ;; update goal
     =goal>
       state       cap-first-location
-     ;; reset timer
+
+    ;; start timer
     +temporal>
       ISA           time
   )
@@ -72,8 +85,10 @@
       screen-y      =ty
 
     ;; make sure visual is free so we can request move-attention
+    ;; also check that visual buffer is empty
     ?visual>
       state         free
+      buffer        empty
 
   ==>
     ;; store location in goal
@@ -85,6 +100,9 @@
     !eval!          (format t "storing first target location: ~a, ~a~%" =tx =ty)
 
     ;; search for same location
+    ;; TODO is this a violation of greedy-polite?
+    ;; TODO i.e., should vis-loc become empty for a production cycle before we can do the search again?
+    ;; TODO then we would have to store the location
     +visual-location>
       ISA           visual-location
       :nearest      =visual-location
@@ -122,9 +140,11 @@
     !eval!          (format t "projecting at x: ~a y: ~a, ticks: ~a~%" =projected-x =projected-y =elapsed-ticks)
 
     ;; store projected location in visual location buffer
+    ;; TODO is this a violation of greedy-polite?
     =visual-location>
       screen-x      =projected-x
       screen-y      =projected-y
+
     ;; and move to next state
     ;; TODO could move move request here to speed up
     =goal>
@@ -141,17 +161,21 @@
       ISA           targeting
       state         move-cursor
 
+    ;; check for oval location
     =visual-location>
       ISA           visual-location
       kind          OVAL
 
     ;; make sure motor system is free
+    ;; TODO can greedy-polite say anything about the manual buffer? it doesn't contain anything
     ?manual>
       preparation   free
 
     ;; make sure visual is free
+    ;; also make sure buffer is empty (greedy-polite)
     ?visual>
       state         free
+      buffer        empty
   ==>
 
     ;; request to move the cursor
@@ -163,14 +187,18 @@
     ;; distinguishing between friend and enemy targets
     ; TODO it may be better to just keep the visual-location buffer full
     ; and supply that when making the new request in check-target
+    ;; TODO I think what we should actually do to abide by greedy-polite is store the vis-loc and use that
     +visual>
       ISA           move-attention
       screen-pos    =visual-location
+
+    ;; update goal
     =goal>
       state         click-mouse
   )
 
   ;; prepare a click while checking the target
+  ;; TODO I don't think this abides by greedy-polite, but for combining with addition it doesn't matter
   (P prepare-click
     =goal>
       ISA           targeting
@@ -204,8 +232,18 @@
       preparation   free
 
     ;; wait for visual to be free so we can clear it
+    ;; TODO this is not really semantic either right?
+    ;; TODO anyway, can't we just match against the buffer itself and let
+    ;; TODO it strict harvest?
     ?visual>
       state         free
+    ;; TODO i think we should be doing this:
+    ; =visual>
+    ;   ISA           OVAL
+    ;; TODO, or nothing at all because we should store vis-loc instead of using :nearest current
+    ;; TODO, although, one could argue that you need visual attention on the target to acutally
+    ;; make that decision, so we should probably do both
+    ;; TODO at the very least we should be checking that =visual> is ours if we explicitly clear below
   ==>
     =goal>
       state         find-red-target
@@ -215,6 +253,7 @@
       ISA           execute
 
     ;; clear visual buffer so that it doesn't keep re-encoding and slowing down future searches
+    ;; TODO take out if we change to =visual> in the conditions
     +visual>
       ISA           clear
 
