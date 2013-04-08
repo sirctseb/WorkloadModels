@@ -12,6 +12,10 @@
     :visual-movement-tolerance 10
     :pixels-per-inch 96
     :viewing-distance 96)
+  ;; we'll count this as sgp
+  ;; set the default visloc chunk to something that will never match
+  ;; the effect is to disable buffer stuffing
+  (set-visloc-default isa visual-location screen-x 0 screen-x 1)
 
   ;; chunk-types
   (chunk-type targeting state target-x target-y projected-x projected-y)
