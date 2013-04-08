@@ -167,14 +167,14 @@
       ISA           move-attention
       screen-pos    =visual-location
     =goal>
-      state         distinguish-target
+      state         click-mouse
   )
 
   ;; prepare a click while checking the target
   (P prepare-click
     =goal>
       ISA           targeting
-      state         distinguish-target
+      state         click-mouse
 
     ;; wait until manual preparation is free and last command was a move (we didn't already prepare click)
     ?manual>
@@ -189,11 +189,11 @@
       finger        index
   )
 
-  ;; after a rescan of the target, check if the target is red and click it
-  (P distinguish-target-enemy
+  ;; wait until mouse move is done to click
+  (P click-mouse
     =goal>
       ISA           targeting
-      state         distinguish-target
+      state         click-mouse
 
     ;; let prepare-click go first
     ;; TODO this is not a semantic test. it only exists to allow prepare-click to go first
