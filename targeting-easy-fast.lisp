@@ -171,26 +171,12 @@
     ?manual>
       preparation   free
 
-    ;; make sure visual is free
-    ;; also make sure buffer is empty (greedy-polite)
-    ?visual>
-      state         free
-      buffer        empty
   ==>
 
     ;; request to move the cursor
     +manual>
       ISA           move-cursor
       loc           =visual-location
-
-    ;; request to attend to visual object so that we can search for nearest when
-    ;; distinguishing between friend and enemy targets
-    ; TODO it may be better to just keep the visual-location buffer full
-    ; and supply that when making the new request in check-target
-    ;; TODO I think what we should actually do to abide by greedy-polite is store the vis-loc and use that
-    +visual>
-      ISA           move-attention
-      screen-pos    =visual-location
 
     ;; update goal
     =goal>
@@ -231,19 +217,6 @@
       last-command  prepare
       preparation   free
 
-    ;; wait for visual to be free so we can clear it
-    ;; TODO this is not really semantic either right?
-    ;; TODO anyway, can't we just match against the buffer itself and let
-    ;; TODO it strict harvest?
-    ?visual>
-      state         free
-    ;; TODO i think we should be doing this:
-    ; =visual>
-    ;   ISA           OVAL
-    ;; TODO, or nothing at all because we should store vis-loc instead of using :nearest current
-    ;; TODO, although, one could argue that you need visual attention on the target to acutally
-    ;; make that decision, so we should probably do both
-    ;; TODO at the very least we should be checking that =visual> is ours if we explicitly clear below
   ==>
     =goal>
       state         find-red-target
@@ -251,11 +224,6 @@
     ;; submit click request
     +manual>
       ISA           execute
-
-    ;; clear visual buffer so that it doesn't keep re-encoding and slowing down future searches
-    ;; TODO take out if we change to =visual> in the conditions
-    +visual>
-      ISA           clear
 
     !eval!          (format t "detected enemy, clicking~%")
 
