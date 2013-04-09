@@ -37,6 +37,8 @@
     =goal>
       ISA         targeting
       state       find-red-target
+    ?manual>
+      state       free
   ==>
     +visual-location>
       ISA         visual-location
