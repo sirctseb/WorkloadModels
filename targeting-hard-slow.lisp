@@ -120,11 +120,8 @@
     !eval!          (incf *friend-avoids*)
   )
 
-  ;; rule to move cursor toward target
-  ;; TODO can we somehow check that the imaginal buffer does NOT contain friend info?
-  ;; TODO if we don't have such a check (like now), what happens? sometimes move-cursor goes
-  ;; TODO even when friend info is there?
-  (P move-cursor
+  ;; rule to move cursor toward target when there is no friend info remembered
+  (P move-cursor-no-friend-info
     =goal>
       ISA           targeting
       state         move-cursor
@@ -132,6 +129,49 @@
     =visual-location>
       ISA           visual-location
       kind          OVAL
+
+    ?imaginal>
+      buffer        empty
+
+    ;; make sure motor system is free
+    ?manual>
+      preparation   free
+  ==>
+
+    ;; request to move the cursor
+    +manual>
+      ISA           move-cursor
+      loc           =visual-location
+
+    ;; request to attend to visual object so that we can search for nearest when
+    ;; distinguishing between friend and enemy targets
+    ; TODO it may be better to just keep the visual-location buffer full
+    ; and supply that when making the new request in check-target
+    +visual>
+      ISA           move-attention
+      screen-pos    =visual-location
+    =goal>
+      state         check-target
+  )
+
+  ;; rule to move cursor toward target when there is friend info but it doesn't match
+  (P move-cursor-not-friend
+    =goal>
+      ISA           targeting
+      state         move-cursor
+
+    ;; check for friend info
+    =imaginal>
+      ISA           friend-target
+      x             =fx
+      y             =fy
+
+    =visual-location>
+      ISA           visual-location
+      kind          OVAL
+      ;; check that it doesn't match friend location
+      - screen-x    =fx
+      - screen-y    =fy
 
     ;; make sure motor system is free
     ?manual>
