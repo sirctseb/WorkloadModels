@@ -37,6 +37,13 @@
     =goal>
       ISA         targeting
       state       find-red-target
+    ;; require manual to be free before searching for a target
+    ;; TODO this is not really semantic. it resolves a problem where
+    ;; TODO this +vis-loc can find a target that will be clicked on in about 200ms
+    ;; TODO and then will vanish. then the cap-first-location +vis-loc will
+    ;; TODO find the other red target because the first one is gone by then
+    ;; TODO the projection is obviously way off and we a) miss and b) waste time
+    ;; TODO this costs us about 200ms in mean completion time for 0 misses
     ?manual>
       state       free
   ==>
