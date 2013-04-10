@@ -230,6 +230,15 @@
       isa           move-cursor
       loc           =visual-location
 
+    ;; start vis-loc loop again
+    +visual-location>
+      ISA           visual-location
+      ;; search for oval
+      kind          OVAL
+      ;; nearest the current location
+      :nearest      current
+      
+
     ;; log that we did this
     !eval!          (incf *whiff-counter*)
     !eval!          (format t "wiffed too long, moving ~%")
