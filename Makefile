@@ -1,5 +1,4 @@
-exp_root = ~/dart/WorkloadExperiment
-model_root = ~/Desktop/addition
+model_root = .
 output_dir = $(model_root)/output
 SHELL=/bin/bash
 TRIALS=1000
