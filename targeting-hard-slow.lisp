@@ -136,6 +136,10 @@
     ;; make sure motor system is free
     ?manual>
       preparation   free
+
+    ;; make sure visual is free to do move-attention
+    ?visual>
+      state         free
   ==>
 
     ;; request to move the cursor
