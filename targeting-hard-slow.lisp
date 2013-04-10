@@ -32,23 +32,28 @@
 
   ;; Productions
 
-  ;; Rule to start searching for a target  
+  ;; Rule to start searching for a target
   (P find-black-target
     =goal>
       ISA         targeting
       state       find-black-target
-    ?visual>
-      state       free
+
+    ;; check for empty visual-location buffer
+    ?visual-location>
+      buffer      empty
   ==>
+    ;; search for an unattended black target
     +visual-location>
       ISA         visual-location
       :attended   nil
       kind        OVAL
       color       black
+    ;; update state
     =goal>
       state       move-cursor
   )
 
+  ;; TODO I think this never occurs and should be taken out
   (P on-move
     =goal>
       ISA         targeting
@@ -62,6 +67,7 @@
     !eval!          (dolog "failed to attend to target location in find black target~%")
     !eval!          (incf *vis-fails*)
   )
+  ;; TODO this may also never occur and should be taken out
   (P on-move-move-cursor
     =goal>
       ISA           targeting
@@ -79,6 +85,7 @@
   ;; rule to check the visual location against a remembered
   ;; location of a friend target and go to a different one
   (P avoid-friend
+    ;; check for move-cursor state
     =goal>
       ISA           targeting
       state         move-cursor
@@ -97,8 +104,11 @@
       screen-y      =fy
 
     ;; make sure visual is free so we can move attention
+    ;; TODO do visual free in find-black-target and a separate rule to clear the visual buffer
+    ;; TODO but make sure :attended stays true after clearing visual
     ?visual>
       state         free
+      buffer        empty
   ==>
     =goal>
       state         find-black-target
@@ -108,6 +118,7 @@
       isa           move-attention
       screen-pos    =visual-location
 
+    ;; TODO this is very not greedy-polite in imaginal. if addition uses imaginal we will need to change it
     ;; prevent imaginal buffer from being harvested by setting it to the same values
     ;; TODO an alternative is to attempt to retrive the friend-target chunk from declarative
     ;; TODO if it's not in the imaginal buffer. that may be more robust in dual-task cases because
@@ -126,10 +137,12 @@
       ISA           targeting
       state         move-cursor
 
+    ;; check for vis-loc result
     =visual-location>
       ISA           visual-location
       kind          OVAL
 
+    ;; check that there is no friend info
     ?imaginal>
       buffer        empty
 
@@ -140,6 +153,7 @@
     ;; make sure visual is free to do move-attention
     ?visual>
       state         free
+      buffer        empty
   ==>
 
     ;; request to move the cursor
@@ -151,6 +165,8 @@
     ;; distinguishing between friend and enemy targets
     ; TODO it may be better to just keep the visual-location buffer full
     ; and supply that when making the new request in check-target
+    ;; TODO we will probably have to store the vis-loc in the goal to comply with greedy-polite
+    ;; TODO this keeps visual busy the whole time
     +visual>
       ISA           move-attention
       screen-pos    =visual-location
@@ -180,6 +196,11 @@
     ;; make sure motor system is free
     ?manual>
       preparation   free
+
+    ;; check for visual free because we will move-attention
+    ?visual>
+      state         free
+      buffer        empty
   ==>
 
     ;; request to move the cursor
@@ -191,6 +212,8 @@
     ;; distinguishing between friend and enemy targets
     ; TODO it may be better to just keep the visual-location buffer full
     ; and supply that when making the new request in check-target
+    ;; TODO we will probably have to store the vis-loc in the goal to comply with greedy-polite
+    ;; TODO this keeps visual busy the whole time
     +visual>
       ISA           move-attention
       screen-pos    =visual-location
@@ -206,6 +229,7 @@
     ;; wait until visual attention has been moved to target
     ?visual>
       state         free
+      buffer        empty
   ==>
     ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
     +visual-location>
@@ -213,6 +237,7 @@
       ;; search for oval
       kind          OVAL
       ;; nearest the current location
+      ;; TODO will probably read a vis-loc from goal instead of using current
       :nearest      current
     =goal>
       ;; move to the state where we distinguish between red and green targets
@@ -224,6 +249,7 @@
     =goal>
       ISA           targeting
       state         distinguish-target
+
     ;; wait until visual location is found
     =visual-location>
       ISA           visual-location
@@ -231,15 +257,19 @@
       kind          OVAL
       ;; check for red (enemy)
       color         red
+
     ;; make sure visual is free so we can request to move attention
     ?visual>
       state         free
+      buffer        empty
   ==>
     ;; TODO if visual location request fails?
     ;; go to click mouse state to wait for manual state to be free
     =goal>
       state         click-mouse
+
     ;; request attention move
+    ;; TODO this is not necessary for model functionality
     +visual>
       ISA           move-attention
       screen-pos    =visual-location
@@ -343,6 +373,8 @@
       state         busy
   ==>
     ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
+    ;; TODO this keeps vis-loc busy, violating greedy-polite
+    ;; TODO it should be split up into a new state that reads empty vis-loc and does the search
     +visual-location>
       ISA           visual-location
       ;; search for oval
@@ -360,6 +392,7 @@
       ISA           targeting
       state         click-mouse
 
+    ;; TODO this doesn't do much except tie up visual because manual takes longer than visual anyway
     ;; wait until we attended the target
     =visual>
       ISA           OVAL
