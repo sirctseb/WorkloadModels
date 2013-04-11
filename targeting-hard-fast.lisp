@@ -369,10 +369,6 @@
     ?manual>
       last-command  prepare
       state         free
-
-    ;; wait for visual to be free so we can clear it
-    ?visual>
-      state         free
   ==>
     =goal>
       state         find-black-target
@@ -380,10 +376,6 @@
     ;; submit click request
     +manual>
       ISA           execute
-
-    ;; clear visual buffer so that it doesn't keep re-encoding and slowing down future searches
-    +visual>
-      ISA           clear
 
     !eval!          (format t "detected enemy, clicking~%")
 
