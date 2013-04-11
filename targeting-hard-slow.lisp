@@ -271,9 +271,9 @@
 
     ;; request attention move
     ;; TODO this is not necessary for model functionality
-    +visual>
-      ISA           move-attention
-      screen-pos    =visual-location
+    ; +visual>
+    ;   ISA           move-attention
+    ;   screen-pos    =visual-location
 
     !eval!          (format t "detected enemy, clicking~%")
 
