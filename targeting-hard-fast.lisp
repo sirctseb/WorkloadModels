@@ -283,6 +283,7 @@
     ;; make sure visual is free
     ?visual>
       state         free
+      buffer        empty
   ==>
 
     ;; request to move the cursor
