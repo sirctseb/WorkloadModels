@@ -315,8 +315,8 @@
       ISA           visual-location
       ;; search for oval
       kind          OVAL
-      ;; nearest the current location
-      :nearest      current
+      ;; nearest the stored location
+      :nearest      =vis-loc
     =goal>
       ;; move to the state where we distinguish between red and green targets
       state         distinguish-target
