@@ -327,6 +327,7 @@
       ISA         move-attention
       screen-pos  =visual-location
 
+    ;; TODO this violates gp, should be a separate rule
     ;; request visual location of first addend
     +visual-location>
       ISA         visual-location
