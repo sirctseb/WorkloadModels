@@ -400,11 +400,6 @@
       ISA           targeting
       state         click-mouse
 
-    ;; TODO this doesn't do much except tie up visual because manual takes longer than visual anyway
-    ;; wait until we attended the target
-    =visual>
-      ISA           OVAL
-
     ;; make sure motor module is free
     ;; TODO only preparation needs to be free
     ?manual>
