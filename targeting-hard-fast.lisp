@@ -465,6 +465,10 @@
     =temporal>
       ISA           time
       > ticks       =whiff-wait-time
+
+    ;; match visual-location so that it harvests
+    =visual-location>
+      ISA           visual-location
   ==>
     =goal>
       state         find-black-target
