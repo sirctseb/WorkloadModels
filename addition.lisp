@@ -440,6 +440,10 @@
       ISA         number
       value       =value
 
+    ;; clear to avoid re-encodes
+    +visual>
+      ISA         clear
+
     ;; update goal
     =goal>
       state       store-first
