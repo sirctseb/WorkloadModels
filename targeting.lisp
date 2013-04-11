@@ -335,7 +335,7 @@
 					(or moving difficult)
 					(schedule-periodic-event .01
 						#'(lambda ()
-							(let ((color-count 0))
+							(let ((color-count 0) (clear nil))
 								(dolist (button buttons)
 									(when
 										(gethash button *buttons-visible*)
@@ -360,18 +360,18 @@
 														(> cursor-y button-y)
 														(< cursor-y (+ button-y size)))
 													; set button color
-													(progn
+													(unless (equal (color button) (gethash button *button-colors*))
 														(setf (color button) (gethash button *button-colors*))
-														(incf color-count))
-													(setf (color button) 'black))))))
+														(incf color-count)
+														(setf clear t))
+													(unless (equal (color button) 'black) (setf clear t) (setf (color button) 'black)))))))
 
 								(when (> color-count 1)
-									(dolog "two targets are colored~%")))
-							(proc-display))
+									(dolog "two targets are colored~%"))
+								(proc-display :clear clear)))
 
 						:details "moving object"))
 
-				(cwd "/Users/sirc/Desktop/addition")
 				(open-log-file)
 				(if trace-file
 					(with-open-file (*standard-output* trace-file :direction :output :if-exists :append :if-does-not-exist :create)
