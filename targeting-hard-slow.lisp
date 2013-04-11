@@ -18,7 +18,7 @@
   (set-visloc-default isa visual-location screen-x 0 screen-x 1)
 
   ;; chunk types
-  (chunk-type targeting state target-x target-y cursor-diff-x cursor-diff-y target-location)
+  (chunk-type targeting state target-location)
   (chunk-type friend-target x y)
 
   ;; dms
