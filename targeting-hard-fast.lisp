@@ -237,6 +237,7 @@
       ISA           clear
   )
 
+  ;; TODO check if these ever fire and remove if not
   (P on-move
     =goal>
         ISA         targeting
