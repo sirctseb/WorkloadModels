@@ -289,6 +289,10 @@
     =goal>
       ISA         arithmetic-problem
       state       find-second
+
+    ;; gp: require empty visual-location
+    ?visual-location>
+      buffer      empty
   ==>
     ;; perform search for right-most text
     +visual-location>
