@@ -220,10 +220,13 @@
     !eval!          (format t "speed: ~a~%" (/ =x-diff =elapsed-ticks))
     !eval!          (format t "projecting move from ~a to ~a by ~a ~%" =tx =projected-x (* *target-projection* (/ =x-diff =elapsed-ticks)))
     !eval!          (format t "projecting at x: ~a y: ~a, ticks: ~a~%" =projected-x =projected-y =elapsed-ticks)
+
     ;; store projected location in visual location buffer
+    ;; TODO is this a violation of gp?
     =visual-location>
       screen-x      =projected-x
       screen-y      =projected-y
+
     ;; and move to next state
     ;; could move move request here to speed up
     =goal>
