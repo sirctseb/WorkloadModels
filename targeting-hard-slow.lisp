@@ -221,10 +221,10 @@
     =goal>
       ISA           targeting
       state         check-target
-    ;; wait until visual attention has been moved to target
-    ?visual>
-      state         free
-      buffer        empty
+    ;; get visual location from visual buffer
+    =visual>
+      ISA           OVAL
+      screen-pos    =vis-loc
   ==>
     ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
     +visual-location>
