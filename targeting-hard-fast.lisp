@@ -56,7 +56,7 @@
     ;; update goal
     =goal>
       state       cap-first-location
-      
+
     ;; reset timer
     +temporal>
       ISA           time
@@ -65,6 +65,7 @@
   ;; rule to check the visual location against a remembered
   ;; location of a friend target and go to a different one
   (P avoid-friend
+    ;; check state
     =goal>
       ISA           targeting
       state         cap-first-location
@@ -77,6 +78,7 @@
       y             =fy
       x-diff        =x-diff
       y-diff        =y-diff
+    ;; TODO do we need this check?
     ?imaginal>
       state         free
 
