@@ -320,6 +320,7 @@
     ;; check for free visual
     ?visual>
       state       free
+      buffer      empty
   ==>
     ;; request to move attention to second addend
     +visual>
