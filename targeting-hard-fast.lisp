@@ -290,10 +290,9 @@
     +manual>
       ISA           move-cursor
       loc           =visual-location
+
     ;; request to attend to visual object so that we can search for nearest when
     ;; distinguishing between friend and enemy targets
-    ; TODO it may be better to just keep the visual-location buffer full
-    ; and supply that when making the new request in check-target
     +visual>
       ISA           move-attention
       screen-pos    =visual-location
