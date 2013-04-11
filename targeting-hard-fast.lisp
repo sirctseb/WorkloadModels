@@ -557,6 +557,8 @@
       state         free
 
     ;; get current imaginal contents
+    ;; TODO doing two consecutive imaginals like this is slow
+    ;; TODO we could at least use the stored vis-loc we already have as one of them
     =imaginal>
       isa           friend-target
       x             =fx
