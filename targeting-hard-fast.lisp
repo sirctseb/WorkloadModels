@@ -46,13 +46,17 @@
     ?temporal>
       buffer      empty
   ==>
+    ;; do visual search for black target
     +visual-location>
       ISA         visual-location
       :attended   nil
       kind        OVAL
       color       black
+
+    ;; update goal
     =goal>
       state       cap-first-location
+      
     ;; reset timer
     +temporal>
       ISA           time
