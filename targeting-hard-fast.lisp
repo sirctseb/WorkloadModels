@@ -138,6 +138,7 @@
 
     !eval!          (format t "storing first target location: ~a, ~a~%" =tx =ty)
 
+    ;; TODO for gp this should be in a subsequent rule so vis-loc is empty between requests
     ;; search for same location
     +visual-location>
       ISA           visual-location
