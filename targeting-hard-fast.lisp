@@ -446,6 +446,7 @@
       kind          OVAL
       color         black
   ==>
+    ;; TODO this should be a separate rule for gp
     ;; recan vis-loc
     +visual-location>
       ISA           visual-location
