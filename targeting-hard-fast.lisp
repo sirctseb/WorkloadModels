@@ -516,11 +516,11 @@
       ;; get location values
       screen-x      =sx
       screen-y      =sy
-    ;; TODO make sure imaginal module is free so we can remember where friend is?
-    ;; TODO if it is not free? we should probably skip the remember
 
+    ;; TODO if it is not free? we should probably skip the remember
     ;; only do the remembering if imaginal is empty
     ?imaginal>
+      state         free
       buffer        empty
   ==>
     ;; store location of friend target
