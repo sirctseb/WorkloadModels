@@ -364,6 +364,8 @@
     =goal>
       ISA           targeting
       state         distinguish-target
+      ;; match location for new search
+      target-location =target-location
 
     ;; wait until visual location is found
     =visual-location>
@@ -372,6 +374,7 @@
       kind          OVAL
       ;; check for black
       color         black
+
     ;; only loop when the move is not complete
     ?manual>
       state         busy
@@ -384,7 +387,8 @@
       ;; search for oval
       kind          OVAL
       ;; nearest the current location
-      :nearest      current
+      :nearest      =target-location
+
     =goal>
       ;; move to the state where we distinguish between red and green targets
       state         distinguish-target
