@@ -37,6 +37,10 @@
     =goal>
       ISA         targeting
       state       find-black-target
+
+    ;; check for empty vis-loc
+    ?visual-location>
+      buffer      empty
   ==>
     +visual-location>
       ISA         visual-location
