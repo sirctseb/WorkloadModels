@@ -48,6 +48,7 @@
       :attended   nil
       kind        OVAL
       color       black
+
     ;; update state
     =goal>
       state       move-cursor
@@ -104,19 +105,19 @@
       screen-y      =fy
 
     ;; make sure visual is free so we can move attention
-    ;; TODO do visual free in find-black-target and a separate rule to clear the visual buffer
-    ;; TODO but make sure :attended stays true after clearing visual
-    ?visual>
-      state         free
-      buffer        empty
+    ;; TODO doing a move-attention can guarantee that we switch to the other target,
+    ;; TODO but it also takes more time so it probably doesn't save any
+    ; ?visual>
+    ;   state         free
+    ;   buffer        empty
   ==>
     =goal>
       state         find-black-target
 
     ;; move attention to friend target so that find-target-black searches for the other
-    +visual>
-      isa           move-attention
-      screen-pos    =visual-location
+    ; +visual>
+    ;   isa           move-attention
+    ;   screen-pos    =visual-location
 
     ;; TODO this is very not greedy-polite in imaginal. if addition uses imaginal we will need to change it
     ;; prevent imaginal buffer from being harvested by setting it to the same values
