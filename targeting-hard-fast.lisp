@@ -473,6 +473,7 @@
     !eval!          (incf *total-whiff-counter*)
   )
 
+  ;; TODO does this ever happen? waiting for imaginal in cap-first should prevent it
   ;; detect friend when we've already seen it
   (P distinguish-target-friend-remembered
     =goal>
@@ -487,9 +488,11 @@
       ;; check for green
       color           green
 
+    ;; check that there is already info
     =imaginal>
       ISA           friend-target
   ==>
+    ;; TODO this is not gp in imaginal
     ;; keep imaginal
     =imaginal>
     ;; go back to finding black target
