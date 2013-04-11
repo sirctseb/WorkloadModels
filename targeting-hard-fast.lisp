@@ -41,6 +41,10 @@
     ;; check for empty vis-loc
     ?visual-location>
       buffer      empty
+
+    ;; check for empty temporal
+    ?temporal>
+      buffer      empty
   ==>
     +visual-location>
       ISA         visual-location
