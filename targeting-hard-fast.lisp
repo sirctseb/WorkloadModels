@@ -95,6 +95,7 @@
     =goal>
       state         find-black-target
 
+    ;; TODO this is very not greedy-polite in imaginal. if addition uses imaginal we will need to change it
     ;; prevent imaginal buffer from being harvested by setting it to the same values
     ;; TODO an alternative is to attempt to retrive the friend-target chunk from declarative
     ;; TODO if it's not in the imaginal buffer. that may be more robust in dual-task cases because
