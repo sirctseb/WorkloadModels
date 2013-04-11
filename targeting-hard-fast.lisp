@@ -159,10 +159,6 @@
       screen-x      =tx
       screen-y      =ty
 
-    ;; make sure visual is free so we can request move-attention
-    ?visual>
-      state         free
-
     ;; check that friend info is in imaginal
     =imaginal>
       isa           friend-target
