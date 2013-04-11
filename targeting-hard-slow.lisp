@@ -287,6 +287,8 @@
     =goal>
       ISA           targeting
       state         distinguish-target
+      ;; match target location for new search
+      target-location =target-location
 
     ;; wait until visual location found
     =visual-location>
@@ -305,13 +307,14 @@
       isa           move-cursor
       loc           =visual-location
 
+    ;; TODO this should be a separate rule for greedy-polite
     ;; start vis-loc loop again
     +visual-location>
       ISA           visual-location
       ;; search for oval
       kind          OVAL
       ;; nearest the current location
-      :nearest      current
+      :nearest      =target-location
       
 
     ;; log that we did this
