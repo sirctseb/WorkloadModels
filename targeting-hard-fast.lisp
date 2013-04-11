@@ -127,6 +127,7 @@
     ;; check that there is nothing in imaginal
     ?imaginal>
       buffer        empty
+      ;; check state free so we will not let this rule fire until a pending imaginal goes through
       state         free
   ==>
     ;; store location in goal
