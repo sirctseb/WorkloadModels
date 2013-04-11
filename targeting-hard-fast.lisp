@@ -529,6 +529,7 @@
       x             =sx
       y             =sy
 
+    ;; TODO this should be a separate rule for gp
     ;; scan for same location
     +visual-location>
       ISA           visual-location
