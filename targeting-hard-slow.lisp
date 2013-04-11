@@ -166,8 +166,6 @@
     ;; distinguishing between friend and enemy targets
     ; TODO it may be better to just keep the visual-location buffer full
     ; and supply that when making the new request in check-target
-    ;; TODO we will probably have to store the vis-loc in the goal to comply with greedy-polite
-    ;; TODO this keeps visual busy the whole time
     +visual>
       ISA           move-attention
       screen-pos    =visual-location
@@ -211,10 +209,6 @@
 
     ;; request to attend to visual object so that we can search for nearest when
     ;; distinguishing between friend and enemy targets
-    ; TODO it may be better to just keep the visual-location buffer full
-    ; and supply that when making the new request in check-target
-    ;; TODO we will probably have to store the vis-loc in the goal to comply with greedy-polite
-    ;; TODO this keeps visual busy the whole time
     +visual>
       ISA           move-attention
       screen-pos    =visual-location
