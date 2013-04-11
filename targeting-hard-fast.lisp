@@ -325,6 +325,8 @@
     =goal>
       ;; move to the state where we distinguish between red and green targets
       state         distinguish-target
+      ;; store the vis-loc of target of focus
+      target-location =vis-loc
   )
 
   ;; prepare a click while checking the target
