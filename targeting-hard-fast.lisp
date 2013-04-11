@@ -389,6 +389,8 @@
     =goal>
       ISA           targeting
       state         distinguish-target
+      ;; match target location for new search
+      target-location =target-location
 
     ?temporal>
       buffer        empty
@@ -409,13 +411,14 @@
     +temporal>
       ISA           time
 
+    ;; TODO this should be a separate rule for gp
     ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
     +visual-location>
       ISA           visual-location
       ;; search for oval
       kind          OVAL
       ;; nearest the current location
-      :nearest      current
+      :nearest      =target-location
 
     ;; log that we did this
     ;; TODO we should do this in move-after-whiff to only count when whiffs really happen
