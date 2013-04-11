@@ -317,6 +317,11 @@
       kind          OVAL
       ;; nearest the stored location
       :nearest      =vis-loc
+
+    ;; =visual auto harvests here, but may be re-encoded, so clear it
+    +visual>
+      ISA           clear
+
     =goal>
       ;; move to the state where we distinguish between red and green targets
       state         distinguish-target
