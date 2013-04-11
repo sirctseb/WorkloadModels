@@ -62,6 +62,25 @@
       ISA           time
   )
 
+  ;; it can happen that a vis-loc is requested when the cursor is over any remaining targets
+  ;; so that they are all colored and the vis-loc fails in this case we can just reset until one becomes black
+  ;; TODO consider adding shortcut rule that checks if we are over red and can just click
+  ;; TODO check for other times vis-loc can fail
+  (P on-move
+    =goal>
+        ISA         targeting
+        state       cap-first-location
+    ?visual-location>
+        state       error
+  ==>
+    +visual-location>
+        ISA         visual-location
+        kind        OVAL
+        color       black
+    !eval!          (dolog "failed to find target location in find black target~%")
+    !eval!          (incf *vis-fails*)
+  )
+
   ;; rule to check the visual location against a remembered
   ;; location of a friend target and go to a different one
   (P avoid-friend
@@ -242,33 +261,6 @@
       ISA           clear
   )
 
-  ;; TODO check if these ever fire and remove if not
-  (P on-move
-    =goal>
-        ISA         targeting
-        state       find-black-target
-    ?visual-location>
-        state       error
-  ==>
-    +visual-location>
-        ISA         visual-location
-        kind        OVAL
-    !eval!          (dolog "failed to attend to target location in find black target~%")
-    !eval!          (incf *vis-fails*)
-  )
-  (P on-move-move-cursor
-    =goal>
-      ISA           targeting
-      state         move-cursor
-    ?visual-location>
-      state         error
-  ==>
-    +visual-location>
-      ISA           visual-location
-      kind          OVAL
-    !eval!          (dolog "failed to attend to target location in move cursor~%")
-    !eval!          (incf *vis-fails*)
-  )
 
 
   ;; rule to move cursor toward target
