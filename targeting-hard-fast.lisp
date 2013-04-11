@@ -431,6 +431,8 @@
     =goal>
       ISA           targeting
       state         distinguish-target
+      ;; match target location for new search
+      target-location =target-location
 
     ;; check that the timer exists but time is not up yet
     !bind!          =whiff-wait-time *whiff-wait-time*
@@ -447,7 +449,7 @@
     ;; recan vis-loc
     +visual-location>
       ISA           visual-location
-      :nearest      current
+      :nearest      =target-location
   )
 
   (P move-after-whiff
