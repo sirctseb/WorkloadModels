@@ -368,6 +368,7 @@
       ISA         number
       value       =value
 
+    ;; TODO this violates gp
     ;; request move-attention to first addend
     +visual>
       ISA         move-attention
