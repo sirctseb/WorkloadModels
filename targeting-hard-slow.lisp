@@ -260,9 +260,10 @@
       color         red
 
     ;; make sure visual is free so we can request to move attention
-    ?visual>
-      state         free
-      buffer        empty
+    ;; TODO remove if we remove the move-attention in actions
+    ; ?visual>
+    ;   state         free
+    ;   buffer        empty
   ==>
     ;; TODO if visual location request fails?
     ;; go to click mouse state to wait for manual state to be free
