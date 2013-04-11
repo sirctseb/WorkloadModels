@@ -103,6 +103,11 @@
     ;; NOTE this is different than +imaginal> x =fx which makes the imaginal module busy while it sets the value
     =imaginal>
 
+    ;; clear temporal because find-black-target started it
+    ;; TODO this is not gp in temporal
+    +temporal>
+      ISA           clear
+
     !eval!          (format t "avoiding friend~%")
     ;; increment number of times avoided friend
     !eval!          (incf *friend-avoids*)
@@ -377,6 +382,11 @@
     +manual>
       ISA           execute
 
+    ;; clear temporal in case we were running a whiff
+    ;; TODO this is not gp in temporal
+    +temporal>
+      ISA           clear
+
     !eval!          (format t "detected enemy, clicking~%")
 
     ;; increment the number of targets checked
@@ -498,6 +508,10 @@
     ;; go back to finding black target
     =goal>
       state         find-black-target
+    ;; clear temporal in case we were running a whiff
+    ;; TODO this is not gp in temporal
+    +temporal>
+      ISA           clear
   )
 
   ;; after a rescan of the target, check if the target is green
@@ -534,6 +548,11 @@
     +visual-location>
       ISA           visual-location
       :nearest      =visual-location
+
+    ;; clear temporal in case we were running a whiff
+    ;; TODO this is not gp in temporal
+    +temporal>
+      ISA           clear
 
     ;; remember motion
     =goal>
@@ -625,6 +644,11 @@
       kind          OVAL
       ;; nearest the stored location
       :nearest      =target-location
+
+    ;; clear temporal in case we were running a whiff
+    ;; TODO this is not gp in temporal
+    +temporal>
+      ISA           clear
 
     =goal>
       ;; move to the state where we distinguish between red and green targets
