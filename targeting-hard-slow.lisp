@@ -231,12 +231,18 @@
       ISA           visual-location
       ;; search for oval
       kind          OVAL
-      ;; nearest the current location
-      ;; TODO will probably read a vis-loc from goal instead of using current
-      :nearest      current
+      ;; nearest the stored location
+      :nearest      =vis-loc
+
+    ;; =visual auto harvests here, but it will get re-encoded on color change, so clear it
+    +visual>
+      ISA           clear
+
     =goal>
       ;; move to the state where we distinguish between red and green targets
       state         distinguish-target
+      ;; store vis-loc of target of focus
+      target-location =vis-loc
   )
 
   ;; after a rescan of the target, check if the target is red and click it
