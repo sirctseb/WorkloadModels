@@ -15,7 +15,7 @@
   ;; we'll count this as sgp
   ;; set the default visloc chunk to something that will never match
   ;; the effect is to disable buffer stuffing
-  (set-visloc-default isa visual-location screen-x 0 screen-x 1)
+  (set-visloc-default isa visual-location color does-not-exist)
 
   ;; chunk types
   (chunk-type targeting state target-x target-y projected-x projected-y)
