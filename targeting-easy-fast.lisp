@@ -24,10 +24,8 @@
   (chunk-type friend-target x y x-diff y-diff)
 
   ;; dms
-  (suppress-warnings
-    (add-dm (track isa chunk) (attend-letter isa chunk)
+  (add-dm (track isa chunk) (attend-letter isa chunk)
     (goal isa targeting state find-red-target))
-    )
 
   ;; goal focus
   (goal-focus goal)
