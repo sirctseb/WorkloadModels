@@ -1,0 +1,41 @@
+
+  ;; items for targeting task
+  ( :item_type    display_item_visual_text_button
+    :item_name enemy1
+    :setup_event initialize_target
+    :visual_text ("")
+    :display_button_color (red)
+    ; :display_button_color (black)
+    ; :display_target_secret_color (red)
+    :display_item_width (128)
+    :display_item_height (128)
+    :display_item_screen_location_x (150)
+    :display_item_screen_location_y (150)
+    :button_click_event target_clicked_enemy_1
+  )
+  ( :item_type    display_item_visual_text_button
+    :item_name friend
+    :setup_event initialize_target
+    :visual_text ("")
+    :display_button_color (green)
+    ; :display_button_color (black)
+    ; :display_target_secret_color (green)
+    :display_item_width (128)
+    :display_item_height (128)
+    :display_item_screen_location_x (300)
+    :display_item_screen_location_y (300)
+    :button_click_event target_clicked_friend
+  )
+  ( :item_type    display_item_visual_text_button
+    :item_name    enemy2
+    :setup_event initialize_target
+    :visual_text ("")
+    :display_button_color (red)
+    ; :display_button_color (black)
+    ; :display_target_secret_color (red)
+    :display_item_width (128)
+    :display_item_height (128)
+    :display_item_screen_location_x (450)
+    :display_item_screen_location_y (450)
+    :button_click_event target_clicked_enemy_2
+  )

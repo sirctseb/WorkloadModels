@@ -1,0 +1,25 @@
+  ; TaskTemplateFun__Generate_An_Item_For_Trials_Using_Generating_Methods 
+  ( :item_type    display_item_visual_text
+    :item_name addend1
+    :visual_text (14)
+    :display_item_width (25)
+    :display_item_height (20)
+    :display_item_screen_location_x (75)
+    :display_item_screen_location_y (140)
+  )
+  ( :item_type    display_item_visual_text
+    :item_name plus
+    :visual_text(+)
+    :display_item_width (5)
+    :display_item_height (20)
+    :display_item_screen_location_x (100)
+    :display_item_screen_location_y (140)
+  )
+  ( :item_type    display_item_visual_text
+    :item_name addend2
+    :visual_text(2)
+    :display_item_width (25)
+    :display_item_height (20)
+    :display_item_screen_location_x (110)
+    :display_item_screen_location_y (140)
+  )
