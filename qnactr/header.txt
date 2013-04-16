@@ -16,6 +16,11 @@
   :reset_all_modules_before_each_trial t
 
   :auto_compute_default_reaction_time   t ;;nil by default  
+
+  ; :targeting-moving t ; fast
+  ; :targeting-moving nil ; slow
+  ; :targeting-difficult t ; hard
+  ; :targeting-difficult nil ; easy
 )
 
 (add_trials_from_discrete_display_feedback_two_stages_method
