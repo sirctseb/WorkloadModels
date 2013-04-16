@@ -16,11 +16,18 @@ print "targeting:" . $targeting . "\n";
 print "difficulty:" . $difficulty . "\n";
 print "speed:" . $speed . "\n";
 
-# put shared header into resulting file
-copy("qnactr/header.txt", "qnactr/qnactr_model.txt") or die "Copy failed $!";
+# open result file
+open(modelfile, ">qnactr/qnactr_model.txt");
 
-# open result file for further addition
-open(modelfile, ">>qnactr/qnactr_model.txt");
+# put shared header into resulting file
+open(header, "qnactr/header.txt");
+while(<header>) {
+	# process conditional lines for targeting
+	s/^([^;]*);([^;]*; ($difficulty|$speed))/$1$2/g;
+	print modelfile $_;
+}
+close(header);
+
 
 # if addition is enabled, put in addition header stuff
 if($addition) {
