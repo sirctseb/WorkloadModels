@@ -12,6 +12,10 @@
     :visual-movement-tolerance 0.5
     :pixels-per-inch 96
     :viewing-distance 96)
+  ;; we'll count this as sgp
+  ;; set the default visloc chunk to something that will never match
+  ;; the effect is to disable buffer stuffing
+  (set-visloc-default isa visual-location color does-not-exist)
 
   ;; chunk types
   (chunk-type targeting state target-x target-y cursor-diff-x cursor-diff-y target-location)
@@ -33,8 +37,12 @@
     =goal>
       ISA         targeting
       state       find-red-target
+    ;; TODO there's no reason to check this here
     ?visual>
-        state       free
+      state       free
+    ;; check for empty vis-loc
+    ?visual-location>
+      buffer      empty
   ==>
     +visual-location>
       ISA         visual-location
@@ -45,6 +53,7 @@
       state       move-cursor
   )
 
+  ;; TODO does this production ever fire?
   (P on-move-move-cursor
     =goal>
       ISA           targeting
@@ -72,6 +81,11 @@
     =visual-location>
       ISA           visual-location
       kind          OVAL
+
+    ;; check that visual is free and empty
+    ?visual>
+      state         free
+      buffer        empty
 
     ;; make sure motor system is free
     ?manual>
@@ -103,6 +117,12 @@
     ;; make sure motor module is free
     ?manual>
       state         free
+
+    ;; harvest visual
+    ;; TODO we don't actually want to wait for this here though,
+    ;; TODO we should make a parallel production that just harvests visual
+    =visual>
+      ISA           OVAL
   ==>
     
     ;; submit click request
