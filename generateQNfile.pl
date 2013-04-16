@@ -64,6 +64,7 @@ if($addition) {
 			$model_def = 1;
 		}
 	}
+	close(additionmodel);
 }
 
 sub badline {
@@ -100,6 +101,7 @@ if($targeting) {
 			$model_def = 1;
 		}
 	}
+	close(targetmodel);
 
 }
 
