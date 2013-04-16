@@ -37,6 +37,8 @@ if($targeting) {
 	# copy in contents of targeting header file
 	open(targetingheader, "qnactr/targetheader.txt");
 	while(<targetingheader>) {
+		# uncomment conditional lines
+		s/^([^;]*); ([^;]*; $difficulty)/$1$2/g;
 		print modelfile $_;
 	}
 	close(targetingheader);
