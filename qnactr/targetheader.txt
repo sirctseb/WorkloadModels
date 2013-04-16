@@ -4,9 +4,9 @@
     :item_name enemy1
     :setup_event initialize_target
     :visual_text ("")
-    :display_button_color (red)
-    ; :display_button_color (black)
-    ; :display_target_secret_color (red)
+    ; :display_button_color (red) ; easy
+    ; :display_button_color (black) ; hard
+    ; :display_target_secret_color (red) ; hard
     :display_item_width (128)
     :display_item_height (128)
     :display_item_screen_location_x (150)
@@ -17,9 +17,9 @@
     :item_name friend
     :setup_event initialize_target
     :visual_text ("")
-    :display_button_color (green)
-    ; :display_button_color (black)
-    ; :display_target_secret_color (green)
+    ; :display_button_color (green) ; easy
+    ; :display_button_color (black) ; hard
+    ; :display_target_secret_color (green) ; hard
     :display_item_width (128)
     :display_item_height (128)
     :display_item_screen_location_x (300)
@@ -30,9 +30,9 @@
     :item_name    enemy2
     :setup_event initialize_target
     :visual_text ("")
-    :display_button_color (red)
-    ; :display_button_color (black)
-    ; :display_target_secret_color (red)
+    ; :display_button_color (red) ; easy
+    ; :display_button_color (black) ; hard
+    ; :display_target_secret_color (red) ; hard
     :display_item_width (128)
     :display_item_height (128)
     :display_item_screen_location_x (450)
