@@ -55,8 +55,10 @@ if($addition) {
 	my $model_def = 0;
 	while(<additionmodel>) {
 		if($model_def && !/; end model/) {
-			# copy line to output file
-			print modelfile $_;
+			if(!badline($_)) {
+				# copy line to output file
+				print modelfile $_;
+			}
 		} elsif(/define-model/) { # check for define-model call
 			# set flag to true
 			$model_def = 1;
