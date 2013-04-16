@@ -2,7 +2,8 @@
 (define-model targeting-hard-fast
 
   ;; sgp section
-  (sgp :needs-mouse nil
+  (sgp
+    :needs-mouse nil
     :show-focus t
     :trace-detail high
     :cursor-noise t
