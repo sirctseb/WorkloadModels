@@ -414,4 +414,4 @@
     =goal>
       state         find-black-target
   )
-)
+) ; end model

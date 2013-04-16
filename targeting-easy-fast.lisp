@@ -230,4 +230,4 @@
     ;; increment the number of targets checked
     !eval!          (incf *check-order*)
   )
-)
+) ; end model

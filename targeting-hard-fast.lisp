@@ -652,4 +652,4 @@
       ;; move to the state where we distinguish between red and green targets
       state         distinguish-target
   )
-)
+) ; end model
