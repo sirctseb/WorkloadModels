@@ -16,6 +16,8 @@
   ;; set the default visloc chunk to something that will never match
   ;; the effect is to disable buffer stuffing
   (set-visloc-default isa visual-location color does-not-exist)
+  (start-hand-at-mouse)
+  (set-cursor-position 960 600)
 
   ;; chunk types
   (chunk-type targeting state target-x target-y projected-x projected-y target-location)
