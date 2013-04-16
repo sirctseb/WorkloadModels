@@ -17,15 +17,15 @@ print "difficulty:" . $difficulty . "\n";
 print "speed:" . $speed . "\n";
 
 # put shared header into resulting file
-copy("header.txt", "qnactr_model.txt") or die "Copy failed $!";
+copy("qnactr/header.txt", "qnactr/qnactr_model.txt") or die "Copy failed $!";
 
 # open result file for further addition
-open(modelfile, ">>qnactr_model.txt");
+open(modelfile, ">>qnactr/qnactr_model.txt");
 
 # if addition is enabled, put in addition header stuff
 if($addition) {
 	# copy in contents of addition header file
-	open(additionheader, "additionheader.txt");
+	open(additionheader, "qnactr/additionheader.txt");
 	while(<additionheader>) {
 		print modelfile $_;
 	}
@@ -35,7 +35,7 @@ if($addition) {
 # if targeting is enabled, put in targeting header stuff
 if($targeting) {
 	# copy in contents of targeting header file
-	open(targetingheader, "targetheader.txt");
+	open(targetingheader, "qnactr/targetheader.txt");
 	while(<targetingheader>) {
 		print modelfile $_;
 	}
