@@ -2,6 +2,8 @@
   ( :item_type    display_item_visual_text
     :item_name addend1
     :visual_text (14)
+    ; :setup_event initialize_addend_hard ; hard
+    ; :setup_event initialize_addend_easy ; easy
     :display_item_width (25)
     :display_item_height (20)
     :display_item_screen_location_x (75)
@@ -18,6 +20,8 @@
   ( :item_type    display_item_visual_text
     :item_name addend2
     :visual_text(2)
+    ; :setup_event initialize_addend_hard ; hard
+    ; :setup_event initialize_addend_easy ; easy
     :display_item_width (25)
     :display_item_height (20)
     :display_item_screen_location_x (110)
