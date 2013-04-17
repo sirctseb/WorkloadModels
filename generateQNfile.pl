@@ -7,9 +7,10 @@ my $addition = 0;
 my $targeting = 1;
 my $difficulty = easy;
 my $speed = slow;
+my $oprange = easy;
 
 # parse command line options
-GetOptions('a' => \$addition, 't' => \$targeting, 'd=s' => \$difficulty, 's=s' => \$speed);
+GetOptions('a' => \$addition, 't' => \$targeting, 'd=s' => \$difficulty, 's=s' => \$speed, 'o=s' => \$oprange);
 
 print "addition:" . $addition . "\n";
 print "targeting:" . $targeting . "\n";
@@ -34,6 +35,8 @@ if($addition) {
 	# copy in contents of addition header file
 	open(additionheader, "qnactr/additionheader.txt");
 	while(<additionheader>) {
+		# uncomment conditional lines
+		s/^([^;]*);([^;]*; $oprange)/$1$2/g;
 		print modelfile $_;
 	}
 	close(additionheader);
