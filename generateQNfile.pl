@@ -4,7 +4,7 @@ use File::Copy;
 
 # set default values for command line options
 my $addition = 0;
-my $targeting = 1;
+my $targeting = 0;
 my $difficulty = easy;
 my $speed = slow;
 my $oprange = easy;
