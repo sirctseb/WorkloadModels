@@ -8,9 +8,11 @@ my $targeting = 1;
 my $difficulty = easy;
 my $speed = slow;
 my $oprange = easy;
+my $trials = 240;
 
 # parse command line options
-GetOptions('a' => \$addition, 't' => \$targeting, 'd=s' => \$difficulty, 's=s' => \$speed, 'o=s' => \$oprange);
+GetOptions('a' => \$addition, 't' => \$targeting, 'd=s' => \$difficulty, 's=s' => \$speed, 'o=s' => \$oprange,
+			't=i' => \$trials);
 
 print "addition:" . $addition . "\n";
 print "targeting:" . $targeting . "\n";
@@ -25,6 +27,9 @@ open(header, "qnactr/header.txt");
 while(<header>) {
 	# process conditional lines for targeting
 	s/^([^;]*);([^;]*; ($difficulty|$speed))/$1$2/g;
+	# subsitute trials
+	s/(\s*:add_number_of_blocks_per_day\s*)12\s*;\s*trials/$1$trials/;
+	# replace trials
 	print modelfile $_;
 }
 close(header);
