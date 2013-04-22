@@ -73,6 +73,22 @@
       ISA           time
   )
 
+  ;; Rule to fail forever if no red target is found
+  (P fail-find
+    =goal>
+      ISA         targeting
+      state       cap-first-location
+    ?visual-location>
+      state       error
+  ==>
+    ; stop temporal counter
+    +temporal>
+      ISA         clear
+    ; go to fail state
+    =goal>
+      state       fail
+  )
+
   ;; Rule to capture the location of a target when there is no friend info
   (P cap-first-location
     =goal>
