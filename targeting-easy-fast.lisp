@@ -1,196 +1,250 @@
 ;;; Implementation of the targeting task for the experiment in the easy - fast condition
-(define-model simple-tracking
-	(sgp :needs-mouse nil :show-focus t :trace-detail high :cursor-noise t :vwt t :incremental-mouse-moves 0.01 :randomize-time nil :visual-movement-tolerance 10 :pixels-per-inch 96 :viewing-distance 96)
-	(chunk-type targeting state target-x target-y projected-x projected-y)
-	(chunk-type friend-target x y x-diff y-diff)
+(define-model targeting-easy-fast
 
-	(suppress-warnings (add-dm (track isa chunk) (attend-letter isa chunk)
-		(goal isa targeting state find-red-target)))
-	
-	;; adding this setting to the model will avoid the deleted chunk
-	;; warnings in the object tracking case.
-	;; (sgp :delete-visicon-chunks nil)
+  ;; sgp section
+  (sgp
+    :needs-mouse nil
+    :show-focus t
+    :trace-detail high
+    :cursor-noise t
+    :vwt t
+    :incremental-mouse-moves 0.01
+    :randomize-time nil
+    :visual-movement-tolerance 10
+    :pixels-per-inch 96
+    :viewing-distance 96)
+  ;; we'll count this as sgp
+  ;; set the default visloc chunk to something that will never match
+  ;; the effect is to disable buffer stuffing
+  (set-visloc-default isa visual-location color does-not-exist)
+  (start-hand-at-mouse)
+  (set-cursor-position 960 600)
 
-	;; Rule to start searching for a target  
-	(P find-red-target
-		=goal>
-			ISA         targeting
-			state       find-red-target
-	==>
-		+visual-location>
-			ISA         visual-location
-			:attended   nil
-			kind        OVAL
-			color       red
-		=goal>
-			state       cap-first-location
-		 ;; reset timer
-		+temporal>
-			ISA           time
-	)
+  ;; chunk-types
+  (chunk-type targeting state target-x target-y projected-x projected-y)
+  (chunk-type friend-target x y x-diff y-diff)
 
-	;; Rule to capture the location of a target when there is no friend info
-	(P cap-first-location
-		=goal>
-			ISA           targeting
-			state         cap-first-location
+  ;; dms
+  (add-dm (track isa chunk) (attend-letter isa chunk)
+    (goal isa targeting state find-red-target))
 
-		;; find vis loc
-		=visual-location>
-			ISA           visual-location
-			screen-x      =tx
-			screen-y      =ty
+  ;; goal focus
+  (goal-focus goal)
 
-		;; make sure visual is free so we can request move-attention
-		?visual>
-			state         free
+  ;; Productions
 
-	==>
-		;; store location in goal
-		=goal>
-			target-x      =tx
-			target-y      =ty
-			state         lead-target
+  ;; Rule to start searching for a target  
+  (P find-red-target
+    =goal>
+      ISA         targeting
+      state       find-red-target
 
-		!eval!          (format t "storing first target location: ~a, ~a~%" =tx =ty)
+    ;; require manual to be free before searching for a target
+    ;; TODO this is not really semantic. it resolves a problem where
+    ;; TODO this +vis-loc can find a target that will be clicked on in about 200ms
+    ;; TODO and then will vanish. then the cap-first-location +vis-loc will
+    ;; TODO find the other red target because the first one is gone by then
+    ;; TODO the projection is obviously way off and we a) miss and b) waste time
+    ;; TODO this costs us about 200ms in mean completion time for 0 misses
+    ?manual>
+      state       free
 
-		;; search for same location
-		+visual-location>
-			ISA           visual-location
-			:nearest      =visual-location
-	)
+    ;; check for empty vis-loc
+    ?visual-location>
+      buffer      empty
 
-	;; Rule to capture second location of the target after moving attention
-	(P lead-target
-		=goal>
-			ISA           targeting
-			state         lead-target
-			target-x      =tx
-			target-y      =ty
-		;; get the new location
-		=visual-location>
-			ISA           visual-location
-			screen-x      =sx
-			screen-y      =sy
-		;; get elapsed time
-		=temporal>
-			ISA           time
-			ticks         =elapsed-ticks
-	==>
-		!eval!          (format t "second target location: ~a, ~a~%" =sx =sy)
-		;; calculate x difference
-		!bind!          =x-diff (- =sx =tx)
-		!bind!          =y-diff (- =sy =ty)
-		;; project location
-		!bind!          =projected-x (+ =tx (* *target-projection* (/ =x-diff =elapsed-ticks)))
-		!bind!          =projected-y (+ =ty (* *target-projection* (/ =y-diff =elapsed-ticks)))
-		!eval!          (format t "x-diff: ~a~%" =x-diff)
-		!eval!          (format t "speed: ~a~%" (/ =x-diff =elapsed-ticks))
-		!eval!          (format t "projecting move from ~a to ~a by ~a ~%" =tx =projected-x (* *target-projection* (/ =x-diff =elapsed-ticks)))
-		!eval!          (format t "projecting at x: ~a y: ~a, ticks: ~a~%" =projected-x =projected-y =elapsed-ticks)
-		;; store projected location in visual location buffer
-		=visual-location>
-			screen-x      =projected-x
-			screen-y      =projected-y
-		;; and move to next state
-		;; TODO move move request here to speed up?
-		=goal>
-			state         move-cursor
+    ;; check for empty temporal
+    ?temporal>
+      buffer      empty
+  ==>
+    ;; do search for enemy target
+    +visual-location>
+      ISA         visual-location
+      :attended   nil
+      kind        OVAL
+      color       red
 
-		;; clear timer
-		+temporal>
-			ISA           clear
-	)
+    ;; update goal
+    =goal>
+      state       cap-first-location
 
-	;; rule to move cursor toward target
-	(P move-cursor
-		=goal>
-			ISA           targeting
-			state         move-cursor
+    ;; start timer
+    +temporal>
+      ISA           time
+  )
 
-		=visual-location>
-			ISA           visual-location
-			kind          OVAL
+  ;; Rule to fail forever if no red target is found
+  (P fail-find
+    =goal>
+      ISA         targeting
+      state       cap-first-location
+    ?visual-location>
+      state       error
+  ==>
+    ; stop temporal counter
+    +temporal>
+      ISA         clear
+    ; go to fail state
+    =goal>
+      state       fail
+  )
 
-		;; make sure motor system is free
-		?manual>
-			preparation   free
+  ;; Rule to capture the location of a target when there is no friend info
+  (P cap-first-location
+    =goal>
+      ISA           targeting
+      state         cap-first-location
 
-		;; make sure visual is free
-		?visual>
-			state         free
-	==>
+    ;; find vis loc
+    =visual-location>
+      ISA           visual-location
+      screen-x      =tx
+      screen-y      =ty
 
-		;; request to move the cursor
-		+manual>
-			ISA           move-cursor
-			loc           =visual-location
-		;; request to attend to visual object so that we can search for nearest when
-		;; distinguishing between friend and enemy targets
-		; TODO it may be better to just keep the visual-location buffer full
-		; and supply that when making the new request in check-target
-		+visual>
-			ISA           move-attention
-			screen-pos    =visual-location
-		=goal>
-			state         distinguish-target
-	)
+    ;; make sure visual is free so we can request move-attention
+    ;; also check that visual buffer is empty
+    ?visual>
+      state         free
+      buffer        empty
 
-	;; prepare a click while checking the target
-	(P prepare-click
-		=goal>
-			ISA           targeting
-			state         distinguish-target
+  ==>
+    ;; store location in goal
+    =goal>
+      target-x      =tx
+      target-y      =ty
+      state         lead-target
 
-		;; wait until manual preparation is free and last command was a move (we didn't already prepare click)
-		?manual>
-			last-command  move-cursor
-			preparation   free
-	==>
-		;; prepare the mouse-click
-		;; TODO there is no prepare mouse-click, hopefully manually doing the punch right index works
-		+manual>
-			ISA           prepare
-			style         punch
-			hand          right
-			finger        index
-	)
+    !eval!          (format t "storing first target location: ~a, ~a~%" =tx =ty)
 
-	;; after a rescan of the target, check if the target is red and click it
-	(P distinguish-target-enemy
-		=goal>
-			ISA           targeting
-			state         distinguish-target
+    ;; search for same location
+    ;; TODO is this a violation of greedy-polite?
+    ;; TODO i.e., should vis-loc become empty for a production cycle before we can do the search again?
+    ;; TODO then we would have to store the location
+    +visual-location>
+      ISA           visual-location
+      :nearest      =visual-location
+  )
 
-		;; let prepare-click go first
-		;; TODO this is not a semantic test. it only exists to allow prepare-click to go first
-		;; TODO there should be a better way to let prepare-click to have priority
-		;; TODO we could just put a flag in goal
-		?manual>
-			last-command  prepare
-			state         free
+  ;; Rule to capture second location of the target after moving attention
+  (P lead-target
+    =goal>
+      ISA           targeting
+      state         lead-target
+      target-x      =tx
+      target-y      =ty
 
-		;; wait for visual to be free so we can clear it
-		?visual>
-			state         free
-	==>
-		=goal>
-			state         find-red-target
+    ;; get the new location
+    =visual-location>
+      ISA           visual-location
+      screen-x      =sx
+      screen-y      =sy
 
-		;; submit click request
-		+manual>
-			;ISA           click-mouse
-			ISA           execute
+    ;; get elapsed time
+    =temporal>
+      ISA           time
+      ticks         =elapsed-ticks
+  ==>
+    !eval!          (format t "second target location: ~a, ~a~%" =sx =sy)
+    ;; calculate x difference
+    !bind!          =x-diff (- =sx =tx)
+    !bind!          =y-diff (- =sy =ty)
+    ;; project location
+    !bind!          =projected-x (+ =tx (* *target-projection* (/ =x-diff =elapsed-ticks)))
+    !bind!          =projected-y (+ =ty (* *target-projection* (/ =y-diff =elapsed-ticks)))
+    !eval!          (format t "x-diff: ~a~%" =x-diff)
+    !eval!          (format t "speed: ~a~%" (/ =x-diff =elapsed-ticks))
+    !eval!          (format t "projecting move from ~a to ~a by ~a ~%" =tx =projected-x (* *target-projection* (/ =x-diff =elapsed-ticks)))
+    !eval!          (format t "projecting at x: ~a y: ~a, ticks: ~a~%" =projected-x =projected-y =elapsed-ticks)
 
-		;; clear visual buffer so that it doesn't keep re-encoding and slowing down future searches
-		+visual>
-			ISA           clear
+    ;; store projected location in visual location buffer
+    ;; TODO is this a violation of greedy-polite?
+    =visual-location>
+      screen-x      =projected-x
+      screen-y      =projected-y
 
-		!eval!          (format t "detected enemy, clicking~%")
+    ;; and move to next state
+    ;; TODO could move move request here to speed up
+    =goal>
+      state         move-cursor
 
-		;; increment the number of targets checked
-		!eval!          (incf *check-order*)
-	)
+    ;; clear timer
+    +temporal>
+      ISA           clear
+  )
 
-	(goal-focus goal)
-)
+  ;; rule to move cursor toward target
+  (P move-cursor
+    =goal>
+      ISA           targeting
+      state         move-cursor
+
+    ;; check for oval location
+    =visual-location>
+      ISA           visual-location
+      kind          OVAL
+
+    ;; make sure motor system is free
+    ;; TODO can greedy-polite say anything about the manual buffer? it doesn't contain anything
+    ?manual>
+      preparation   free
+
+  ==>
+
+    ;; request to move the cursor
+    +manual>
+      ISA           move-cursor
+      loc           =visual-location
+
+    ;; update goal
+    =goal>
+      state         click-mouse
+  )
+
+  ;; prepare a click while checking the target
+  ;; TODO I don't think this abides by greedy-polite, but for combining with addition it doesn't matter
+  (P prepare-click
+    =goal>
+      ISA           targeting
+      state         click-mouse
+
+    ;; wait until manual preparation is free and last command was a move (we didn't already prepare click)
+    ?manual>
+      last-command  move-cursor
+      preparation   free
+  ==>
+    ;; prepare the mouse-click
+    +manual>
+      ISA           prepare
+      style         punch
+      hand          right
+      finger        index
+  )
+
+  ;; wait until mouse move is done to click
+  (P click-mouse
+    =goal>
+      ISA           targeting
+      state         click-mouse
+
+    ;; let prepare-click go first
+    ;; TODO this is not a semantic test. it only exists to allow prepare-click to go first
+    ;; TODO there should be a better way to let prepare-click to have priority
+    ;; TODO we could just put a flag in goal
+    ?manual>
+      last-command  prepare
+      preparation   free
+
+  ==>
+    =goal>
+      state         find-red-target
+
+    ;; submit click request
+    +manual>
+      ISA           execute
+
+    !eval!          (format t "detected enemy, clicking~%")
+
+    ;; increment the number of targets checked
+    !eval!          (incf *check-order*)
+  )
+) ; end model
