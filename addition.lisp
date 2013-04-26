@@ -36,12 +36,18 @@
 (define-model addition
   
   ;; sgp section
-  (sgp :esc t :lf .05)
-  (sgp :v t :show-focus t :trace-detail high)
+  (sgp
+    :esc t
+    :lf .05)
+  (sgp
+    :v t
+    :show-focus t
+    :trace-detail high
+    )
   ;; we'll count this as sgp
   ;; set the default visloc chunk to something that will never match
   ;; the effect is to disable buffer stuffing
-  (set-visloc-default isa visual-location screen-x 0 screen-x 1)
+  (set-visloc-default isa visual-location color does-not-exist)
 
   ;; chunk types
   (chunk-type arithmetic first operator second result ones carry)
@@ -289,6 +295,10 @@
     =goal>
       ISA         arithmetic-problem
       state       find-second
+
+    ;; gp: require empty visual-location
+    ?visual-location>
+      buffer      empty
   ==>
     ;; perform search for right-most text
     +visual-location>
@@ -316,15 +326,18 @@
     ;; check for free visual
     ?visual>
       state       free
+      buffer      empty
   ==>
     ;; request to move attention to second addend
     +visual>
       ISA         move-attention
       screen-pos  =visual-location
 
+    ;; TODO this violates gp, should be a separate rule
     ;; request visual location of first addend
     +visual-location>
       ISA         visual-location
+      kind        text
       screen-x    lowest
 
     ;; update goal
@@ -362,6 +375,7 @@
       ISA         number
       value       =value
 
+    ;; TODO this violates gp
     ;; request move-attention to first addend
     +visual>
       ISA         move-attention
@@ -432,6 +446,10 @@
     +retrieval>
       ISA         number
       value       =value
+
+    ;; clear to avoid re-encodes
+    +visual>
+      ISA         clear
 
     ;; update goal
     =goal>
@@ -772,4 +790,4 @@
     =goal>
       state       done
     )
-)
+) ; end model
