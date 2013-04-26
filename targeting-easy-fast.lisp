@@ -2,7 +2,8 @@
 (define-model targeting-easy-fast
 
   ;; sgp section
-  (sgp :needs-mouse nil
+  (sgp
+    :needs-mouse nil
     :show-focus t
     :trace-detail high
     :cursor-noise t
@@ -16,16 +17,16 @@
   ;; set the default visloc chunk to something that will never match
   ;; the effect is to disable buffer stuffing
   (set-visloc-default isa visual-location color does-not-exist)
+  (start-hand-at-mouse)
+  (set-cursor-position 960 600)
 
   ;; chunk-types
   (chunk-type targeting state target-x target-y projected-x projected-y)
   (chunk-type friend-target x y x-diff y-diff)
 
   ;; dms
-  (suppress-warnings
-    (add-dm (track isa chunk) (attend-letter isa chunk)
+  (add-dm (track isa chunk) (attend-letter isa chunk)
     (goal isa targeting state find-red-target))
-    )
 
   ;; goal focus
   (goal-focus goal)
@@ -70,6 +71,22 @@
     ;; start timer
     +temporal>
       ISA           time
+  )
+
+  ;; Rule to fail forever if no red target is found
+  (P fail-find
+    =goal>
+      ISA         targeting
+      state       cap-first-location
+    ?visual-location>
+      state       error
+  ==>
+    ; stop temporal counter
+    +temporal>
+      ISA         clear
+    ; go to fail state
+    =goal>
+      state       fail
   )
 
   ;; Rule to capture the location of a target when there is no friend info
@@ -230,4 +247,4 @@
     ;; increment the number of targets checked
     !eval!          (incf *check-order*)
   )
-)
+) ; end model
