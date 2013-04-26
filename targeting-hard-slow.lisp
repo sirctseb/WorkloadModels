@@ -213,6 +213,9 @@
     +visual>
       ISA           move-attention
       screen-pos    =visual-location
+
+    ;; keep imaginal
+    =imaginal>
     =goal>
       state         check-target
   )
