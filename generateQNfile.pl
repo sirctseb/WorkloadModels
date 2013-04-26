@@ -128,10 +128,14 @@ close(modelfile);
 # create block description file
 open(blockfile, ">qnactr/block.txt");
 my $oplevel = 0;
-if($oprange eq easy) {
-	$oplevel = "[1,12]";
+if($addition) {
+	if($oprange eq easy) {
+		$oplevel = "[1,12]";
+	} else {
+		$oplevel = "[13,25]";
+	}
 } else {
-	$oplevel = "[13,24]";
+	$oplevel = null;
 }
 my $targetNumber = $targeting ? 3 : 0;
 my $targetSpeed = ($speed eq fast) ? 200 : 0;
