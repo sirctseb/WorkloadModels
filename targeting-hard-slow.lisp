@@ -2,7 +2,8 @@
 (define-model targeting-hard-slow
 
   ;; sgp section
-  (sgp :needs-mouse nil
+  (sgp
+    :needs-mouse nil
     :show-focus t
     :trace-detail high
     :cursor-noise t
@@ -16,16 +17,16 @@
   ;; set the default visloc chunk to something that will never match
   ;; the effect is to disable buffer stuffing
   (set-visloc-default isa visual-location color does-not-exist)
+  (start-hand-at-mouse)
+  (set-cursor-position 960 600)
 
   ;; chunk types
   (chunk-type targeting state target-location)
   (chunk-type friend-target x y)
 
   ;; dms
-  (suppress-warnings
-    (add-dm (track isa chunk) (attend-letter isa chunk)
-      (goal isa targeting state find-black-target))
-    )
+  (add-dm (track isa chunk) (attend-letter isa chunk)
+    (goal isa targeting state find-black-target))
 
   ;; goal focus
   (goal-focus goal)
@@ -212,6 +213,9 @@
     +visual>
       ISA           move-attention
       screen-pos    =visual-location
+
+    ;; keep imaginal
+    =imaginal>
     =goal>
       state         check-target
   )
@@ -414,4 +418,4 @@
     =goal>
       state         find-black-target
   )
-)
+) ; end model

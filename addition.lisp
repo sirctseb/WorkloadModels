@@ -36,8 +36,14 @@
 (define-model addition
   
   ;; sgp section
-  (sgp :esc t :lf .05)
-  (sgp :v t :show-focus t :trace-detail high)
+  (sgp
+    :esc t
+    :lf .05)
+  (sgp
+    :v t
+    :show-focus t
+    :trace-detail high
+    )
   ;; we'll count this as sgp
   ;; set the default visloc chunk to something that will never match
   ;; the effect is to disable buffer stuffing
@@ -331,6 +337,7 @@
     ;; request visual location of first addend
     +visual-location>
       ISA         visual-location
+      kind        text
       screen-x    lowest
 
     ;; update goal
@@ -783,4 +790,4 @@
     =goal>
       state       done
     )
-)
+) ; end model
