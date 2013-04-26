@@ -1,5 +1,3 @@
-;;; Implementation of the targeting task for the experiment
-
 ;; true iff the last request to the manual system was a move
 (defvar *move-last* nil)
 ;; true iff a button was clicked more recently than a manual request finished
@@ -16,6 +14,8 @@
 (defvar *buttons-visible* (make-hash-table))
 ;; the underlying colors of each button
 (defvar *button-colors* (make-hash-table))
+;; the amount we move each button every hundredth of a second
+(defvar *button-movements* (make-hash-table))
 ;; the number of targets hit
 (defvar *hit-counter* 0)
 ;; the number of misses
@@ -40,570 +40,364 @@
 (defvar *friend-order* -1)
 ;; the current number of targets checked, used for calculating friend-order
 (defvar *check-order* 0)
+;; the target projection factor
+(defparameter *target-projection* 57)
+;; the number of ticks to wait after whiffing to give up on a target
+(defparameter *whiff-wait-time* 20)
 
 (defun open-log-file ()
-  (unless *log-file*
-    (setf *log-file* (open "log.txt" :direction :output :if-exists :append
-      :if-does-not-exist :create))
-    )
-    (dolog "time: ~a~%" (list (get-universal-time)))
-  )
+	(unless *log-file*
+		(setf *log-file*
+			(open "log.txt" :direction :output :if-exists :append
+				:if-does-not-exist :create)))
+	(dolog "time: ~a~%" (list (get-universal-time))))
+
 (defun close-log-file()
-  (when *log-file*
-    (close *log-file*)
-    (setf *log-file* nil)
-    ))
+	(when *log-file*
+		(close *log-file*)
+		(setf *log-file* nil)
+		))
+
 (defun dolog (msg &optional args)
-  (when *log-file*
-    (if args
-      ;; if args are supplied, call format with them
-      (apply 'format (cons *log-file* (cons msg args)))
-      ;; otherwise, just call with the message string
-      (format *log-file* msg)
-      )
-    )
-)
+	(when *log-file*
+		(if args
+			;; if args are supplied, call format with them
+			(apply 'format (cons *log-file* (cons msg args)))
+			;; otherwise, just call with the message string
+			(format *log-file* msg))))
 
 ;; declar variable for cursor marker so we can access it in the hook
 
 (defun print-event-info (event)
-      (format t "Hook sees event with time: ~S~%" (evt-time event))
-      (format t "Hook sees event with action: ~S~%" (evt-action event))
-      (format t "Hook sees event with params: ~S~%" (evt-params event))
-      (format t "Hook sees event with model: ~S~%" (evt-model event))
-      (format t "Hook sees event with module: ~S~%" (evt-module event))
-      (format t "Hook sees event with destination: ~S~%" (evt-destination event))
-      (format t "Hook sees event with details: ~S~%" (evt-details event))
-      (format t "Hook sees event with output: ~S~%" (evt-output event))
-)
+	(format t "Hook sees event with time: ~S~%" (evt-time event))
+	(format t "Hook sees event with action: ~S~%" (evt-action event))
+	(format t "Hook sees event with params: ~S~%" (evt-params event))
+	(format t "Hook sees event with model: ~S~%" (evt-model event))
+	(format t "Hook sees event with module: ~S~%" (evt-module event))
+	(format t "Hook sees event with destination: ~S~%" (evt-destination event))
+	(format t "Hook sees event with details: ~S~%" (evt-details event))
+	(format t "Hook sees event with output: ~S~%" (evt-output event)))
 
 ;;; Event hook function
 (defun hook (event)
-  (when (eq (evt-module event) ':MOTOR)
-    (when (eq 'OUTPUT-KEY (evt-action event))
-      (setf *move-last* nil)
-    )
-    (when (eq 'MOVE-CURSOR-ABSOLUTE (evt-action event))
-      (setf *move-last* t))
-  )
-  (when (and
-          (eq (evt-module event) ':MOTOR)
-          (eq 'FINISH-MOVEMENT (evt-action event))
-          )
-    ;; if we are finishing a click, check if a button was dismissed
-    ;; since the last movement finish.
-    (unless *move-last*
-      (if *button-clicked*
-        (progn
-        (dolog "hit a target at ~a ~%" `(,(evt-time event)))
-        (format t "hit target~%")
-        (incf *hit-counter*)
-        )
-        (progn
-        (dolog "missed a target at ~a ~%" `(,(evt-time event)))
-        (format t "missed target ~%")
-        (incf *miss-counter*)
-        (when (and *break-on-hover-miss* (> *friend-hovers* 0)) (schedule-break-relative 0.001 :details "stopping after miss"))
-        )
-      )
-    )
-    ;; unset click var
-    (setf *button-clicked* nil)
-  )
-)
+	(when (eq (evt-module event) ':MOTOR)
+		(when (eq 'OUTPUT-KEY (evt-action event))
+			(setf *move-last* nil))
+		(when (eq 'MOVE-CURSOR-ABSOLUTE (evt-action event))
+			(setf *move-last* t)))
+	(when (and
+		(eq (evt-module event) ':MOTOR)
+		(eq 'FINISH-MOVEMENT (evt-action event)))
+	;; if we are finishing a click, check if a button was dismissed
+	;; since the last movement finish.
+	(unless *move-last*
+		(if *button-clicked*
+			(progn
+				(dolog "hit a target at ~a ~%" `(,(evt-time event)))
+				(format t "hit target~%")
+				(incf *hit-counter*))
+			(progn
+				(dolog "missed a target at ~a ~%" `(,(evt-time event)))
+				(format t "missed target ~%")
+				(incf *miss-counter*)
+				(when (and *break-on-hover-miss* (> *friend-hovers* 0)) (schedule-break-relative 0.001 :details "stopping after miss")))))
+		;; unset click var
+		(setf *button-clicked* nil)))
 
 (defun remove-button-after-delay (b)
-  ;; TODO it seems that act-r crashes when you remove a button in its own
-  ;; action, so instead, schedule an event to remove the button in 0.01ms
-  ;; set var that indicates a click occured more recently than manual request finish
-  (setf *button-clicked* t)
-  ;; set var that shows this button is not visible
-  (setf (gethash b *buttons-visible*) nil)
-  ;; schedule the event for actually removing the button
-  (schedule-event-relative .001 (lambda() (remove-items-from-exp-window b) (proc-display)))
-)
-(defun create-button (x y &optional (size *default-button-size*) &key (enemy t))
-  (let ((button (add-button-to-exp-window :text "" :x x :y y :width size :height size
-    ;; NOTE for some reason giving 'remove-button-after-delay directly doesn't work
-    :action (lambda (button) (remove-button-after-delay button))
-    ; make buttons black initially
-    ;; TODO condition on hardness
-    :color 'black
-    )))
-    ; store buttons real color
-    (setf (gethash button *button-colors*) (if enemy 'red 'green))
-    ; store that button is visible
-    (setf (gethash button *buttons-visible*) t)
-    button
-  )
-)
-(defun create-buttons (num &optional (size *default-button-size*) (width *default-screen-size*) (height *default-screen-size*))
-  (let (buttons '())
-    (dotimes (n num buttons)
-      (setf buttons (cons (create-button (random 100) (+ (* n (round (/ height 3))) (random (- (round (/ height 3)) 150))) size :enemy (eq (mod n 2) 0)) buttons))
-    )
-  )
-)
+	;; TODO it seems that act-r crashes when you remove a button in its own
+	;; action, so instead, schedule an event to remove the button in 0.01ms
+	;; set var that indicates a click occured more recently than manual request finish
+	(setf *button-clicked* t)
+	;; set var that shows this button is not visible
+	(setf (gethash b *buttons-visible*) nil)
+	;; schedule the event for actually removing the button
+	(schedule-event-relative .001 (lambda() (remove-items-from-exp-window b) (proc-display))))
+
+(defun create-button (x y &optional (size *default-button-size*) &key (enemy t) (difficult t))
+	(let 
+		(
+			(button (add-button-to-exp-window :text "" :x (- x (/ size 2)) :y (- y (/ size 2)) :width size :height size
+				;; NOTE for some reason giving 'remove-button-after-delay directly doesn't work
+				:action (lambda (button) (remove-button-after-delay button))
+				;; if difficulty, make black. otherwise make red iff enemy
+				:color (if difficult 'black (if enemy 'red 'green)))))
+		;; store buttons real color
+		(setf (gethash button *button-colors*) (if enemy 'red 'green))
+		;; store that button is visible
+		(setf (gethash button *buttons-visible*) t)
+		;; store button movement
+		(set-button-movement (list x y) button)
+		button))
+
+;; determine if a point is inside a circle
+(defun inside-circle (point circle)
+	(<
+		(+
+			(*
+				(-
+					(first point)
+					(first circle))
+				(-
+					(first point)
+					(first circle)))
+			(*
+				(-
+					(second point)
+					(second circle))
+				(-
+					(second point)
+					(second circle))))
+		(*
+			(third circle)
+			(third circle))))
+;; determine if a point is outside a rectangle
+(defun outside-rect (point rectangle)
+	(or
+		(< (first point) (first rectangle))
+		(> (first point) (third rectangle))
+		(< (second point) (second rectangle))
+		(> (second point) (fourth rectangle))))
+;; determine if a point is elligible to be a starting point
+(defun is-elligible (point)
+	(let
+		(
+			(c1 (list 0 0 1200))
+			(c2 (list 0 1200 1200))
+			(c3 (list 1920 0 1200))
+			(c4 (list 1920 1200 100))
+			(c5 (list 960 600 300)))
+		(not
+			(or (outside-rect point '(0 0 1856 1136))
+				(inside-circle point c5)
+				(and
+					(inside-circle point c1)
+					(inside-circle point c2)
+					(inside-circle point c3)
+					(inside-circle point c4))))))
+;; generate a point in the screen
+(defun get-point-in-screen()
+	(list (random 1920) (random 1200)))
+;; generate a starting location for a button
+(defun get-button-start-location ()
+	(loop
+		(let
+    		((point (get-point-in-screen)))
+        	(when (is-elligible point)
+        		(return point)))))
+
+;; generate a random point on a given circle
+(defun random-on-circle (circle)
+  	(let ((theta (* pi (random 2.0))))
+ 	   	(list
+ 	   		(+
+ 	   			(first circle)
+ 	   			(* (third circle) (cos theta)))
+ 	   		(+
+ 	   			(second circle)
+ 	   			(* (third circle) (sin theta))))))
+;; generate a random point on a given circle within a given rectangle
+(defun random-on-circle-in-rectangle (circle rectangle)
+	;; generate
+	(loop
+		;; random points on the circle
+   		(let ((point (random-on-circle circle)))
+   			;; until one is in the rectangle
+   			(when (not (outside-rect point rectangle))
+   				(return point)))))
+;; generate button movement based on an elligible start point
+(defun generate-button-movement (point)
+  	;; get a random point on a circle with the movement radius around the given point and within the screen
+	(let ((endpoint (random-on-circle-in-rectangle (append point (list 1200)) '(0 0 1920 1200))))
+   		;; return the vector scaled by the number of milliseconds the movement takes
+   		(list (coerce (/ (- (first endpoint) (first point)) 600) 'single-float)
+           	  (coerce (/ (- (second endpoint) (second point)) 600) 'single-float))))
+;; get and store the button movement based on an elligible start point
+(defun set-button-movement (point button)
+	(let ((movement (generate-button-movement point)))
+		(setf (gethash button *button-movements*) movement)))
+
+(defun create-buttons (num &optional (size *default-button-size*) (width *default-screen-size*) (height *default-screen-size*) (difficult t))
+	(let (buttons '())
+		(dotimes (n num buttons)
+			(setf buttons
+				(cons
+					(let ((point (get-button-start-location)))
+						(create-button
+							; (random 100)
+							(first point)
+							; (+ (* n (round (/ height 3))) (random (- (round (/ height 3)) 150)))
+							(second point)
+							size
+							:enemy (eq (mod n 2) 0)
+							:difficult difficult)) buttons)))))
+(defun test-targets()
+	;; make a hundred buttons
+	(create-buttons 100 128 1920 1200 t))
+
 ;; condition function for stopping simulation:
 ;; stop once we have hit two targets or 6 seconds have passed
 ;; TODO this does not check for friendly hits
 (defun task-end-condition ()
-  (or (> *hit-counter* 1) (> (get-time) 6000))
-)
-(defun once (&key (num-targets 3) (trials 1) (button-size 128) (width 1920) (height 1200) (moving t) (real-time t) (trace-file nil) (break-hover-miss nil) (trace nil) (show-motion t)) 
-  (run-trials :num-targets num-targets :trials trials :button-size button-size :width width :height height :moving moving :real-time real-time :trace-file trace-file :break-hover-miss break-hover-miss :trace trace :show-motion show-motion)
-)
-(defun run-trials (&key (num-targets 3) (trials 50) (button-size 128) (width 1920) (height 1200)
-                        (moving nil) (real-time nil) (trace-file nil) (break-hover-miss nil)
-                        (trace nil) (show-motion nil) (visible t))
-  (dotimes (n trials)
-    (when 
-      (and
-        (third (do-targeting num-targets :button-size button-size :width width :height height :moving moving :real-time real-time :trace-file trace-file :break-hover-miss break-hover-miss :trace trace :show-motion show-motion :visible visible)
-          )
-        (> *friend-hovers* 0)
-        )
-      (return)
-    )
-  )
-  )
+	(or
+		(> *hit-counter* 1)
+		(> (get-time) 6000)))
+
+(defun once
+	(&key (num-targets 3) (trials 1) (button-size 128) (width 1920)
+		(height 1200) (moving t) (real-time t) (trace-file nil)
+		(break-hover-miss nil) (trace nil) (show-motion t) (difficult t)) 
+	(run-trials
+		:num-targets num-targets
+		:trials trials
+		:button-size button-size
+		:width width
+		:height height
+		:moving moving
+		:real-time real-time
+		:trace-file trace-file
+		:break-hover-miss break-hover-miss
+		:trace trace
+		:show-motion show-motion
+		:difficult difficult))
+
+(defun run-trials
+	(&key
+		(num-targets 3) (trials 50) (button-size 128) (width 1920)
+		(height 1200) (moving nil) (real-time nil) (trace-file nil) (break-hover-miss nil)
+		(trace nil) (show-motion nil) (visible t) (difficult t))
+	(dotimes (n trials)
+		(when 
+			(and
+				(third
+					(do-targeting
+						num-targets
+						:button-size button-size
+						:width width
+						:height height
+						:moving moving
+						:real-time real-time
+						:trace-file trace-file
+						:break-hover-miss break-hover-miss
+						:trace trace
+						:show-motion show-motion
+						:visible visible
+						:difficult difficult))
+				(> *friend-hovers* 0))
+			(return))))
+
 (defun dt () (do-targeting 5))
+
 (defun reset-task ()
-  (setf *hit-counter* 0)
-  (setf *miss-counter* 0)
-  (setf *friend-hovers* 0)
-  (setf *whiff-counter* 0)
-  (setf *total-whiff-counter* 0)
-  (setf *vis-fails* 0)
-  (setf *friend-avoids* 0)
-  (setf *friend-order* -1)
-  (setf *check-order* 0)
-)
-(defun do-targeting (&optional (num-targets 3) &key (button-size *default-button-size*) (width 1920) (height 1200)
-    (moving *default-moving*) (real-time nil) (trace-file nil) (break-hover-miss nil) (trace nil)
-    (show-motion nil) (visible t))
- 
+	(setf *hit-counter* 0)
+	(setf *miss-counter* 0)
+	(setf *friend-hovers* 0)
+	(setf *whiff-counter* 0)
+	(setf *total-whiff-counter* 0)
+	(setf *vis-fails* 0)
+	(setf *friend-avoids* 0)
+	(setf *friend-order* -1)
+	(setf *check-order* 0))
 
-   ; set break on hover miss flag
-   (setf *break-on-hover-miss* break-hover-miss)
-   (reset-task)
-   (reset)
-   (if trace (sgp :v t) (sgp :v nil))
-   (let* ((window (open-exp-window "Moving X" :visible visible :width width :height height))
-          (buttons (create-buttons num-targets button-size width height))
-          (returnvalue nil)
-        )
-      ;(setf *buttons-visible* (make-list (list-length buttons) t))
-    
-      (if (not (subtypep (type-of window) 'virtual-window))
-         (print-warning "This example only works correctly for virtual and visible-virtual windows because the x coordinate accessor is specific to those objects.")
-      
-         (progn
+(defun do-targeting
+	(&optional
+		(num-targets 3) &key (button-size *default-button-size*) (width 1920) (height 1200)
+		(moving *default-moving*) (difficult t) (real-time nil) (trace-file nil) (break-hover-miss nil) (trace nil)
+		(show-motion nil) (visible t))
 
+	;; load model based on params, but only if there is not already a model
+	;; TODO use relative path
+	(unless (current-model)
+		(let ((path (concatenate 'string "~/Desktop/addition/targeting-" (if difficult "hard" "easy") "-" (if moving "fast" "slow") ".lisp")))
+			(format t "loading ~a~%" path)
+			(load path)))
 
-            (install-device window)
-            (start-hand-at-mouse)
-            (set-cursor-position 960 600)
-            (proc-display)
-            ;; schedule moves if targets should move
-              (schedule-periodic-event .01 #'(lambda ()
-                                            ;; Virtual dialog item specific coordinate moving
-                                            ;; code.  Code for real windows is different for each
-                                            ;; Lisp since the x position accessor will differ.
-                                            (let ((color-count 0))
-                                              (dolist (button buttons)
-    ;                                            (format t "seeing if button ~a is visible so we can move it" button)
-                                                (when (gethash button *buttons-visible*)
-    ;                                              (format t "it is! moving it")
-                                                  (when show-motion (remove-items-from-exp-window button))
-                                                  (when moving
-                                                    (setf (x-pos button) (+ 2.8 (x-pos button)))
-                                                  )
-                                                  (when show-motion (add-items-to-exp-window button))
-                                                  ;(format t "moving target at ~a to x ~d~%" (get-time) (x-pos button))
-                                                  ;(format t "cursor location: ~s" (get-mouse-coordinates (current-device)))
-                                                  ;; check if mouse is within target
-                                                  ;; define cursor and button locations
-                                                  (let* ((cursor-loc (get-mouse-coordinates (current-device)))
-                                                          (cursor-x (aref cursor-loc 0))
-                                                          (cursor-y (aref cursor-loc 1))
-                                                          (button-x (x-pos button))
-                                                          (button-y (y-pos button))
-                                                          (size (width button)))
-                                                    ; test if cursor within button
-                                                    (if (and (> cursor-x button-x)
-                                                               (< cursor-x (+ button-x size))
-                                                               (> cursor-y button-y)
-                                                               (< cursor-y (+ button-y size)))
-                                                      ; set button color
-                                                      (progn
-                                                        (setf (color button) (gethash button *button-colors*))
-                                                        (incf color-count)
-                                                      )
-                                                      (setf (color button) 'black)
-                                                    )
-                                                  )
-                                                )
-                                              )
-                                              (when (> color-count 1)
-                                                (dolog "two targets are colored~%")
-                                              )
-                                            )
-                                            (proc-display)
-                                       :details "moving object"
-                                       :initial-delay 0.5))
-            (cwd "/Users/sirc/Desktop/addition")
-            (open-log-file)
-            (if trace-file
-              (with-open-file (*standard-output* trace-file :direction :output :if-exists :append :if-does-not-exist :create)
-                (setf returnvalue 
-                  (multiple-value-list (run-until-condition 'task-end-condition :real-time real-time)))
-              )
-              (setf returnvalue
-                (multiple-value-list (run-until-condition 'task-end-condition :real-time real-time)))
-            )
-            (dolog "hits: ~a~%" `(,*hit-counter*))
-            (dolog "misses: ~a~%" `(,*miss-counter*))
-            (dolog "friend hovers: ~a~%" `(,*friend-hovers*))
-            (dolog "completion time: ~a~%" `(,(get-time)))
-            (dolog "whiffs: ~a~%" `(,*whiff-counter*))
-            (dolog "vis fails: ~a~%" `(,*vis-fails*))
-            (dolog "friend avoids: ~a~%" `(,*friend-avoids*))
-            (dolog "friend order: ~a~%" `(,*friend-order*))
-            (dolog "total-whiffs: ~a~%" `(,*total-whiff-counter*))
-            (close-log-file)
-            )) returnvalue ))
+	;; set break on hover miss flag
+	(setf *break-on-hover-miss* break-hover-miss)
+	(reset-task)
+	(reset)
+	(if trace (sgp :v t) (sgp :v nil))
+	(let*
+		(	(window (open-exp-window "Moving X" :visible visible :width width :height height))
+			(buttons (create-buttons num-targets button-size width height difficult))
+			(returnvalue nil))
+
+		(if (not (subtypep (type-of window) 'virtual-window))
+			(print-warning "This example only works correctly for virtual and visible-virtual windows because the x coordinate accessor is specific to those objects.")
+
+			(progn
+				(install-device window)
+				(start-hand-at-mouse)
+				(set-cursor-position 960 600)
+				(proc-display)
+				;; schedule moves if targets should move or we need to change target colors
+				(when
+					(or moving difficult)
+					(schedule-periodic-event .01
+						#'(lambda ()
+							(let ((color-count 0) (clear nil))
+								(dolist (button buttons)
+									(when
+										(gethash button *buttons-visible*)
+										(when moving
+											(when show-motion (remove-items-from-exp-window button))
+											(when moving (setf (x-pos button) (+ (first (gethash button *button-movements*)) (x-pos button))))
+											(when moving (setf (y-pos button) (+ (second (gethash button *button-movements*)) (y-pos button))))
+											(when show-motion (add-items-to-exp-window button)))
+
+										;; check if mouse is within target
+										;; define cursor and button locations
+										(when difficult
+											(let* (	(cursor-loc (get-mouse-coordinates (current-device)))
+													(cursor-x (aref cursor-loc 0))
+													(cursor-y (aref cursor-loc 1))
+													(button-x (x-pos button))
+													(button-y (y-pos button))
+													(size (width button)))
+												; test if cursor within button
+												(if (and (> cursor-x button-x)
+														(< cursor-x (+ button-x size))
+														(> cursor-y button-y)
+														(< cursor-y (+ button-y size)))
+													; set button color
+													(unless (equal (color button) (gethash button *button-colors*))
+														(setf (color button) (gethash button *button-colors*))
+														(incf color-count)
+														(setf clear t))
+													(unless (equal (color button) 'black) (setf clear t) (setf (color button) 'black)))))))
+
+								(when (> color-count 1)
+									(dolog "two targets are colored~%"))
+								(proc-display :clear clear)))
+
+						:details "moving object"))
+
+				(open-log-file)
+				(if trace-file
+					(with-open-file (*standard-output* trace-file :direction :output :if-exists :append :if-does-not-exist :create)
+						(setf returnvalue 
+							(multiple-value-list (run-until-condition 'task-end-condition :real-time real-time))))
+					(setf returnvalue
+						(multiple-value-list (run-until-condition 'task-end-condition :real-time real-time))))
+				(dolog "hits: ~a~%" `(,*hit-counter*))
+				(dolog "misses: ~a~%" `(,*miss-counter*))
+				(dolog "friend hovers: ~a~%" `(,*friend-hovers*))
+				(dolog "completion time: ~a~%" `(,(get-time)))
+				(dolog "whiffs: ~a~%" `(,*whiff-counter*))
+				(dolog "vis fails: ~a~%" `(,*vis-fails*))
+				(dolog "friend avoids: ~a~%" `(,*friend-avoids*))
+				(dolog "friend order: ~a~%" `(,*friend-order*))
+				(dolog "total-whiffs: ~a~%" `(,*total-whiff-counter*))
+				(close-log-file)))
+		returnvalue))
 
 (clear-all)
 
 ; add event hook
 (setf *hook-handle* (add-pre-event-hook 'hook))
 
-(define-model simple-tracking
-
-   (sgp :needs-mouse nil :show-focus t :trace-detail high :cursor-noise t :vwt t :incremental-mouse-moves 0.01 :randomize-time nil
-    :visual-movement-tolerance 0.5 :pixels-per-inch 96 :viewing-distance 96)
-   (chunk-type targeting state target-x target-y cursor-diff-x cursor-diff-y target-location)
-   (chunk-type friend-target x y)
-
-   (add-dm (track isa chunk) (attend-letter isa chunk)
-      (goal isa targeting state find-black-target))
-  
-   ;; adding this setting to the model will avoid the deleted chunk
-   ;; warnings in the object tracking case.
-   ;; (sgp :delete-visicon-chunks nil)
-
-;; Rule to start searching for a target  
-(P find-black-target
-   =goal>
-      ISA         targeting
-      state       find-black-target
-   ?visual>
-      state       free
-==>
-   +visual-location>
-      ISA         visual-location
-      :attended   nil
-      kind        OVAL
-      color       black
-   =goal>
-      state       move-cursor
-)
-
-(P on-move
-  =goal>
-      ISA         targeting
-      state       find-black-target
-  ?visual-location>
-      state       error
-==>
-  +visual-location>
-      ISA         visual-location
-      kind        OVAL
-  !eval!          (dolog "failed to attend to target location in find black target~%")
-  !eval!          (incf *vis-fails*)
-)
-(P on-move-move-cursor
-  =goal>
-    ISA           targeting
-    state         move-cursor
-  ?visual-location>
-    state         error
-==>
-  +visual-location>
-    ISA           visual-location
-    kind          OVAL
-  !eval!          (dolog "failed to attend to target location in move cursor~%")
-  !eval!          (incf *vis-fails*)
-)
-
-;; rule to check the visual location against a remembered
-;; location of a friend target and go to a different one
-(P avoid-friend
-  =goal>
-    ISA           targeting
-    state         move-cursor
-
-  ;; check for friend info in the imaginal buffer
-  =imaginal>
-    ISA           friend-target
-    ;; get friend location
-    x             =fx
-    y             =fy
-
-  =visual-location>
-    ISA           visual-location
-    ;; check if new location is at the remembered friend location
-    screen-x      =fx
-    screen-y      =fy
-
-  ;; make sure visual is free so we can move attention
-  ?visual>
-    state         free
-==>
-  =goal>
-    state         find-black-target
-
-  ;; move attention to friend target so that find-target-black searches for the other
-  +visual>
-    isa           move-attention
-    screen-pos    =visual-location
-
-  ;; prevent imaginal buffer from being harvested by setting it to the same values
-  ;; TODO an alternative is to attempt to retrive the friend-target chunk from declarative
-  ;; TODO if it's not in the imaginal buffer. that may be more robust in dual-task cases because
-  ;; TODO something else might fill the imaginal buffer and then we'll never get it back
-  ;; NOTE this is different than +imaginal> x =fx which makes the imaginal module busy while it sets the value
-  =imaginal>
-
-  !eval!          (format t "avoiding friend~%")
-  ;; increment number of times avoided friend
-  !eval!          (incf *friend-avoids*)
-)
-
-;; rule to move cursor toward target
-;; TODO can we somehow check that the imaginal buffer does NOT contain friend info?
-;; TODO if we don't have such a check (like now), what happens? sometimes move-cursor goes
-;; TODO even when friend info is there?
-(P move-cursor
-  =goal>
-    ISA           targeting
-    state         move-cursor
-
-  =visual-location>
-    ISA           visual-location
-    kind          OVAL
-;    screen-pos    =target-location
-
-  ;; request to move cursor
-  ;; TODO :cursor-noise should probably be enabled
-  ;; TODO also, :default-target-width
-  ;; TODO :incremental-mouse-moves?
-  ;; TODO just look at all the parameters
-
-  ;; make sure motor system is free
-  ?manual>
-    preparation   free
-==>
-
-  ;; request to move the cursor
-  +manual>
-    ISA           move-cursor
-    ;; TODO i guess we don't need the comparison rules
-    ;; TODO do we even need to move visual attention to cursor?
-    ;; TODO I think a better model is,
-    ;; 1. find target
-    ;; 2. move mouse
-    ;; 3. while manual busy, track cursor
-    ;; 4. if cursor within target, click button
-    loc           =visual-location
-  ;; request to attend to visual object so that we can search for nearest when
-  ;; distinguishing between friend and enemy targets
-  ; TODO it may be better to just keep the visual-location buffer full
-  ; and supply that when making the new request in check-target
-  +visual>
-    ISA           move-attention
-    screen-pos    =visual-location
-  =goal>
-    state         check-target
-)
-
-;; re-scan for the nearest oval to get info about its color
-(P check-target
-  =goal>
-    ISA           targeting
-    state         check-target
-  ;; wait until visual attention has been moved to target
-  ?visual>
-    state         free
-==>
-  ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
-  +visual-location>
-    ISA           visual-location
-    ;; search for oval
-    kind          OVAL
-    ;; nearest the current location
-    :nearest      current
-  =goal>
-    ;; move to the state where we distinguish between red and green targets
-    state         distinguish-target
-)
-
-;; after a rescan of the target, check if the target is red and click it
-(P distinguish-target-enemy
-  =goal>
-    ISA           targeting
-    state         distinguish-target
-  ;; wait until visual location is found
-  =visual-location>
-    ISA           visual-location
-    ;; check for oval
-    kind          OVAL
-    ;; check for red (enemy)
-    color         red
-  ;; make sure visual is free so we can request to move attention
-  ?visual>
-    state         free
-==>
-  ;; TODO if visual location request fails?
-  ;; go to click mouse state to wait for manual state to be free
-  =goal>
-    state         click-mouse
-  ;; request attention move
-  +visual>
-    ISA           move-attention
-    screen-pos    =visual-location
-
-  !eval!          (format t "detected enemy, clicking~%")
-
-  ;; increment the number of targets checked
-  !eval!          (incf *check-order*)
-)
-
-;; if we are still trying to distinguish a target but it has stayed black through the mouse move,
-;; then we missed it, so do another mouse move to it
-(P distinguish-whiff
-  =goal>
-    ISA           targeting
-    state         distinguish-target
-
-  ;; wait until visual location found
-  =visual-location>
-    ISA           visual-location
-    ;; check for oval
-    kind          OVAL
-    ;; check for black
-    color         black
-
-  ;; wait for mouse move to be over
-  ?manual>
-    state         free
-==>
-  ;; move to the same location
-  +manual>
-    isa           move-cursor
-    loc           =visual-location
-
-  ;; log that we did this
-  !eval!          (incf *whiff-counter*)
-  !eval!          (format t "wiffed too long, moving ~%")
-  !eval!          (incf *total-whiff-counter*)
-)
-
-;; after a rescan of the target, check if the target is green and go back to finding black targets
-(P distinguish-target-friend
-  =goal>
-    ISA           targeting
-    state         distinguish-target
-  ;; wait until visual location is found
-  =visual-location>
-    ISA           visual-location
-    ;; check for oval
-    kind          OVAL
-    ;; check for green (friend)
-    color         green
-    ;; get location values
-    screen-x      =sx
-    screen-y      =sy
-  ;; TODO make sure imaginal module is free so we can remember where friend is?
-  ;; TODO if it is not free? we should probably skip the remember
-==>
-  ;; store location of friend target
-  +imaginal>
-    isa           friend-target
-    x             =sx
-    y             =sy
-    
-  ;; increment the number of times the friend target was hovered
-  !eval!          (incf *friend-hovers*)
-  !eval!          (format t "detected friend~%")
-
-  ;; set the order in which the friend was checked if it hasn't been set yet
-  !eval!          (when (eq -1 *friend-order*) (setf *friend-order* *check-order*))
-  ;; search for black targets again
-  =goal>
-    state         find-black-target
-)
-
-;; after a rescan of the target, check if the target is still black and keep rescanning
-(P distinguish-target-black
-  =goal>
-    ISA           targeting
-    state         distinguish-target
-  ;; wait until visual location is found
-  =visual-location>
-    ISA           visual-location
-    ;; check for oval
-    kind          OVAL
-    ;; check for black
-    color         black
-  ;; only loop when the move is not complete
-  ?manual>
-    state         busy
-==>
-  ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
-  +visual-location>
-    ISA           visual-location
-    ;; search for oval
-    kind          OVAL
-    ;; nearest the current location
-    :nearest      current
-  =goal>
-    ;; move to the state where we distinguish between red and green targets
-    state         distinguish-target
-)
-
-; request a mouse click
-(P click-mouse
-  =goal>
-    ISA           targeting
-    state         click-mouse
-
-  ;; wait until we attended the target
-  =visual>
-    ISA           OVAL
-  ;; make sure motor module is free
-  ?manual>
-    state         free
-==>
-  
-  ;; submit click request
-  +manual>
-    ISA           click-mouse
-
-  =goal>
-    state         find-black-target
-)
-
-(P after-click
-  =goal>
-    ISA           targeting
-    state         after-click
-  ?manual>
-    state         free
-==>
-  !stop!
-)
-
-(goal-focus goal)
-)
+;; function to determine if point x,y is on line defined by point x1, y1 and vector x-diff,y-diff
+(defun is-on-line (x y x1 y1 x-diff y-diff)
+	(let ((left-side (* (- y y1) x-diff))
+		(right-side (* (- x x1) y-diff)))
+	(< (abs (- left-side right-side)) 0.1)))

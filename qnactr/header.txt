@@ -1,0 +1,30 @@
+;;;;;;;;;;;;;;;;;;;;;
+;; Task definition ;;
+;;;;;;;;;;;;;;;;;;;;;
+
+;; Show three targets, two red and one green
+
+(use_task_dbt_template   
+  :method       discrete_display_feedback_two_stages_method
+  :response_terminates_display        nil     ;;t by default
+
+  :reset_audio_module_before_each_trial   t
+  :reinitialize_goal_1_before_each_trial    t
+  :clear_retrieval_buffer_and_reset_declarative_module_state  t
+  :reset_imaginary_module_before_each_trial t
+  :reset_vision_module_before_each_trial  t
+  :reset_all_modules_before_each_trial t
+
+  :auto_compute_default_reaction_time   t ;;nil by default  
+
+  ; :targeting-moving t ; fast
+  ; :targeting-moving nil ; slow
+  ; :targeting-difficult t ; hard
+  ; :targeting-difficult nil ; easy
+)
+
+(add_trials_from_discrete_display_feedback_two_stages_method
+  :add_number_of_blocks_per_day       12 ; trials
+  :add_number_of_trials_per_block       1
+  :number_of_responses_per_trial      1 
+  :display_and_response_duration      ( 6 )    ;; (-1.0) seconds by default, mean infinite display until response collection done
