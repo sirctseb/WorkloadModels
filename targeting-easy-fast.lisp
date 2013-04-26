@@ -123,6 +123,7 @@
     +visual-location>
       ISA           visual-location
       :nearest      =visual-location
+      color         red
   )
 
   ;; Rule to capture second location of the target after moving attention
