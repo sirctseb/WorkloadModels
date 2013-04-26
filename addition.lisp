@@ -39,6 +39,8 @@
   (sgp
     :esc t
     :lf .05)
+  (sgp :rt -.45 :esc t :ans 0.01 :mp 16)
+  (sgp :er t)
   (sgp
     :v t
     :show-focus t
