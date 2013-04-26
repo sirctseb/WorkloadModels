@@ -337,6 +337,7 @@
     ;; request visual location of first addend
     +visual-location>
       ISA         visual-location
+      kind        text
       screen-x    lowest
 
     ;; update goal
