@@ -108,6 +108,9 @@ if($targeting) {
 					s/=goal>/=goal-2>/g;
 					s/goal-focus/goal-2-focus/g;
 				}
+				# replace global variables with constants
+				s/\*target-projection\*/50/g;
+				s/\*whiff-wait-time\*/16/g;
 				# copy line to output file
 				print modelfile $_;
 			}
