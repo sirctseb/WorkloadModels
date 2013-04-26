@@ -12,7 +12,7 @@ my $trials = 240;
 
 # parse command line options
 GetOptions('a' => \$addition, 't' => \$targeting, 'd=s' => \$difficulty, 's=s' => \$speed, 'o=s' => \$oprange,
-			't=i' => \$trials);
+			'n=i' => \$trials);
 
 print "addition:" . $addition . "\n";
 print "targeting:" . $targeting . "\n";
