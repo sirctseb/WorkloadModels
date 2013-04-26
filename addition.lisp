@@ -39,6 +39,8 @@
   (sgp
     :esc t
     :lf .05)
+  (sgp :rt -.45 :esc t :ans 0.01 :mp 16)
+  (sgp :er t)
   (sgp
     :v t
     :show-focus t
@@ -432,6 +434,9 @@
     =goal>
       ISA         arithmetic-problem
       state       encode-first
+      ;; make sure store-second-nil-tens goes first
+      ;; TODO why isn't that a different state if it has to go first?
+      - second-ones nil
 
     ;; wait for visual attention to move
     =visual>
