@@ -432,6 +432,9 @@
     =goal>
       ISA         arithmetic-problem
       state       encode-first
+      ;; make sure store-second-nil-tens goes first
+      ;; TODO why isn't that a different state if it has to go first?
+      - second-ones nil
 
     ;; wait for visual attention to move
     =visual>
