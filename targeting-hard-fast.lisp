@@ -300,6 +300,7 @@
     =goal>
       ISA           targeting
       state         check-target
+      target-location =vis-loc
     ;; get visual location from visual buffer
     ; =visual>
     ;   isa           OVAL
