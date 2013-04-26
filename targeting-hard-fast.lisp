@@ -275,9 +275,9 @@
       preparation   free
 
     ;; make sure visual is free
-    ?visual>
-      state         free
-      buffer        empty
+    ; ?visual>
+    ;   state         free
+    ;   buffer        empty
   ==>
 
     ;; request to move the cursor
@@ -287,11 +287,12 @@
 
     ;; request to attend to visual object so that we can search for nearest when
     ;; distinguishing between friend and enemy targets
-    +visual>
-      ISA           move-attention
-      screen-pos    =visual-location
+    ; +visual>
+    ;   ISA           move-attention
+    ;   screen-pos    =visual-location
     =goal>
       state         check-target
+      target-location =visual-location
   )
 
   ;; re-scan for the nearest oval to get info about its color
@@ -300,11 +301,11 @@
       ISA           targeting
       state         check-target
     ;; get visual location from visual buffer
-    =visual>
-      isa           OVAL
-      screen-pos    =vis-loc
-    ?visual>
-      state         free
+    ; =visual>
+    ;   isa           OVAL
+    ;   screen-pos    =vis-loc
+    ; ?visual>
+    ;   state         free
   ==>
     ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
     +visual-location>
@@ -315,14 +316,15 @@
       :nearest      =vis-loc
 
     ;; =visual auto harvests here, but may be re-encoded, so clear it
-    +visual>
-      ISA           clear
+    ; +visual>
+    ;   ISA           clear
 
     =goal>
       ;; move to the state where we distinguish between red and green targets
       state         distinguish-target
       ;; store the vis-loc of target of focus
-      target-location =vis-loc
+      ; TODO now this is already stored
+      ; target-location =vis-loc
   )
 
   ;; prepare a click while checking the target
