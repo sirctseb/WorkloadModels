@@ -145,10 +145,6 @@
       screen-x      =tx
       screen-y      =ty
 
-    ;; make sure visual is free so we can request move-attention
-    ?visual>
-      state         free
-
     ;; check that there is nothing in imaginal
     ?imaginal>
       buffer        empty
