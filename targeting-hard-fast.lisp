@@ -307,6 +307,8 @@
     ;   screen-pos    =vis-loc
     ; ?visual>
     ;   state         free
+    ?visual-location>
+        buffer        empty
   ==>
     ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
     +visual-location>
