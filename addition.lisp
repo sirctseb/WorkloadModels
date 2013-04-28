@@ -45,6 +45,7 @@
     :v t
     :show-focus t
     :trace-detail high
+    :randomize-time t
     )
   ;; we'll count this as sgp
   ;; set the default visloc chunk to something that will never match
