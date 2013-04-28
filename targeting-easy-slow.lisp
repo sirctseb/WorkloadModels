@@ -9,7 +9,7 @@
     :cursor-noise t
     :vwt t
     :incremental-mouse-moves 0.01
-    :randomize-time nil
+    :randomize-time t
     :visual-movement-tolerance 0.5
     :pixels-per-inch 96
     :viewing-distance 96)
