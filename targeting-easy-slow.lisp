@@ -123,6 +123,7 @@
       screen-pos    =visual-location
     =goal>
       state         click-mouse
+      check-miss    nil
   )
 
   ;; TODO this holds visual for the whole mouse move
