@@ -60,6 +60,13 @@
       check-miss    nil
     ?visual-location>
       state         error
+    ;; TODO this is a non-semantic manual free check to make sure that,
+    ;; TODO in the case that we miss one target, go click the other,
+    ;; TODO do a find-red-target that fails because the first is attended,
+    ;; TODO and the second isn't gone yet because the click hasn't gone through,
+    ;; TODO we wait until it is gone to do the search that allows attended targets
+    ?manual>
+      state         free
   ==>
     ;; search for any red that we might have missed
     +visual-location>
