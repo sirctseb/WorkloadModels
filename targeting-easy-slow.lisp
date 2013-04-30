@@ -38,9 +38,6 @@
     =goal>
       ISA         targeting
       state       find-red-target
-    ;; TODO there's no reason to check this here
-    ?visual>
-      state       free
     ;; check for empty vis-loc
     ?visual-location>
       buffer      empty
