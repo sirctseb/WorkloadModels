@@ -9,10 +9,13 @@
     :cursor-noise t
     :vwt t
     :incremental-mouse-moves 0.01
-    :randomize-time nil
+    :randomize-time t
     :visual-movement-tolerance 10
     :pixels-per-inch 96
     :viewing-distance 96)
+  ;; fast and randomized imaginal
+  (sgp :imaginal-delay 0.05
+       :vidt t)
   ;; we'll count this as sgp
   ;; set the default visloc chunk to something that will never match
   ;; the effect is to disable buffer stuffing
@@ -145,10 +148,6 @@
       screen-x      =tx
       screen-y      =ty
 
-    ;; make sure visual is free so we can request move-attention
-    ?visual>
-      state         free
-
     ;; check that there is nothing in imaginal
     ?imaginal>
       buffer        empty
@@ -279,9 +278,9 @@
       preparation   free
 
     ;; make sure visual is free
-    ?visual>
-      state         free
-      buffer        empty
+    ; ?visual>
+    ;   state         free
+    ;   buffer        empty
   ==>
 
     ;; request to move the cursor
@@ -291,11 +290,12 @@
 
     ;; request to attend to visual object so that we can search for nearest when
     ;; distinguishing between friend and enemy targets
-    +visual>
-      ISA           move-attention
-      screen-pos    =visual-location
+    ; +visual>
+    ;   ISA           move-attention
+    ;   screen-pos    =visual-location
     =goal>
       state         check-target
+      target-location =visual-location
   )
 
   ;; re-scan for the nearest oval to get info about its color
@@ -303,12 +303,15 @@
     =goal>
       ISA           targeting
       state         check-target
+      target-location =vis-loc
     ;; get visual location from visual buffer
-    =visual>
-      isa           OVAL
-      screen-pos    =vis-loc
-    ?visual>
-      state         free
+    ; =visual>
+    ;   isa           OVAL
+    ;   screen-pos    =vis-loc
+    ; ?visual>
+    ;   state         free
+    ?visual-location>
+        buffer        empty
   ==>
     ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
     +visual-location>
@@ -319,14 +322,15 @@
       :nearest      =vis-loc
 
     ;; =visual auto harvests here, but may be re-encoded, so clear it
-    +visual>
-      ISA           clear
+    ; +visual>
+    ;   ISA           clear
 
     =goal>
       ;; move to the state where we distinguish between red and green targets
       state         distinguish-target
       ;; store the vis-loc of target of focus
-      target-location =vis-loc
+      ; TODO now this is already stored
+      ; target-location =vis-loc
   )
 
   ;; prepare a click while checking the target

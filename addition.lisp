@@ -38,11 +38,19 @@
   ;; sgp section
   (sgp
     :esc t
-    :lf .05)
+    :lf .2
+    :le 10
+    )
+  (sgp :blc 0.1)
+  (sgp :ans 0.05)
+  (sgp :rt -.45)
+  ; (sgp :rt -.45 :esc t :ans 0.05 :mp 16)
+  (sgp :er t)
   (sgp
     :v t
     :show-focus t
     :trace-detail high
+    :randomize-time t
     )
   ;; we'll count this as sgp
   ;; set the default visloc chunk to something that will never match
@@ -337,6 +345,7 @@
     ;; request visual location of first addend
     +visual-location>
       ISA         visual-location
+      kind        text
       screen-x    lowest
 
     ;; update goal
@@ -431,6 +440,9 @@
     =goal>
       ISA         arithmetic-problem
       state       encode-first
+      ;; make sure store-second-nil-tens goes first
+      ;; TODO why isn't that a different state if it has to go first?
+      - second-ones nil
 
     ;; wait for visual attention to move
     =visual>

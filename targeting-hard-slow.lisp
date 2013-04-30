@@ -9,7 +9,7 @@
     :cursor-noise t
     :vwt t
     :incremental-mouse-moves 0.01
-    :randomize-time nil
+    :randomize-time t
     :visual-movement-tolerance 0.5
     :pixels-per-inch 96
     :viewing-distance 96)
@@ -153,9 +153,9 @@
       preparation   free
 
     ;; make sure visual is free to do move-attention
-    ?visual>
-      state         free
-      buffer        empty
+    ; ?visual>
+    ;   state         free
+    ;   buffer        empty
   ==>
 
     ;; request to move the cursor
@@ -165,13 +165,14 @@
 
     ;; request to attend to visual object so that we can search for nearest when
     ;; distinguishing between friend and enemy targets
-    ; TODO it may be better to just keep the visual-location buffer full
-    ; and supply that when making the new request in check-target
-    +visual>
-      ISA           move-attention
-      screen-pos    =visual-location
+    ; TODO instead of moving attention and getting the location from the visual buffer,
+    ; TODO just store the visual location chunk directly from it's own buffer to goal here
+    ; +visual>
+    ;   ISA           move-attention
+    ;   screen-pos    =visual-location
     =goal>
       state         check-target
+      target-location =visual-location
   )
 
   ;; rule to move cursor toward target when there is friend info but it doesn't match
@@ -198,9 +199,11 @@
       preparation   free
 
     ;; check for visual free because we will move-attention
-    ?visual>
-      state         free
-      buffer        empty
+    ; TODO instead of moving attention and getting the location from the visual buffer,
+    ; TODO just store the visual location chunk directly from it's own buffer to goal here
+    ; ?visual>
+    ;   state         free
+    ;   buffer        empty
   ==>
 
     ;; request to move the cursor
@@ -210,14 +213,16 @@
 
     ;; request to attend to visual object so that we can search for nearest when
     ;; distinguishing between friend and enemy targets
-    +visual>
-      ISA           move-attention
-      screen-pos    =visual-location
+    ; +visual>
+    ;   ISA           move-attention
+    ;   screen-pos    =visual-location
 
     ;; keep imaginal
     =imaginal>
+
     =goal>
       state         check-target
+      target-location =visual-location
   )
 
   ;; re-scan for the nearest oval to get info about its color
@@ -225,10 +230,17 @@
     =goal>
       ISA           targeting
       state         check-target
+      target-location =vis-loc
     ;; get visual location from visual buffer
-    =visual>
-      ISA           OVAL
-      screen-pos    =vis-loc
+    ; TODO instead of moving attention and getting the location from the visual buffer,
+    ; TODO just store the visual location chunk directly from it's own buffer to goal here
+    ; =visual>
+    ;   ISA           OVAL
+    ;   screen-pos    =vis-loc
+
+    ; check that vis-loc is empty because we will request it here
+    ?visual-location>
+      buffer        empty
   ==>
     ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
     +visual-location>
@@ -239,14 +251,15 @@
       :nearest      =vis-loc
 
     ;; =visual auto harvests here, but it will get re-encoded on color change, so clear it
-    +visual>
-      ISA           clear
+    ; +visual>
+    ;   ISA           clear
 
     =goal>
       ;; move to the state where we distinguish between red and green targets
       state         distinguish-target
       ;; store vis-loc of target of focus
-      target-location =vis-loc
+      ; TODO it is already stored now
+      ; target-location =vis-loc
   )
 
   ;; after a rescan of the target, check if the target is red and click it
@@ -344,8 +357,10 @@
       ;; get location values
       screen-x      =sx
       screen-y      =sy
-    ;; TODO make sure imaginal module is free so we can remember where friend is?
+    ;; make sure imaginal module is free so we can remember where friend is?
     ;; TODO if it is not free? we should probably skip the remember
+    ?imaginal>
+      state         free
   ==>
     ;; store location of friend target
     +imaginal>

@@ -9,7 +9,7 @@
     :cursor-noise t
     :vwt t
     :incremental-mouse-moves 0.01
-    :randomize-time nil
+    :randomize-time t
     :visual-movement-tolerance 10
     :pixels-per-inch 96
     :viewing-distance 96)
@@ -123,6 +123,7 @@
     +visual-location>
       ISA           visual-location
       :nearest      =visual-location
+      color         red
   )
 
   ;; Rule to capture second location of the target after moving attention
