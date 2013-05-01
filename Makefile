@@ -84,10 +84,10 @@ qnactr: targeting-easy-fast.lisp targeting-easy-slow.lisp targeting-hard-slow.li
 	perl generateQNfile.pl -n 240 -a -o hard -t -d hard -s slow && mkdir -p qnactr/block13/trial0 && cp qnactr/qnactr_model.txt qnactr/block13/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block13/trial0/block.txt;
 	perl generateQNfile.pl -n 240 -a -o hard -t -d hard -s fast && mkdir -p qnactr/block14/trial0 && cp qnactr/qnactr_model.txt qnactr/block14/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block14/trial0/block.txt;
 
-publish-models:
+publish-models: qnactr
 	for block in 1 2 3 4 5 6 7 8 9 10 11 12 13 14; do \
-		cp qnactr/block$$block/trial0/block.txt $(exp_dir)/output/subject21/block$$block; \
-		cp qnactr/block$$block/trial0/QN_ACTR_Model_Initialization.txt $(exp_dir)/output/subject21/block$$block/trial0; \
+		cp qnactr/block$$block/trial0/block.txt $(exp_dir)/output/subject$(MODELNUM)/block$$block; \
+		cp qnactr/block$$block/trial0/QN_ACTR_Model_Initialization.txt $(exp_dir)/output/subject$(MODELNUM)/block$$block/trial0; \
 	done
 
 clean:
