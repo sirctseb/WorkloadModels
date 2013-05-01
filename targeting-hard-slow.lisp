@@ -13,6 +13,16 @@
     :visual-movement-tolerance 0.5
     :pixels-per-inch 96
     :viewing-distance 96)
+  (sgp
+    :esc t
+    :lf .2
+    :le 10
+    )
+  (sgp :blc 0.1)
+  (sgp :ans 0.05)
+  (sgp :rt -.45)
+  ; (sgp :rt -.45 :esc t :ans 0.05 :mp 16)
+  (sgp :er t)
   ;; we'll count this as sgp
   ;; set the default visloc chunk to something that will never match
   ;; the effect is to disable buffer stuffing
@@ -21,11 +31,14 @@
   (set-cursor-position 960 600)
 
   ;; chunk types
-  (chunk-type targeting state target-location)
+  (chunk-type targeting state target-location target-x target-y)
   (chunk-type friend-target x y)
+  (chunk-type response color action)
 
   ;; dms
   (add-dm (track isa chunk) (attend-letter isa chunk)
+    (enemy-response isa response color red action shoot)
+    (friend-response isa response color green action oh-no-dont-shoot)
     (goal isa targeting state find-black-target))
 
   ;; goal focus
@@ -143,6 +156,8 @@
     =visual-location>
       ISA           visual-location
       kind          OVAL
+      screen-x      =x
+      screen-y      =y
 
     ;; check that there is no friend info
     ?imaginal>
@@ -173,6 +188,8 @@
     =goal>
       state         check-target
       target-location =visual-location
+      target-x      =x
+      target-y      =y
   )
 
   ;; rule to move cursor toward target when there is friend info but it doesn't match
@@ -193,6 +210,8 @@
       ;; check that it doesn't match friend location
       - screen-x    =fx
       - screen-y    =fy
+      screen-x      =x
+      screen-y      =y
 
     ;; make sure motor system is free
     ?manual>
@@ -223,6 +242,8 @@
     =goal>
       state         check-target
       target-location =visual-location
+      target-x      =x
+      target-y      =y
   )
 
   ;; re-scan for the nearest oval to get info about its color
@@ -262,41 +283,91 @@
       ; target-location =vis-loc
   )
 
-  ;; after a rescan of the target, check if the target is red and click it
-  (P distinguish-target-enemy
+  ;; detect if the target is no longer black
+  (P detect-target-color
     =goal>
       ISA           targeting
       state         distinguish-target
-
-    ;; wait until visual location is found
+    
     =visual-location>
       ISA           visual-location
       ;; check for oval
       kind          OVAL
-      ;; check for red (enemy)
-      color         red
+      ;; check for not block
+      - color       black
+      ;; match color
+      color         =color
 
-    ;; make sure visual is free so we can request to move attention
-    ;; TODO remove if we remove the move-attention in actions
-    ; ?visual>
-    ;   state         free
-    ;   buffer        empty
+    ;; TODO other task will have to be gp in retrieval
+    ?retrieval>
+      state         free
+      buffer        empty
   ==>
-    ;; TODO if visual location request fails?
+    ;; request lookup of action based on color
+    +retrieval>
+      ISA           response
+      color         =color
+
+    ;; update goal
+    =goal>
+      state         decide-whether-to-shoot
+  )
+
+  ;; after a rescan of the target, check if the target is red and click it
+  (P decide-to-shoot
+    =goal>
+      ISA           targeting
+      state         decide-whether-to-shoot
+
+    ;; match shoot action from memory
+    =retrieval>
+      ISA           response
+      action        shoot
+
+  ==>
     ;; go to click mouse state to wait for manual state to be free
     =goal>
       state         click-mouse
-
-    ;; request attention move
-    ;; TODO this is not necessary for model functionality
-    ; +visual>
-    ;   ISA           move-attention
-    ;   screen-pos    =visual-location
 
     !eval!          (format t "detected enemy, clicking~%")
 
     ;; increment the number of targets checked
     !eval!          (incf *check-order*)
+  )
+
+  ;; after a rescan of the target, check if the target is green and go back to finding black targets
+  (P decide-not-to-shoot
+    =goal>
+      ISA           targeting
+      state         decide-whether-to-shoot
+      ; target-location =target-location
+      target-x      =sx
+      target-y      =sy
+
+    =retrieval>
+      ISA           response
+      action        oh-no-dont-shoot
+
+    ;; make sure imaginal module is free so we can remember where friend is?
+    ;; TODO if it is not free? we should probably skip the remember
+    ?imaginal>
+      state         free
+  ==>
+    ;; store location of friend target
+    +imaginal>
+      isa           friend-target
+      x             =sx
+      y             =sy
+      
+    ;; increment the number of times the friend target was hovered
+    !eval!          (incf *friend-hovers*)
+    !eval!          (format t "detected friend~%")
+
+    ;; set the order in which the friend was checked if it hasn't been set yet
+    !eval!          (when (eq -1 *friend-order*) (setf *friend-order* *check-order*))
+    ;; search for black targets again
+    =goal>
+      state         find-black-target
   )
 
   ;; if we are still trying to distinguish a target but it has stayed black through the mouse move,
@@ -339,44 +410,6 @@
     !eval!          (incf *whiff-counter*)
     !eval!          (format t "wiffed too long, moving ~%")
     !eval!          (incf *total-whiff-counter*)
-  )
-
-  ;; after a rescan of the target, check if the target is green and go back to finding black targets
-  (P distinguish-target-friend
-    =goal>
-      ISA           targeting
-      state         distinguish-target
-
-    ;; wait until visual location is found
-    =visual-location>
-      ISA           visual-location
-      ;; check for oval
-      kind          OVAL
-      ;; check for green (friend)
-      color         green
-      ;; get location values
-      screen-x      =sx
-      screen-y      =sy
-    ;; make sure imaginal module is free so we can remember where friend is?
-    ;; TODO if it is not free? we should probably skip the remember
-    ?imaginal>
-      state         free
-  ==>
-    ;; store location of friend target
-    +imaginal>
-      isa           friend-target
-      x             =sx
-      y             =sy
-      
-    ;; increment the number of times the friend target was hovered
-    !eval!          (incf *friend-hovers*)
-    !eval!          (format t "detected friend~%")
-
-    ;; set the order in which the friend was checked if it hasn't been set yet
-    !eval!          (when (eq -1 *friend-order*) (setf *friend-order* *check-order*))
-    ;; search for black targets again
-    =goal>
-      state         find-black-target
   )
 
   ;; after a rescan of the target, check if the target is still black and keep rescanning
