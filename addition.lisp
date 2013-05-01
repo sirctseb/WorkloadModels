@@ -368,6 +368,7 @@
     ;; make sure retrieval is free so we can request dm
     ?retrieval>
       state       free
+      buffer      empty
 
     ;; get vis-loc
     =visual-location>
@@ -452,6 +453,7 @@
     ;; make sure retrieval is free
     ?retrieval>
       state       free
+      buffer      empty
   ==>
     ;; request the dm of the number info
     +retrieval>
@@ -480,6 +482,8 @@
       ISA         number
       ones        =first-ones
       tens        =first-tens
+    ?retrieval>
+      state       free
   ==>
     ;; update goal
     =goal>
@@ -641,6 +645,11 @@
       state       retrieve-addition-tens
       first-tens  =first
       second-tens =second
+
+    ;; gp in retrieval
+    ?retrieval>
+      state       free
+      buffer      empty
   ==>
     ;; update goal
     =goal>
@@ -687,6 +696,10 @@
       carry       "1"
       ;; match tens sum
       tens        =tens
+    ;; gp in retrieval
+    ?retrieval>
+      state       free
+      buffer      empty
   ==>
     ;; request retrieval of successor
     +retrieval>
