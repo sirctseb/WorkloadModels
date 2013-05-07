@@ -38,13 +38,19 @@
   ;; sgp section
   (sgp
     :esc t
-    :lf .05)
-  (sgp :rt -.45 :esc t :ans 0.01 :mp 16)
+    :lf .2
+    :le 10
+    )
+  (sgp :blc 0.1)
+  (sgp :ans 0.05)
+  (sgp :rt -.45)
+  ; (sgp :rt -.45 :esc t :ans 0.05 :mp 16)
   (sgp :er t)
   (sgp
     :v t
     :show-focus t
     :trace-detail high
+    :randomize-time t
     )
   ;; we'll count this as sgp
   ;; set the default visloc chunk to something that will never match
@@ -362,6 +368,7 @@
     ;; make sure retrieval is free so we can request dm
     ?retrieval>
       state       free
+      buffer      empty
 
     ;; get vis-loc
     =visual-location>
@@ -446,6 +453,7 @@
     ;; make sure retrieval is free
     ?retrieval>
       state       free
+      buffer      empty
   ==>
     ;; request the dm of the number info
     +retrieval>
@@ -474,6 +482,8 @@
       ISA         number
       ones        =first-ones
       tens        =first-tens
+    ?retrieval>
+      state       free
   ==>
     ;; update goal
     =goal>
@@ -635,6 +645,11 @@
       state       retrieve-addition-tens
       first-tens  =first
       second-tens =second
+
+    ;; gp in retrieval
+    ?retrieval>
+      state       free
+      buffer      empty
   ==>
     ;; update goal
     =goal>
@@ -681,6 +696,10 @@
       carry       "1"
       ;; match tens sum
       tens        =tens
+    ;; gp in retrieval
+    ?retrieval>
+      state       free
+      buffer      empty
   ==>
     ;; request retrieval of successor
     +retrieval>
