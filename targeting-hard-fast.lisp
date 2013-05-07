@@ -171,15 +171,10 @@
     =goal>
       target-x      =tx
       target-y      =ty
-      state         lead-target
+      state         search-target-again
+      target-location =visual-location
 
     !eval!          (format t "storing first target location: ~a, ~a~%" =tx =ty)
-
-    ;; TODO for gp this should be in a subsequent rule so vis-loc is empty between requests
-    ;; search for same location
-    +visual-location>
-      ISA           visual-location
-      :nearest      =visual-location
   )
 
   ;; Rule to capture the location of a target when it doesn't match friend info
@@ -216,16 +211,34 @@
     =goal>
       target-x      =tx
       target-y      =ty
-      state         lead-target
+      state         search-target-again
+      target-location =visual-location
 
     !eval!          (format t "storing first target location: ~a, ~a~%" =tx =ty)
 
-    ;; TODO for gp this should be a separate rule so vis-loc is empty between requests
-    ;; search for same location
-    +visual-location>
-      ISA           visual-location
-      :nearest      =visual-location
   )
+
+  ;; Do search for same target location
+  (P search-target-again
+    =goal>
+      ISA    targeting
+      state  search-target-again
+      target-location =target-location
+
+    ;; check empty vis-loc
+    ?visual-location>
+      buffer  empty
+  ==>
+    ;; search for target again
+    +visual-location>
+      ISA visual-location
+      :nearest  =target-location
+
+    ;; update goal
+    =goal>
+      state  lead-target
+  )
+
 
   ;; Rule to capture second location of the target after moving attention
   (P lead-target
