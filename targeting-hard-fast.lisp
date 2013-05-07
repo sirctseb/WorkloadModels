@@ -525,12 +525,6 @@
       x             =sx
       y             =sy
 
-    ;; TODO this should be a separate rule for gp
-    ;; scan for same location
-    +visual-location>
-      ISA           visual-location
-      :nearest      =target-location
-
     ;; clear temporal in case we were running a whiff
     ;; TODO this is not gp in temporal
     +temporal>
@@ -538,13 +532,34 @@
 
     ;; remember motion
     =goal>
-      state         remember-friend-motion
+      state         search-to-remember-friend
     ;; increment the number of times the friend target was hovered
     !eval!          (incf *friend-hovers*)
     !eval!          (format t "detected friend~%")
 
     ;; set the order in which the friend was checked if it hasn't been set yet
     !eval!          (when (eq -1 *friend-order*) (setf *friend-order* *check-order*))
+  )
+
+  (P search-to-remember-friend
+    =goal>
+      ISA    targeting
+      state  search-to-remember-friend
+      target-location =target-location
+
+    ;; gp vis-lock check
+    ?visual-location>
+      buffer  empty
+    
+  ==>
+    =goal>
+      state  remember-friend-motion
+
+    ;; TODO this should be a separate rule for gp
+    ;; scan for same location
+    +visual-location>
+      ISA           visual-location
+      :nearest      =target-location
   )
 
   ;; get motion of friend target and store
