@@ -232,6 +232,7 @@
     ;; search for target again
     +visual-location>
       ISA visual-location
+      kind      OVAL
       :nearest  =target-location
 
     ;; update goal
@@ -559,6 +560,7 @@
     ;; scan for same location
     +visual-location>
       ISA           visual-location
+      kind          OVAL
       :nearest      =target-location
   )
 
@@ -675,6 +677,7 @@
     ;; recan vis-loc
     +visual-location>
       ISA           visual-location
+      kind          OVAL
       :nearest      =target-location
   )
 
