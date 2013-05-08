@@ -34,7 +34,7 @@
   (set-cursor-position 960 600)
 
   ;; chunk types
-  (chunk-type targeting state target-x target-y projected-x projected-y target-location)
+  (chunk-type targeting state target-x target-y target-location friend-x friend-y friend-x-diff friend-y-diff cur-x-diff cur-y-diff)
   (chunk-type friend-target x y x-diff y-diff)
   (chunk-type response color action)
 
@@ -105,18 +105,10 @@
     =goal>
       ISA           targeting
       state         cap-first-location
-
-    ;; check for friend info in the imaginal buffer
-    =imaginal>
-      ISA           friend-target
-      ;; get friend location and motion
-      x             =fx
-      y             =fy
-      x-diff        =x-diff
-      y-diff        =y-diff
-    ;; TODO do we need this check?
-    ?imaginal>
-      state         free
+      friend-x      =fx
+      friend-y      =fy
+      friend-x-diff =x-diff
+      friend-y-diff =y-diff
 
     =visual-location>
       ISA           visual-location
@@ -130,14 +122,6 @@
   ==>
     =goal>
       state         find-black-target
-
-    ;; TODO this is very not greedy-polite in imaginal. if addition uses imaginal we will need to change it
-    ;; prevent imaginal buffer from being harvested by setting it to the same values
-    ;; TODO an alternative is to attempt to retrive the friend-target chunk from declarative
-    ;; TODO if it's not in the imaginal buffer. that may be more robust in dual-task cases because
-    ;; TODO something else might fill the imaginal buffer and then we'll never get it back
-    ;; NOTE this is different than +imaginal> x =fx which makes the imaginal module busy while it sets the value
-    =imaginal>
 
     ;; clear temporal because find-black-target started it
     ;; TODO this is not gp in temporal
@@ -154,6 +138,8 @@
     =goal>
       ISA           targeting
       state         cap-first-location
+      ;; test that there is no friend info
+      friend-x      nil
 
     ;; find vis loc
     =visual-location>
@@ -161,11 +147,6 @@
       screen-x      =tx
       screen-y      =ty
 
-    ;; check that there is nothing in imaginal
-    ?imaginal>
-      buffer        empty
-      ;; check state free so we will not let this rule fire until a pending imaginal goes through
-      state         free
   ==>
     ;; store location in goal
     =goal>
@@ -184,6 +165,10 @@
     =goal>
       ISA           targeting
       state         cap-first-location
+      friend-x      =fx
+      friend-y      =fy
+      friend-x-diff =x-diff
+      friend-y-diff =y-diff
 
     ;; find vis loc
     =visual-location>
@@ -191,22 +176,9 @@
       screen-x      =tx
       screen-y      =ty
 
-    ;; check that friend info is in imaginal
-    =imaginal>
-      isa           friend-target
-      x             =fx
-      y             =fy
-      x-diff        =x-diff
-      y-diff        =y-diff
-      
-    ?imaginal>
-      state         free
-
     ;; determine that target is not friend
     !bind!          =on-line (not (is-on-line =tx =ty =fx =fy =x-diff =y-diff))
   ==>
-    ;; keep imaginal
-    =imaginal>
     ;; store location in goal
     =goal>
       target-x      =tx
@@ -282,6 +254,8 @@
     ;; could move move request here to speed up
     =goal>
       state         move-cursor
+      cur-x-diff    =x-diff
+      cur-y-diff    =y-diff
 
     ;; clear timer
     +temporal>
@@ -477,19 +451,14 @@
     =goal>
       ISA           targeting
       state         decide-whether-to-shoot
+      friend-x      =fx
 
     ;; match no-shoot chunk
     =retrieval>
       ISA           response
       action        oh-no-dont-shoot
 
-    ;; check that there is already info
-    =imaginal>
-      ISA           friend-target
   ==>
-    ;; TODO this is not gp in imaginal
-    ;; keep imaginal
-    =imaginal>
     ;; go back to finding black target
     =goal>
       state         find-black-target
@@ -508,23 +477,15 @@
       target-x      =sx
       target-y      =sy
       target-location =target-location
+      cur-x-diff    =x-diff
+      cur-y-diff    =y-diff
 
     ;; match no-shoot chunk
     =retrieval>
       ISA           response
       action        oh-no-dont-shoot
 
-    ;; TODO if it is not free? we should probably skip the remember
-    ;; only do the remembering if imaginal is empty
-    ?imaginal>
-      state         free
-      buffer        empty
   ==>
-    ;; store location of friend target
-    +imaginal>
-      isa           friend-target
-      x             =sx
-      y             =sy
 
     ;; clear temporal in case we were running a whiff
     ;; TODO this is not gp in temporal
@@ -533,7 +494,11 @@
 
     ;; remember motion
     =goal>
-      state         search-to-remember-friend
+      state         find-black-target
+      friend-x      =sx
+      friend-y      =sy
+      friend-x-diff =x-diff
+      friend-y-diff =y-diff
     ;; increment the number of times the friend target was hovered
     !eval!          (incf *friend-hovers*)
     !eval!          (format t "detected friend~%")
@@ -542,6 +507,7 @@
     !eval!          (when (eq -1 *friend-order*) (setf *friend-order* *check-order*))
   )
 
+  ;; TODO not used with new goal friend memory
   (P search-to-remember-friend
     =goal>
       ISA    targeting
@@ -564,23 +530,12 @@
       :nearest      =target-location
   )
 
+  ;; TODO not used with new goal friend memory
   ;; get motion of friend target and store
   (P remember-friend-motion
     =goal>
       ISA           targeting
       state         remember-friend-motion
-
-    ;; wait until imaginal is ready
-    ?imaginal>
-      state         free
-
-    ;; get current imaginal contents
-    ;; TODO doing two consecutive imaginals like this is slow
-    ;; TODO we could at least use the stored vis-loc we already have as one of them
-    =imaginal>
-      isa           friend-target
-      x             =fx
-      y             =fy
 
     ;; get new vis-loc
     =visual-location>
@@ -596,15 +551,7 @@
     ;; compute motion params
     !bind!          =x-diff (- =sx =fx)
     !bind!          =y-diff (- =sy =fy)
-
-    ;; store motion of friend target
-    +imaginal>
-      ISA           friend-target
-      x             =fx
-      y             =fy
-      x-diff        =x-diff
-      y-diff        =y-diff
-
+    
     ;; search for black targets again
     =goal>
       state         find-black-target
