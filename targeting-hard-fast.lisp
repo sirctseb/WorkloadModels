@@ -509,56 +509,6 @@
     !eval!          (when (eq -1 *friend-order*) (setf *friend-order* *check-order*))
   )
 
-  ;; TODO not used with new goal friend memory
-  (P search-to-remember-friend
-    =goal>
-      ISA    targeting
-      state  search-to-remember-friend
-      target-location =target-location
-
-    ;; gp vis-lock check
-    ?visual-location>
-      buffer  empty
-    
-  ==>
-    =goal>
-      state  remember-friend-motion
-
-    ;; TODO this should be a separate rule for gp
-    ;; scan for same location
-    +visual-location>
-      ISA           visual-location
-      kind          OVAL
-      :nearest      =target-location
-  )
-
-  ;; TODO not used with new goal friend memory
-  ;; get motion of friend target and store
-  (P remember-friend-motion
-    =goal>
-      ISA           targeting
-      state         remember-friend-motion
-
-    ;; get new vis-loc
-    =visual-location>
-      isa           visual-location
-      ;; check for oval
-      kind          OVAL
-      ;; TODO check for friend?
-      ;color        green
-      ;; get location values
-      screen-x      =sx
-      screen-y      =sy
-  ==>
-    ;; compute motion params
-    !bind!          =x-diff (- =sx =fx)
-    !bind!          =y-diff (- =sy =fy)
-    
-    ;; search for black targets again
-    =goal>
-      state         find-black-target
-  )
-
   ;; if we are still trying to distinguish a target but it has stayed black through the mouse move,
   ;; then we missed it, so do another mouse move to it
   (P distinguish-whiff
