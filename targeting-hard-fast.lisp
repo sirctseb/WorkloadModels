@@ -311,12 +311,7 @@
       ISA           targeting
       state         check-target
       target-location =vis-loc
-    ;; get visual location from visual buffer
-    ; =visual>
-    ;   isa           OVAL
-    ;   screen-pos    =vis-loc
-    ; ?visual>
-    ;   state         free
+
     ?visual-location>
         buffer        empty
   ==>
@@ -325,19 +320,38 @@
       ISA           visual-location
       ;; search for oval
       kind          OVAL
+      ;; monitor for a non-black target
+      - color       black
       ;; nearest the stored location
       :nearest      =vis-loc
-
-    ;; =visual auto harvests here, but may be re-encoded, so clear it
-    ; +visual>
-    ;   ISA           clear
 
     =goal>
       ;; move to the state where we distinguish between red and green targets
       state         distinguish-target
-      ;; store the vis-loc of target of focus
-      ; TODO now this is already stored
-      ; target-location =vis-loc
+  )
+
+  ;; rescan after original check when it fails because all targets are still black
+  ;; TODO we could have just one rule if we put the original +vis-loc in move-cursor
+  (P re-search-on-fail
+    =goal>
+      ISA    targeting
+      state  distinguish-target
+      target-location =vis-loc
+    
+    ;; check for failed vis-loc
+    ;; TODO what about a failed vis-loc from a dual-task?
+    ?visual-location>
+      state    error
+  ==>
+    ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
+    +visual-location>
+      ISA           visual-location
+      ;; search for oval
+      kind          OVAL
+      ;; monitor for a non-black target
+      - color       black
+      ;; nearest the stored location
+      :nearest      =vis-loc
   )
 
   ;; prepare a click while checking the target
@@ -604,42 +618,4 @@
     !eval!          (incf *total-whiff-counter*)
   )
 
-  ;; after a rescan of the target, check if the target is still black and keep rescanning
-  (P distinguish-target-black
-    =goal>
-      ISA           targeting
-      state         distinguish-target
-      target-location =target-location
-
-    ;; wait until visual location is found
-    =visual-location>
-      ISA           visual-location
-      ;; check for oval
-      kind          OVAL
-      ;; check for black
-      color         black
-
-    ;; only loop when the move is not complete
-    ?manual>
-      state         busy
-    ;; let prepare-click go first
-    ;; TODO this is not a semantic test. it only exists to allow prepare-click to go first
-    ;; TODO there should be a better way to let prepare-click to have priority
-    ;; TODO we could just put a flag in goal
-    ?manual>
-      last-command  prepare
-  ==>
-    ;; clear temporal in case we were running a whiff
-    ;; TODO this is not gp in temporal
-    +temporal>
-      ISA           clear
-
-    ;; request visual location search for nearest oval (should be the same we found last time, but it may be colored next time
-    +visual-location>
-      ISA           visual-location
-      ;; search for oval
-      kind          OVAL
-      ;; nearest the stored location
-      :nearest      =target-location
-  )
 ) ; end model
