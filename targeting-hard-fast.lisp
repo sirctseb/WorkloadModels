@@ -609,6 +609,7 @@
     =goal>
       ISA           targeting
       state         distinguish-target
+      target-location =target-location
 
     ;; wait until visual location is found
     =visual-location>
@@ -633,23 +634,6 @@
     +temporal>
       ISA           clear
 
-    =goal>
-      ;; go to separate state for searching again
-      state         search-again-black
-  )
-  
-  ;; production to search for same target after seeing it was still black
-  (P search-again-black
-    =goal>
-      ISA    targeting
-      state  search-again-black
-      target-location =target-location
-    
-    ;; gp vis-loc test
-    ?visual-location>
-      buffer  empty
-  ==>
-
     ;; request visual location search for nearest oval (should be the same we found last time, but it may be colored next time
     +visual-location>
       ISA           visual-location
@@ -657,8 +641,5 @@
       kind          OVAL
       ;; nearest the stored location
       :nearest      =target-location
-
-    =goal>
-      state  distinguish-target
   )
 ) ; end model
