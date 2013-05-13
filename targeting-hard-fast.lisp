@@ -321,7 +321,7 @@
       ;; search for oval
       kind          OVAL
       ;; monitor for a non-black target
-      - color       black
+      - color       black ;negate
       ;; nearest the stored location
       :nearest      =vis-loc
 
@@ -349,7 +349,7 @@
       ;; search for oval
       kind          OVAL
       ;; monitor for a non-black target
-      - color       black
+      - color       black ;negate
       ;; nearest the stored location
       :nearest      =vis-loc
   )

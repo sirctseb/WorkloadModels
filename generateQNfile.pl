@@ -109,8 +109,10 @@ if($targeting) {
 					s/goal-focus/goal-2-focus/g;
 				}
 				# replace global variables with constants
-				s/\*target-projection\*/63/g;
+				s/\*target-projection\*/47/g;
 				s/\*whiff-wait-time\*/16/g;
+				# replace - slot_name slot_value ;negate tests with slot_name NOT_slot_value
+				s/^(\s*)(-\s*)(\w*\s*)(\w*\s*);negate\s*$/$1$3NOT_$4/g;
 				# copy line to output file
 				print modelfile $_;
 			}
