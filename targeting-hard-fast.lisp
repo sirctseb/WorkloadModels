@@ -433,6 +433,44 @@
     =goal>
       state       decide-whether-to-shoot
   )
+  ;; detect flyby target
+  (P detect-flyby
+    =goal>
+      ISA           targeting
+      state         distinguish-target
+      target-x      =cx
+      target-y      =cy
+      cur-x-diff    =x-diff
+      cur-y-diff    =y-diff
+      target-location =vis-loc
+      
+    ;; check for non-black target
+    =visual-location>
+      ISA         visual-location
+      ;; check for oval
+      kind        OVAL
+      ;; check for not black
+      - color     black
+      ;; match color
+      color       =color
+      ;; match location values to check if on line
+      screen-x    =sx
+      screen-y    =sy
+
+    ;; check that color target is not on the original target line
+    !bind!          =not-on-line (not (is-on-line =sx =sy =cx =cy =x-diff =y-diff))
+  ==>
+    ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
+    +visual-location>
+      ISA           visual-location
+      ;; search for oval
+      kind          OVAL
+      ;; monitor for a non-black target
+      - color       black ;negate
+      ;; nearest the stored location
+      ;; TODO do we want nearest here?
+      :nearest      =vis-loc
+  )
 
   ;; after a rescan of the target, check if the target is red and click it
   (P decide-to-shoot
