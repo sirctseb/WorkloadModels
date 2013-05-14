@@ -399,6 +399,10 @@
     =goal>
       ISA           targeting
       state         distinguish-target
+      target-x      =cx
+      target-y      =cy
+      cur-x-diff    =x-diff
+      cur-y-diff    =y-diff
       
     ;; check for non-black target
     =visual-location>
@@ -409,6 +413,12 @@
       - color     black
       ;; match color
       color       =color
+      ;; match location values to check if on line
+      screen-x    =sx
+      screen-y    =sy
+
+    ;; check that color target is on the original target line
+    !bind!          =on-line (is-on-line =sx =sy =cx =cy =x-diff =y-diff)
 
     ;; wait for retrieval
     ?retrieval>
