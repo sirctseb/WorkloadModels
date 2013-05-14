@@ -36,7 +36,7 @@
   (set-cursor-position 960 600)
 
   ;; chunk types
-  (chunk-type targeting state target-x target-y target-location friend-x friend-y friend-x-diff friend-y-diff cur-x-diff cur-y-diff)
+  (chunk-type targeting state target-x target-y target-location friend-x friend-y friend-x-diff friend-y-diff cur-x-diff cur-y-diff ticks)
   (chunk-type friend-target x y x-diff y-diff)
   (chunk-type response color action)
 
@@ -202,6 +202,11 @@
     ;; check empty vis-loc
     ?visual-location>
       buffer  empty
+
+    ;; get ticks now because we will get vis-loc now
+    =temporal>
+      ISA time
+      ticks =elapsed-ticks
   ==>
     ;; search for target again
     +visual-location>
@@ -212,6 +217,10 @@
     ;; update goal
     =goal>
       state  lead-target
+      ticks =elapsed-ticks
+
+    +temporal>
+      ISA clear
   )
 
 
@@ -222,17 +231,13 @@
       state         lead-target
       target-x      =tx
       target-y      =ty
+      ticks =elapsed-ticks
 
     ;; get the new location
     =visual-location>
       ISA           visual-location
       screen-x      =sx
       screen-y      =sy
-
-    ;; get elapsed time
-    =temporal>
-      ISA           time
-      ticks         =elapsed-ticks
   ==>
     !eval!          (format t "second target location: ~a, ~a~%" =sx =sy)
     ;; calculate x difference
@@ -258,10 +263,6 @@
       state         move-cursor
       cur-x-diff    =x-diff
       cur-y-diff    =y-diff
-
-    ;; clear timer
-    +temporal>
-      ISA           clear
   )
 
 
