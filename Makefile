@@ -44,12 +44,12 @@ showplots: bymiss bywhiff byhover byavoid byorder bytotalwhiff
 
 $(output_dir)/table.txt: targeting.lisp load-and-run.lisp
 	echo "misses, whiffs, totalwhiffs, avoids, accuracy, projalpha, projbeta, whifftime" > $(output_dir)/table.txt; \
-	for proj-alpha in 55 56 57 58 59 60 ; do \
-		for proj-beta in 16 18 20 22 24 ; do \
+	for projalpha in 2 ; do \
+		for projbeta in 0.5 ; do \
 			rm log.txt; \
-			. $$HOME/.profile; ccl64 -l load-and-run.lisp -- $(DIFFICULT) $(MOVING) $(TRIALS) $$proj-alpha $$proj-beta 16; \
+			. $$HOME/.profile; ccl64 -l load-and-run.lisp -- $(DIFFICULT) $(MOVING) $(TRIALS) $$projalpha $$projbeta 16; \
 			. $$HOME/.profile; go run aggregate.go > $(output_dir)/aggregate.txt; \
-			RScript test.R --table --projectionbeta $$proj-alpha --projectionbeta $$proj-beta --whifftime 16; \
+			RScript test.R --table --projectionalpha $$projalpha --projectionbeta $$projbeta --whifftime 16; \
 		done \
 	done
 projection-table: $(output_dir)/table.txt
