@@ -109,8 +109,8 @@ if($targeting) {
 					s/goal-focus/goal-2-focus/g;
 				}
 				# replace global variables with constants
-				s/\*target-projection-alpha\*/2/g;
-				s/\*target-projection-beta\*/0.5/g;
+				s/\*target-projection-alpha\*/2.5/g;
+				s/\*target-projection-beta\*/1.5/g;
 				s/\*whiff-wait-time\*/16/g;
 				# replace - slot_name slot_value ;negate tests with slot_name NOT_slot_value
 				s/^(\s*)(-\s*)(\w*\s*)(\w*\s*);negate\s*$/$1$3NOT_$4/g;
