@@ -43,13 +43,13 @@ bytotalwhiff: $(output_dir)/bytotalwhiff.pdf
 showplots: bymiss bywhiff byhover byavoid byorder bytotalwhiff
 
 $(output_dir)/table.txt: targeting.lisp load-and-run.lisp
-	echo "misses, whiffs, totalwhiffs, avoids, accuracy, proj, whifftime" > $(output_dir)/table.txt; \
-	for proj in 55 56 57 58 59 60 ; do \
-		for whiff in 16 18 20 22 24 ; do \
+	echo "misses, whiffs, totalwhiffs, avoids, accuracy, projalpha, projbeta, whifftime" > $(output_dir)/table.txt; \
+	for proj-alpha in 55 56 57 58 59 60 ; do \
+		for proj-beta in 16 18 20 22 24 ; do \
 			rm log.txt; \
-			. $$HOME/.profile; ccl64 -l load-and-run.lisp -- $(DIFFICULT) $(MOVING) $(TRIALS) $$proj $$whiff; \
+			. $$HOME/.profile; ccl64 -l load-and-run.lisp -- $(DIFFICULT) $(MOVING) $(TRIALS) $$proj-alpha $$proj-beta 16; \
 			. $$HOME/.profile; go run aggregate.go > $(output_dir)/aggregate.txt; \
-			RScript test.R --table --projection $$proj --whifftime $$whiff; \
+			RScript test.R --table --projectionbeta $$proj-alpha --projectionbeta $$proj-beta --whifftime 16; \
 		done \
 	done
 projection-table: $(output_dir)/table.txt

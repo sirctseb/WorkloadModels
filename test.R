@@ -2,7 +2,8 @@
 library(optparse)
 option_list = list(
 	make_option(c("-t", "--table"), action = "store_true", default=FALSE, help="Add a line of aggregate data to output/table.txt"),
-	make_option(c("--projection"), action="store", help="The projection factor used in the model"),
+	make_option(c("--projectionalpha"), action="store", help="The projection factor used in the model"),
+	make_option(c("--projectionbeta"), action="store", help="The ticks multication factor"),
 	make_option(c("--whifftime"), action="store", help="The whiff wait time used in the model"),
 	make_option(c("-s", "--stats"), action = "store_true", default=FALSE, help="Print brief statistics about the model data"),
 	make_option(c("-p", "--plots"), action = "store_true", default=FALSE, help="Show completion time plots"),
@@ -41,7 +42,7 @@ if(options$table) {
 	avoids = sum(hsm$avoids)
 	accuracy = sum(hsm$hits) / (sum(hsm$hits) + sum(hsm$misses))
 	# add variables to table
-	out[length(out$misses) + 1,] = c(misses, whiffs, totalwhiffs, avoids, accuracy, options$projection, options$whifftime)
+	out[length(out$misses) + 1,] = c(misses, whiffs, totalwhiffs, avoids, accuracy, options$projectionalpha, options$projectionbeta, options$whifftime)
 	# write table back to file
 	write.table(out, sep=",", quote = FALSE, row.names = FALSE, file = "output/table.txt")
 }
