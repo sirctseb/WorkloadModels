@@ -41,8 +41,8 @@
 ;; the current number of targets checked, used for calculating friend-order
 (defvar *check-order* 0)
 ;; the target projection factor
-(defparameter *target-projection-alpha* 30)
-(defparameter *target-projection-beta* 5)
+(defparameter *target-projection-alpha* 2)
+(defparameter *target-projection-beta* 0.5)
 ;; the number of ticks to wait after whiffing to give up on a target
 (defparameter *whiff-wait-time* 20)
 
