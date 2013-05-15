@@ -248,8 +248,8 @@
     !bind!          =projected-y (+ =sy (* (+ *target-projection-alpha* (* *target-projection-beta* =elapsed-ticks)) =y-diff))
     !eval!          (format t "x-diff: ~a~%" =x-diff)
     !eval!          (format t "speed: ~a~%" (/ =x-diff =elapsed-ticks))
-    !eval!          (format t "projecting move from ~a to ~a by ~a ~%" =tx =projected-x (* *target-projection* (/ =x-diff =elapsed-ticks)))
-    !eval!          (format t "projecting at x: ~a y: ~a, ticks: ~a~%" =projected-x =projected-y =elapsed-ticks)
+    ; !eval!          (format t "projecting move from ~a to ~a by ~a ~%" =tx =projected-x (* *target-projection* (/ =x-diff =elapsed-ticks)))
+    ; !eval!          (format t "projecting at x: ~a y: ~a, ticks: ~a~%" =projected-x =projected-y =elapsed-ticks)
 
     ;; store projected location in visual location buffer
     ;; TODO is this a violation of gp?
