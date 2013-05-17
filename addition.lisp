@@ -489,6 +489,9 @@
     =visual-location>
       ISA visual-location
       kind text
+    ?visual>
+      buffer empty
+      state free
 
   ==>
     ;; request move-attention to first addend
