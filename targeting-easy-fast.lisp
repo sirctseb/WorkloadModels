@@ -2,30 +2,31 @@
 (define-model targeting-easy-fast
 
   ;; sgp section
-  (sgp :needs-mouse nil
+  (sgp
+    :needs-mouse nil
     :show-focus t
     :trace-detail high
     :cursor-noise t
     :vwt t
     :incremental-mouse-moves 0.01
-    :randomize-time nil
+    :randomize-time t
     :visual-movement-tolerance 10
     :pixels-per-inch 96
     :viewing-distance 96)
   ;; we'll count this as sgp
   ;; set the default visloc chunk to something that will never match
   ;; the effect is to disable buffer stuffing
-  (set-visloc-default isa visual-location screen-x 0 screen-x 1)
+  (set-visloc-default isa visual-location color does-not-exist)
+  (start-hand-at-mouse)
+  (set-cursor-position 960 600)
 
   ;; chunk-types
   (chunk-type targeting state target-x target-y projected-x projected-y)
   (chunk-type friend-target x y x-diff y-diff)
 
   ;; dms
-  (suppress-warnings
-    (add-dm (track isa chunk) (attend-letter isa chunk)
+  (add-dm (track isa chunk) (attend-letter isa chunk)
     (goal isa targeting state find-red-target))
-    )
 
   ;; goal focus
   (goal-focus goal)
@@ -72,6 +73,22 @@
       ISA           time
   )
 
+  ;; Rule to fail forever if no red target is found
+  (P fail-find
+    =goal>
+      ISA         targeting
+      state       cap-first-location
+    ?visual-location>
+      state       error
+  ==>
+    ; stop temporal counter
+    +temporal>
+      ISA         clear
+    ; go to fail state
+    =goal>
+      state       fail
+  )
+
   ;; Rule to capture the location of a target when there is no friend info
   (P cap-first-location
     =goal>
@@ -106,6 +123,7 @@
     +visual-location>
       ISA           visual-location
       :nearest      =visual-location
+      color         red
   )
 
   ;; Rule to capture second location of the target after moving attention
@@ -131,9 +149,12 @@
     ;; calculate x difference
     !bind!          =x-diff (- =sx =tx)
     !bind!          =y-diff (- =sy =ty)
+    !bind!          =mag (sqrt (+ (* =x-diff =x-diff) (* =y-diff =y-diff)))
+    !bind!          =x-diff-normal (/ =x-diff =mag)
+    !bind!          =y-diff-normal (/ =y-diff =mag)
     ;; project location
-    !bind!          =projected-x (+ =tx (* *target-projection* (/ =x-diff =elapsed-ticks)))
-    !bind!          =projected-y (+ =ty (* *target-projection* (/ =y-diff =elapsed-ticks)))
+    !bind!          =projected-x (+ =sx (* *target-projection* =x-diff-normal))
+    !bind!          =projected-y (+ =sy (* *target-projection* =y-diff-normal))
     !eval!          (format t "x-diff: ~a~%" =x-diff)
     !eval!          (format t "speed: ~a~%" (/ =x-diff =elapsed-ticks))
     !eval!          (format t "projecting move from ~a to ~a by ~a ~%" =tx =projected-x (* *target-projection* (/ =x-diff =elapsed-ticks)))
@@ -230,4 +251,4 @@
     ;; increment the number of targets checked
     !eval!          (incf *check-order*)
   )
-)
+) ; end model
