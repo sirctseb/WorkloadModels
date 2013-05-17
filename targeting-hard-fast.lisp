@@ -9,10 +9,25 @@
     :cursor-noise t
     :vwt t
     :incremental-mouse-moves 0.01
-    :randomize-time nil
+    :randomize-time t
     :visual-movement-tolerance 10
     :pixels-per-inch 96
     :viewing-distance 96)
+  (sgp
+    :esc t
+    :lf .2
+    :le 10
+    )
+  (sgp :blc 0.1)
+  (sgp :ans 0.05)
+  (sgp :rt -.45)
+  ; (sgp :rt -.45 :esc t :ans 0.05 :mp 16)
+  (sgp :er t)
+  ;; fast and randomized imaginal
+  (sgp :imaginal-delay 0.05
+       :vidt t)
+  ;; fitt's law coefficient
+  (sgp :mouse-fitts-coeff 0.05)
   ;; we'll count this as sgp
   ;; set the default visloc chunk to something that will never match
   ;; the effect is to disable buffer stuffing
@@ -21,11 +36,14 @@
   (set-cursor-position 960 600)
 
   ;; chunk types
-  (chunk-type targeting state target-x target-y projected-x projected-y target-location)
+  (chunk-type targeting state target-x target-y target-location friend-x friend-y friend-x-diff friend-y-diff cur-x-diff cur-y-diff ticks)
   (chunk-type friend-target x y x-diff y-diff)
+  (chunk-type response color action)
 
   ;; dms
   (add-dm (track isa chunk) (attend-letter isa chunk)
+    (enemy-response isa response color red action shoot)
+    (friend-response isa response color green action oh-no-dont-shoot)
     (goal isa targeting state find-black-target))
 
   ;; goal focus
@@ -89,18 +107,10 @@
     =goal>
       ISA           targeting
       state         cap-first-location
-
-    ;; check for friend info in the imaginal buffer
-    =imaginal>
-      ISA           friend-target
-      ;; get friend location and motion
-      x             =fx
-      y             =fy
-      x-diff        =x-diff
-      y-diff        =y-diff
-    ;; TODO do we need this check?
-    ?imaginal>
-      state         free
+      friend-x      =fx
+      friend-y      =fy
+      friend-x-diff =x-diff
+      friend-y-diff =y-diff
 
     =visual-location>
       ISA           visual-location
@@ -114,14 +124,6 @@
   ==>
     =goal>
       state         find-black-target
-
-    ;; TODO this is very not greedy-polite in imaginal. if addition uses imaginal we will need to change it
-    ;; prevent imaginal buffer from being harvested by setting it to the same values
-    ;; TODO an alternative is to attempt to retrive the friend-target chunk from declarative
-    ;; TODO if it's not in the imaginal buffer. that may be more robust in dual-task cases because
-    ;; TODO something else might fill the imaginal buffer and then we'll never get it back
-    ;; NOTE this is different than +imaginal> x =fx which makes the imaginal module busy while it sets the value
-    =imaginal>
 
     ;; clear temporal because find-black-target started it
     ;; TODO this is not gp in temporal
@@ -138,6 +140,8 @@
     =goal>
       ISA           targeting
       state         cap-first-location
+      ;; test that there is no friend info
+      friend-x      nil
 
     ;; find vis loc
     =visual-location>
@@ -145,29 +149,15 @@
       screen-x      =tx
       screen-y      =ty
 
-    ;; make sure visual is free so we can request move-attention
-    ?visual>
-      state         free
-
-    ;; check that there is nothing in imaginal
-    ?imaginal>
-      buffer        empty
-      ;; check state free so we will not let this rule fire until a pending imaginal goes through
-      state         free
   ==>
     ;; store location in goal
     =goal>
       target-x      =tx
       target-y      =ty
-      state         lead-target
+      state         search-target-again
+      target-location =visual-location
 
     !eval!          (format t "storing first target location: ~a, ~a~%" =tx =ty)
-
-    ;; TODO for gp this should be in a subsequent rule so vis-loc is empty between requests
-    ;; search for same location
-    +visual-location>
-      ISA           visual-location
-      :nearest      =visual-location
   )
 
   ;; Rule to capture the location of a target when it doesn't match friend info
@@ -177,6 +167,10 @@
     =goal>
       ISA           targeting
       state         cap-first-location
+      friend-x      =fx
+      friend-y      =fy
+      friend-x-diff =x-diff
+      friend-y-diff =y-diff
 
     ;; find vis loc
     =visual-location>
@@ -184,36 +178,51 @@
       screen-x      =tx
       screen-y      =ty
 
-    ;; check that friend info is in imaginal
-    =imaginal>
-      isa           friend-target
-      x             =fx
-      y             =fy
-      x-diff        =x-diff
-      y-diff        =y-diff
-      
-    ?imaginal>
-      state         free
-
     ;; determine that target is not friend
     !bind!          =on-line (not (is-on-line =tx =ty =fx =fy =x-diff =y-diff))
   ==>
-    ;; keep imaginal
-    =imaginal>
     ;; store location in goal
     =goal>
       target-x      =tx
       target-y      =ty
-      state         lead-target
+      state         search-target-again
+      target-location =visual-location
 
     !eval!          (format t "storing first target location: ~a, ~a~%" =tx =ty)
 
-    ;; TODO for gp this should be a separate rule so vis-loc is empty between requests
-    ;; search for same location
-    +visual-location>
-      ISA           visual-location
-      :nearest      =visual-location
   )
+
+  ;; Do search for same target location
+  (P search-target-again
+    =goal>
+      ISA    targeting
+      state  search-target-again
+      target-location =target-location
+
+    ;; check empty vis-loc
+    ?visual-location>
+      buffer  empty
+
+    ;; get ticks now because we will get vis-loc now
+    =temporal>
+      ISA time
+      ticks =elapsed-ticks
+  ==>
+    ;; search for target again
+    +visual-location>
+      ISA visual-location
+      kind      OVAL
+      :nearest  =target-location
+
+    ;; update goal
+    =goal>
+      state  lead-target
+      ticks =elapsed-ticks
+
+    +temporal>
+      ISA clear
+  )
+
 
   ;; Rule to capture second location of the target after moving attention
   (P lead-target
@@ -222,25 +231,26 @@
       state         lead-target
       target-x      =tx
       target-y      =ty
+      ticks =elapsed-ticks
 
     ;; get the new location
     =visual-location>
       ISA           visual-location
       screen-x      =sx
       screen-y      =sy
-
-    ;; get elapsed time
-    =temporal>
-      ISA           time
-      ticks         =elapsed-ticks
   ==>
     !eval!          (format t "second target location: ~a, ~a~%" =sx =sy)
     ;; calculate x difference
     !bind!          =x-diff (- =sx =tx)
     !bind!          =y-diff (- =sy =ty)
+    !bind!          =mag (sqrt (+ (* =x-diff =x-diff) (* =y-diff =y-diff)))
+    !bind!          =x-diff-normal (/ =x-diff =mag)
+    !bind!          =y-diff-normal (/ =y-diff =mag)
     ;; project location
-    !bind!          =projected-x (+ =tx (* *target-projection* (/ =x-diff =elapsed-ticks)))
-    !bind!          =projected-y (+ =ty (* *target-projection* (/ =y-diff =elapsed-ticks)))
+    ; !bind!          =projected-x (+ =sx (* *target-projection* (/ =x-diff =elapsed-ticks)))
+    ; !bind!          =projected-y (+ =sy (* *target-projection* (/ =y-diff =elapsed-ticks)))
+    !bind!          =projected-x (+ =sx (* *target-projection* =x-diff-normal))
+    !bind!          =projected-y (+ =sy (* *target-projection* =y-diff-normal))
     !eval!          (format t "x-diff: ~a~%" =x-diff)
     !eval!          (format t "speed: ~a~%" (/ =x-diff =elapsed-ticks))
     !eval!          (format t "projecting move from ~a to ~a by ~a ~%" =tx =projected-x (* *target-projection* (/ =x-diff =elapsed-ticks)))
@@ -256,10 +266,8 @@
     ;; could move move request here to speed up
     =goal>
       state         move-cursor
-
-    ;; clear timer
-    +temporal>
-      ISA           clear
+      cur-x-diff    =x-diff-normal
+      cur-y-diff    =y-diff-normal
   )
 
 
@@ -273,15 +281,17 @@
     =visual-location>
       ISA           visual-location
       kind          OVAL
+      screen-x      =x
+      screen-y      =y
 
     ;; make sure motor system is free
     ?manual>
       preparation   free
 
     ;; make sure visual is free
-    ?visual>
-      state         free
-      buffer        empty
+    ; ?visual>
+    ;   state         free
+    ;   buffer        empty
   ==>
 
     ;; request to move the cursor
@@ -291,11 +301,14 @@
 
     ;; request to attend to visual object so that we can search for nearest when
     ;; distinguishing between friend and enemy targets
-    +visual>
-      ISA           move-attention
-      screen-pos    =visual-location
+    ; +visual>
+    ;   ISA           move-attention
+    ;   screen-pos    =visual-location
     =goal>
       state         check-target
+      target-location =visual-location
+      ; target-x      =x
+      ; target-y      =y
   )
 
   ;; re-scan for the nearest oval to get info about its color
@@ -303,30 +316,48 @@
     =goal>
       ISA           targeting
       state         check-target
-    ;; get visual location from visual buffer
-    =visual>
-      isa           OVAL
-      screen-pos    =vis-loc
-    ?visual>
-      state         free
+      target-location =vis-loc
+
+    ?visual-location>
+        buffer        empty
   ==>
     ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
     +visual-location>
       ISA           visual-location
       ;; search for oval
       kind          OVAL
+      ;; monitor for a non-black target
+      - color       black ;negate
       ;; nearest the stored location
       :nearest      =vis-loc
-
-    ;; =visual auto harvests here, but may be re-encoded, so clear it
-    +visual>
-      ISA           clear
 
     =goal>
       ;; move to the state where we distinguish between red and green targets
       state         distinguish-target
-      ;; store the vis-loc of target of focus
+  )
+
+  ;; rescan after original check when it fails because all targets are still black
+  ;; TODO we could have just one rule if we put the original +vis-loc in move-cursor
+  (P re-search-on-fail
+    =goal>
+      ISA    targeting
+      state  distinguish-target
       target-location =vis-loc
+    
+    ;; check for failed vis-loc
+    ;; TODO what about a failed vis-loc from a dual-task?
+    ?visual-location>
+      state    error
+  ==>
+    ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
+    +visual-location>
+      ISA           visual-location
+      ;; search for oval
+      kind          OVAL
+      ;; monitor for a non-black target
+      - color       black ;negate
+      ;; nearest the stored location
+      :nearest      =vis-loc
   )
 
   ;; prepare a click while checking the target
@@ -348,19 +379,115 @@
       finger        index
   )
 
-  ;; after a rescan of the target, check if the target is red and click it
-  (P distinguish-target-enemy
+  ;; prepare click after detect-target-color because it could happen right away
+  ;; TODO this is slow in the case that it's needed. faster would be to have a separate decide-to-shoot
+  ;; TODO that does the whole mouse click instead of just execute
+  (P prepare-click-after-detect-target-color
+    =goal>
+      ISA           targeting
+      state         decide-whether-to-shoot
+    
+    ;; wait until manual preparation is free and last command was a move (we didn't already prepare click)
+    ?manual>
+      last-command  move-cursor
+      preparation   free
+  ==>
+    ;; prepare the mouse-click
+    +manual>
+      ISA           prepare
+      style         punch
+      hand          right
+      finger        index
+  )
+
+  ;; check if there the nearest target is no longer black
+  (P detect-target-color
     =goal>
       ISA           targeting
       state         distinguish-target
-
-    ;; wait until visual location is found
+      target-x      =cx
+      target-y      =cy
+      cur-x-diff    =x-diff
+      cur-y-diff    =y-diff
+      
+    ;; check for non-black target
     =visual-location>
-      ISA           visual-location
+      ISA         visual-location
       ;; check for oval
+      kind        OVAL
+      ;; check for not black
+      - color     black
+      ;; match color
+      color       =color
+      ;; match location values to check if on line
+      screen-x    =sx
+      screen-y    =sy
+
+    ;; check that color target is on the original target line
+    !bind!          =on-line (is-on-line =sx =sy =cx =cy =x-diff =y-diff)
+
+    ;; wait for retrieval
+    ?retrieval>
+      state       free
+      buffer      empty
+  ==>
+    ;; request lookup of action based on color
+    +retrieval>
+      ISA         response
+      color       =color
+    ;; update goal
+    =goal>
+      state       decide-whether-to-shoot
+  )
+  ;; detect flyby target
+  (P detect-flyby
+    =goal>
+      ISA           targeting
+      state         distinguish-target
+      target-x      =cx
+      target-y      =cy
+      cur-x-diff    =x-diff
+      cur-y-diff    =y-diff
+      target-location =vis-loc
+      
+    ;; check for non-black target
+    =visual-location>
+      ISA         visual-location
+      ;; check for oval
+      kind        OVAL
+      ;; check for not black
+      - color     black
+      ;; match color
+      color       =color
+      ;; match location values to check if on line
+      screen-x    =sx
+      screen-y    =sy
+
+    ;; check that color target is not on the original target line
+    !bind!          =not-on-line (not (is-on-line =sx =sy =cx =cy =x-diff =y-diff))
+  ==>
+    ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
+    +visual-location>
+      ISA           visual-location
+      ;; search for oval
       kind          OVAL
-      ;; check for red (enemy)
-      color         red
+      ;; monitor for a non-black target
+      - color       black ;negate
+      ;; nearest the stored location
+      ;; TODO do we want nearest here?
+      :nearest      =vis-loc
+  )
+
+  ;; after a rescan of the target, check if the target is red and click it
+  (P decide-to-shoot
+    =goal>
+      ISA           targeting
+      state         decide-whether-to-shoot
+
+    ;; match shoot chunk
+    =retrieval>
+      ISA           response
+      action        shoot
 
     ;; let prepare-click go first
     ;; TODO this is not a semantic test. it only exists to allow prepare-click to go first
@@ -386,6 +513,68 @@
 
     ;; increment the number of targets checked
     !eval!          (incf *check-order*)
+  )
+
+  ;; TODO does this ever happen? waiting for imaginal in cap-first should prevent it
+  ;; detect friend when we've already seen it
+  (P decide-not-to-shoot-friend-remembered
+    =goal>
+      ISA           targeting
+      state         decide-whether-to-shoot
+      friend-x      =fx
+
+    ;; match no-shoot chunk
+    =retrieval>
+      ISA           response
+      action        oh-no-dont-shoot
+
+  ==>
+    ;; go back to finding black target
+    =goal>
+      state         find-black-target
+    !eval!          (incf *friend-hovers*)
+    ;; clear temporal in case we were running a whiff
+    ;; TODO this is not gp in temporal
+    +temporal>
+      ISA           clear
+  )
+
+  ;; after a rescan of the target, check if the target is green
+  (P decide-not-to-shoot
+    =goal>
+      ISA           targeting
+      state         decide-whether-to-shoot
+      target-x      =sx
+      target-y      =sy
+      target-location =target-location
+      cur-x-diff    =x-diff
+      cur-y-diff    =y-diff
+
+    ;; match no-shoot chunk
+    =retrieval>
+      ISA           response
+      action        oh-no-dont-shoot
+
+  ==>
+
+    ;; clear temporal in case we were running a whiff
+    ;; TODO this is not gp in temporal
+    +temporal>
+      ISA           clear
+
+    ;; remember motion
+    =goal>
+      state         find-black-target
+      friend-x      =sx
+      friend-y      =sy
+      friend-x-diff =x-diff
+      friend-y-diff =y-diff
+    ;; increment the number of times the friend target was hovered
+    !eval!          (incf *friend-hovers*)
+    !eval!          (format t "detected friend~%")
+
+    ;; set the order in which the friend was checked if it hasn't been set yet
+    !eval!          (when (eq -1 *friend-order*) (setf *friend-order* *check-order*))
   )
 
   ;; if we are still trying to distinguish a target but it has stayed black through the mouse move,
@@ -455,6 +644,7 @@
     ;; recan vis-loc
     +visual-location>
       ISA           visual-location
+      kind          OVAL
       :nearest      =target-location
   )
 
@@ -482,175 +672,4 @@
     !eval!          (incf *total-whiff-counter*)
   )
 
-  ;; TODO does this ever happen? waiting for imaginal in cap-first should prevent it
-  ;; detect friend when we've already seen it
-  (P distinguish-target-friend-remembered
-    =goal>
-      ISA           targeting
-      state         distinguish-target
-
-    ;; wait until visual location is found
-    =visual-location>
-      ISA           visual-location
-      ;; check for oval
-      kind            OVAL
-      ;; check for green
-      color           green
-
-    ;; check that there is already info
-    =imaginal>
-      ISA           friend-target
-  ==>
-    ;; TODO this is not gp in imaginal
-    ;; keep imaginal
-    =imaginal>
-    ;; go back to finding black target
-    =goal>
-      state         find-black-target
-    ;; clear temporal in case we were running a whiff
-    ;; TODO this is not gp in temporal
-    +temporal>
-      ISA           clear
-  )
-
-  ;; after a rescan of the target, check if the target is green
-  (P distinguish-target-friend
-    =goal>
-      ISA           targeting
-      state         distinguish-target
-
-    ;; wait until visual location is found
-    =visual-location>
-      ISA           visual-location
-      ;; check for oval
-      kind          OVAL
-      ;; check for green (friend)
-      color         green
-      ;; get location values
-      screen-x      =sx
-      screen-y      =sy
-
-    ;; TODO if it is not free? we should probably skip the remember
-    ;; only do the remembering if imaginal is empty
-    ?imaginal>
-      state         free
-      buffer        empty
-  ==>
-    ;; store location of friend target
-    +imaginal>
-      isa           friend-target
-      x             =sx
-      y             =sy
-
-    ;; TODO this should be a separate rule for gp
-    ;; scan for same location
-    +visual-location>
-      ISA           visual-location
-      :nearest      =visual-location
-
-    ;; clear temporal in case we were running a whiff
-    ;; TODO this is not gp in temporal
-    +temporal>
-      ISA           clear
-
-    ;; remember motion
-    =goal>
-      state         remember-friend-motion
-    ;; increment the number of times the friend target was hovered
-    !eval!          (incf *friend-hovers*)
-    !eval!          (format t "detected friend~%")
-
-    ;; set the order in which the friend was checked if it hasn't been set yet
-    !eval!          (when (eq -1 *friend-order*) (setf *friend-order* *check-order*))
-  )
-
-  ;; get motion of friend target and store
-  (P remember-friend-motion
-    =goal>
-      ISA           targeting
-      state         remember-friend-motion
-
-    ;; wait until imaginal is ready
-    ?imaginal>
-      state         free
-
-    ;; get current imaginal contents
-    ;; TODO doing two consecutive imaginals like this is slow
-    ;; TODO we could at least use the stored vis-loc we already have as one of them
-    =imaginal>
-      isa           friend-target
-      x             =fx
-      y             =fy
-
-    ;; get new vis-loc
-    =visual-location>
-      isa           visual-location
-      ;; check for oval
-      kind          OVAL
-      ;; TODO check for friend?
-      ;color        green
-      ;; get location values
-      screen-x      =sx
-      screen-y      =sy
-  ==>
-    ;; compute motion params
-    !bind!          =x-diff (- =sx =fx)
-    !bind!          =y-diff (- =sy =fy)
-
-    ;; store motion of friend target
-    +imaginal>
-      ISA           friend-target
-      x             =fx
-      y             =fy
-      x-diff        =x-diff
-      y-diff        =y-diff
-
-    ;; search for black targets again
-    =goal>
-      state         find-black-target
-  )
-
-  ;; after a rescan of the target, check if the target is still black and keep rescanning
-  (P distinguish-target-black
-    =goal>
-      ISA           targeting
-      state         distinguish-target
-      ;; match store location for new search
-      target-location =target-location
-
-    ;; wait until visual location is found
-    =visual-location>
-      ISA           visual-location
-      ;; check for oval
-      kind          OVAL
-      ;; check for black
-      color         black
-
-    ;; only loop when the move is not complete
-    ?manual>
-      state         busy
-    ;; let prepare-click go first
-    ;; TODO this is not a semantic test. it only exists to allow prepare-click to go first
-    ;; TODO there should be a better way to let prepare-click to have priority
-    ;; TODO we could just put a flag in goal
-    ?manual>
-      last-command  prepare
-  ==>
-    ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
-    +visual-location>
-      ISA           visual-location
-      ;; search for oval
-      kind          OVAL
-      ;; nearest the stored location
-      :nearest      =target-location
-
-    ;; clear temporal in case we were running a whiff
-    ;; TODO this is not gp in temporal
-    +temporal>
-      ISA           clear
-
-    =goal>
-      ;; move to the state where we distinguish between red and green targets
-      state         distinguish-target
-  )
 ) ; end model
