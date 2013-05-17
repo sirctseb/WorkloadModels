@@ -9,7 +9,7 @@
     :cursor-noise t
     :vwt t
     :incremental-mouse-moves 0.01
-    :randomize-time nil
+    :randomize-time t
     :visual-movement-tolerance 10
     :pixels-per-inch 96
     :viewing-distance 96)
@@ -123,6 +123,7 @@
     +visual-location>
       ISA           visual-location
       :nearest      =visual-location
+      color         red
   )
 
   ;; Rule to capture second location of the target after moving attention
@@ -148,9 +149,12 @@
     ;; calculate x difference
     !bind!          =x-diff (- =sx =tx)
     !bind!          =y-diff (- =sy =ty)
+    !bind!          =mag (sqrt (+ (* =x-diff =x-diff) (* =y-diff =y-diff)))
+    !bind!          =x-diff-normal (/ =x-diff =mag)
+    !bind!          =y-diff-normal (/ =y-diff =mag)
     ;; project location
-    !bind!          =projected-x (+ =tx (* *target-projection* (/ =x-diff =elapsed-ticks)))
-    !bind!          =projected-y (+ =ty (* *target-projection* (/ =y-diff =elapsed-ticks)))
+    !bind!          =projected-x (+ =sx (* *target-projection* =x-diff-normal))
+    !bind!          =projected-y (+ =sy (* *target-projection* =y-diff-normal))
     !eval!          (format t "x-diff: ~a~%" =x-diff)
     !eval!          (format t "speed: ~a~%" (/ =x-diff =elapsed-ticks))
     !eval!          (format t "projecting move from ~a to ~a by ~a ~%" =tx =projected-x (* *target-projection* (/ =x-diff =elapsed-ticks)))

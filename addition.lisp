@@ -38,11 +38,19 @@
   ;; sgp section
   (sgp
     :esc t
-    :lf .05)
+    :lf .2
+    :le 10
+    )
+  (sgp :blc 0.1)
+  (sgp :ans 0.05)
+  (sgp :rt -.45)
+  ; (sgp :rt -.45 :esc t :ans 0.05 :mp 16)
+  (sgp :er t)
   (sgp
     :v t
     :show-focus t
     :trace-detail high
+    :randomize-time t
     )
   ;; we'll count this as sgp
   ;; set the default visloc chunk to something that will never match
@@ -333,13 +341,6 @@
       ISA         move-attention
       screen-pos  =visual-location
 
-    ;; TODO this violates gp, should be a separate rule
-    ;; request visual location of first addend
-    +visual-location>
-      ISA         visual-location
-      kind        text
-      screen-x    lowest
-
     ;; update goal
     =goal>
       state       encode-second
@@ -360,10 +361,7 @@
     ;; make sure retrieval is free so we can request dm
     ?retrieval>
       state       free
-
-    ;; get vis-loc
-    =visual-location>
-      ISA         visual-location
+      buffer      empty
 
     ;; make sure visual is free so we can request move-attention
     ;; TODO clear visual after last attend?
@@ -375,15 +373,13 @@
       ISA         number
       value       =value
 
-    ;; TODO this violates gp
-    ;; request move-attention to first addend
+    ;; clear visual
     +visual>
-      ISA         move-attention
-      screen-pos  =visual-location
+      ISA         clear
 
     ;; update goal
     =goal>
-      state       encode-first
+      state       find-first
     )
 
   ;; Production to get number chunk and store tens and ones
@@ -411,7 +407,7 @@
     =goal>
       ISA         arithmetic-problem
       second-ones nil
-      
+
     ;; wait for retrieval
     =retrieval>
       ISA         number
@@ -423,6 +419,43 @@
       second-ones =ones
     )
 
+  (P find-first
+    =goal>
+      ISA arithmetic-problem
+      state find-first
+    ;; gp vis-loc check
+    ?visual-location>
+      buffer  empty
+  ==>
+    ;; request visual location of first addend
+    +visual-location>
+      ISA         visual-location
+      kind        text
+      screen-x    lowest
+    ;; update goal state
+    =goal>
+      state attend-first
+  )
+
+  (P attend-first
+    =goal>
+      ISA arithmetic-problem
+      state attend-first
+    ;; get vis-loc
+    =visual-location>
+      ISA visual-location
+      kind text
+
+  ==>
+    ;; request move-attention to first addend
+    +visual>
+      ISA         move-attention
+      screen-pos  =visual-location
+    ;; update goal state
+    =goal>
+      state encode-first
+  )
+
   ;; TODO production to do vis-loc in case there isn't one ready?
   ;; TODO production to do move-attend?
 
@@ -432,6 +465,9 @@
     =goal>
       ISA         arithmetic-problem
       state       encode-first
+      ;; make sure store-second-nil-tens goes first
+      ;; TODO why isn't that a different state if it has to go first?
+      - second-ones nil
 
     ;; wait for visual attention to move
     =visual>
@@ -441,6 +477,7 @@
     ;; make sure retrieval is free
     ?retrieval>
       state       free
+      buffer      empty
   ==>
     ;; request the dm of the number info
     +retrieval>
@@ -469,6 +506,8 @@
       ISA         number
       ones        =first-ones
       tens        =first-tens
+    ?retrieval>
+      state       free
   ==>
     ;; update goal
     =goal>
@@ -630,6 +669,11 @@
       state       retrieve-addition-tens
       first-tens  =first
       second-tens =second
+
+    ;; gp in retrieval
+    ?retrieval>
+      state       free
+      buffer      empty
   ==>
     ;; update goal
     =goal>
@@ -676,6 +720,10 @@
       carry       "1"
       ;; match tens sum
       tens        =tens
+    ;; gp in retrieval
+    ?retrieval>
+      state       free
+      buffer      empty
   ==>
     ;; request retrieval of successor
     +retrieval>
