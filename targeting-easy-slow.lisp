@@ -109,11 +109,6 @@
       ISA           visual-location
       kind          OVAL
 
-    ;; check that visual is free and empty
-    ?visual>
-      state         free
-      buffer        empty
-
     ;; make sure motor system is free
     ?manual>
       preparation   free
@@ -124,10 +119,6 @@
       ISA           move-cursor
       loc           =visual-location
 
-    ;; attend to target
-    +visual>
-      ISA           move-attention
-      screen-pos    =visual-location
     =goal>
       state         click-mouse
       check-miss    nil
@@ -147,11 +138,6 @@
     ?manual>
       state         free
 
-    ;; harvest visual
-    ;; TODO we don't actually want to wait for this here though,
-    ;; TODO we should make a parallel production that just harvests visual
-    =visual>
-      ISA           OVAL
   ==>
     
     ;; submit click request
