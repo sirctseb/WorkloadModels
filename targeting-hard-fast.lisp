@@ -359,6 +359,27 @@
       ;; nearest the stored location
       :nearest      =vis-loc
   )
+  ;; rescan on visual-location empty in case a dual-task does a vis-loc
+  (P re-search-on-empty
+    =goal>
+      ISA   targeting
+      state distinguish-target
+      target-location =vis-loc
+    ;; check for empty and non error vis-loc
+    ?visual-location>
+     - state error
+     buffer empty
+  ==>
+    ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
+    +visual-location>
+      ISA           visual-location
+      ;; search for oval
+      kind          OVAL
+      ;; monitor for a non-black target
+      - color       black ;negate
+      ;; nearest the stored location
+      :nearest      =vis-loc
+  )
 
   ;; prepare a click while checking the target
   (P prepare-click
