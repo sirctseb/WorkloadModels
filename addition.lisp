@@ -373,6 +373,10 @@
       ISA         number
       value       =value
 
+    ;; clear visual
+    +visual>
+      ISA         clear
+
     ;; update goal
     =goal>
       state       find-first
