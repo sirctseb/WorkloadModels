@@ -133,9 +133,19 @@
       check-miss    nil
   )
 
-  ;; TODO this holds visual for the whole mouse move
-  ;; TODO we probably shouldn't do this but we need to check what
-  ;; TODO effect it has on dual-task
+  ;; harvest the visual buffer
+  (P ack-target
+    =goal>
+      ISA targeting
+      state click-mouse
+      
+    ;; harvest visual
+    =visual>
+      ISA OVAL
+  ==>
+    +visual>
+      ISA clear
+  )
 
   ; request a mouse click
   (P click-mouse
@@ -146,20 +156,11 @@
     ;; make sure motor module is free
     ?manual>
       state         free
-
-    ;; harvest visual
-    ;; TODO we don't actually want to wait for this here though,
-    ;; TODO we should make a parallel production that just harvests visual
-    =visual>
-      ISA           OVAL
   ==>
     
     ;; submit click request
     +manual>
       ISA           click-mouse
-
-    +visual>
-      ISA           clear
 
     =goal>
       state         find-red-target
