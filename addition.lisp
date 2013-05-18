@@ -351,6 +351,9 @@
     ;; gp: require empty visual-location
     ?visual-location>
       buffer      empty
+    ?visual>
+      state free
+      buffer empty
   ==>
     ;; perform search for right-most text
     +visual-location>
@@ -471,6 +474,9 @@
     ;; gp vis-loc check
     ?visual-location>
       buffer  empty
+    ?visual>
+      state free
+      buffer empty
   ==>
     ;; request visual location of first addend
     +visual-location>
