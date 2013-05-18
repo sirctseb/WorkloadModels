@@ -168,9 +168,9 @@
       preparation   free
 
     ;; make sure visual is free to do move-attention
-    ; ?visual>
-    ;   state         free
-    ;   buffer        empty
+    ?visual>
+      state         free
+      buffer        empty
   ==>
 
     ;; request to move the cursor
@@ -182,9 +182,9 @@
     ;; distinguishing between friend and enemy targets
     ; TODO instead of moving attention and getting the location from the visual buffer,
     ; TODO just store the visual location chunk directly from it's own buffer to goal here
-    ; +visual>
-    ;   ISA           move-attention
-    ;   screen-pos    =visual-location
+    +visual>
+      ISA           move-attention
+      screen-pos    =visual-location
     =goal>
       state         check-target
       target-location =visual-location
@@ -220,9 +220,9 @@
     ;; check for visual free because we will move-attention
     ; TODO instead of moving attention and getting the location from the visual buffer,
     ; TODO just store the visual location chunk directly from it's own buffer to goal here
-    ; ?visual>
-    ;   state         free
-    ;   buffer        empty
+    ?visual>
+      state         free
+      buffer        empty
   ==>
 
     ;; request to move the cursor
@@ -232,9 +232,9 @@
 
     ;; request to attend to visual object so that we can search for nearest when
     ;; distinguishing between friend and enemy targets
-    ; +visual>
-    ;   ISA           move-attention
-    ;   screen-pos    =visual-location
+    +visual>
+      ISA           move-attention
+      screen-pos    =visual-location
 
     ;; keep imaginal
     =imaginal>
@@ -255,9 +255,9 @@
     ;; get visual location from visual buffer
     ; TODO instead of moving attention and getting the location from the visual buffer,
     ; TODO just store the visual location chunk directly from it's own buffer to goal here
-    ; =visual>
-    ;   ISA           OVAL
-    ;   screen-pos    =vis-loc
+    =visual>
+      ISA           OVAL
+      ; screen-pos    =vis-loc
 
     ; check that vis-loc is empty because we will request it here
     ?visual-location>
@@ -272,8 +272,8 @@
       :nearest      =vis-loc
 
     ;; =visual auto harvests here, but it will get re-encoded on color change, so clear it
-    ; +visual>
-    ;   ISA           clear
+    +visual>
+      isa           clear
 
     =goal>
       ;; move to the state where we distinguish between red and green targets
