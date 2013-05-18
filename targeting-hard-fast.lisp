@@ -326,8 +326,6 @@
       ISA           visual-location
       ;; search for oval
       kind          OVAL
-      ;; monitor for a non-black target
-      - color       black ;negate
       ;; nearest the stored location
       :nearest      =vis-loc
 
@@ -336,49 +334,43 @@
       state         distinguish-target
   )
 
-  ;; rescan after original check when it fails because all targets are still black
-  ;; TODO we could have just one rule if we put the original +vis-loc in move-cursor
-  (P re-search-on-fail
+  ;; after a rescan of the target, check if the target is still black and keep rescanning
+  (P distinguish-target-black
     =goal>
-      ISA    targeting
-      state  distinguish-target
-      target-location =vis-loc
-    
-    ;; check for failed vis-loc
-    ;; TODO what about a failed vis-loc from a dual-task?
-    ?visual-location>
-      state    error
+      ISA           targeting
+      state         distinguish-target
+      target-location =target-location
+
+    ;; wait until visual location is found
+    =visual-location>
+      ISA           visual-location
+      ;; check for oval
+      kind          OVAL
+      ;; check for black
+      color         black
+
+    ;; only loop when the move is not complete
+    ?manual>
+      state         busy
+    ;; let prepare-click go first
+    ;; TODO this is not a semantic test. it only exists to allow prepare-click to go first
+    ;; TODO there should be a better way to let prepare-click to have priority
+    ;; TODO we could just put a flag in goal
+    ?manual>
+      last-command  prepare
   ==>
-    ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
+    ;; clear temporal in case we were running a whiff
+    ;; TODO this is not gp in temporal
+    +temporal>
+      ISA           clear
+
+    ;; request visual location search for nearest oval (should be the same we found last time, but it may be colored next time
     +visual-location>
       ISA           visual-location
       ;; search for oval
       kind          OVAL
-      ;; monitor for a non-black target
-      - color       black ;negate
       ;; nearest the stored location
-      :nearest      =vis-loc
-  )
-  ;; rescan on visual-location empty in case a dual-task does a vis-loc
-  (P re-search-on-empty
-    =goal>
-      ISA   targeting
-      state distinguish-target
-      target-location =vis-loc
-    ;; check for empty and non error vis-loc
-    ?visual-location>
-     - state error
-     buffer empty
-  ==>
-    ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
-    +visual-location>
-      ISA           visual-location
-      ;; search for oval
-      kind          OVAL
-      ;; monitor for a non-black target
-      - color       black ;negate
-      ;; nearest the stored location
-      :nearest      =vis-loc
+      :nearest      =target-location
   )
 
   ;; prepare a click while checking the target
@@ -492,8 +484,6 @@
       ISA           visual-location
       ;; search for oval
       kind          OVAL
-      ;; monitor for a non-black target
-      - color       black ;negate
       ;; nearest the stored location
       ;; TODO do we want nearest here?
       :nearest      =vis-loc
