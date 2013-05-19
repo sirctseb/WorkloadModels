@@ -55,6 +55,9 @@
     ;; check for empty visual-location buffer
     ?visual-location>
       buffer      empty
+    ?visual>
+      state free
+      buffer empty
   ==>
     ;; search for an unattended black target
     +visual-location>
@@ -185,6 +188,8 @@
     +visual>
       ISA           move-attention
       screen-pos    =visual-location
+    ;; keep vis-loc as gp cheat
+    =visual-location>
     =goal>
       state         check-target
       target-location =visual-location
@@ -235,6 +240,8 @@
     +visual>
       ISA           move-attention
       screen-pos    =visual-location
+    ;; keep vis-loc as a gp cheat
+    =visual-location>
 
     ;; keep imaginal
     =imaginal>
@@ -260,8 +267,8 @@
       ; screen-pos    =vis-loc
 
     ; check that vis-loc is empty because we will request it here
-    ?visual-location>
-      buffer        empty
+    ; ?visual-location>
+    ;   buffer        empty
   ==>
     ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
     +visual-location>
