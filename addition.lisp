@@ -374,6 +374,7 @@
     ;; get vis-loc reference
     =visual-location>
       ISA         visual-location
+      kind text
 
     ;; check for free visual
     ?visual>
