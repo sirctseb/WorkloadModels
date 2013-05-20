@@ -126,20 +126,6 @@
       ISA           visual-location
       :nearest      =visual-location
       color         red
-    +visual>
-      ISA           move-attention
-      screen-pos    =visual-location
-  )
-  
-  ;; harvest vis
-  (P harvest-vis
-    =goal>
-      ISA targeting
-    =visual>
-      ISA OVAL
-  ==>
-    +visual>
-      ISA clear
   )
 
   ;; Rule to capture second location of the target after moving attention
@@ -176,6 +162,9 @@
     !eval!          (format t "projecting move from ~a to ~a by ~a ~%" =tx =projected-x (* *target-projection* (/ =x-diff =elapsed-ticks)))
     !eval!          (format t "projecting at x: ~a y: ~a, ticks: ~a~%" =projected-x =projected-y =elapsed-ticks)
 
+    +visual>
+      ISA           move-attention
+      screen-pos    =visual-location
     ;; store projected location in visual location buffer
     ;; TODO is this a violation of greedy-polite?
     =visual-location>
@@ -190,6 +179,17 @@
     ;; clear timer
     +temporal>
       ISA           clear
+  )
+
+  ;; harvest vis
+  (P harvest-vis
+    =goal>
+      ISA targeting
+    =visual>
+      ISA OVAL
+  ==>
+    +visual>
+      ISA clear
   )
 
   ;; rule to move cursor toward target
