@@ -126,6 +126,20 @@
       ISA           visual-location
       :nearest      =visual-location
       color         red
+    +visual>
+      ISA           move-attention
+      screen-pos    =visual-location
+  )
+  
+  ;; harvest vis
+  (P harvest-vis
+    =goal>
+      ISA targeting
+    =visual>
+      ISA OVAL
+  ==>
+    +visual>
+      ISA clear
   )
 
   ;; Rule to capture second location of the target after moving attention
