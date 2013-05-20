@@ -105,9 +105,9 @@
 
     ;; make sure visual is free so we can request move-attention
     ;; also check that visual buffer is empty
-    ?visual>
-      state         free
-      buffer        empty
+    ; ?visual>
+    ;   state         free
+    ;   buffer        empty
 
   ==>
     ;; store location in goal
