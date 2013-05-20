@@ -191,6 +191,16 @@
     +visual>
       ISA clear
   )
+  (P harvest-err
+    =goal>
+      ISA targeting
+    ?visual>
+      buffer empty
+      state error
+  ==>
+    +visual>
+      ISA clear
+  )
 
   ;; rule to move cursor toward target
   (P move-cursor
