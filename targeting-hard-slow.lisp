@@ -31,8 +31,7 @@
   (set-cursor-position 960 600)
 
   ;; chunk types
-  (chunk-type targeting state target-location target-x target-y)
-  (chunk-type friend-target x y)
+  (chunk-type targeting state target-location target-x target-y friend-x friend-y)
   (chunk-type response color action)
 
   ;; dms
@@ -107,13 +106,8 @@
     =goal>
       ISA           targeting
       state         move-cursor
-
-    ;; check for friend info in the imaginal buffer
-    =imaginal>
-      ISA           friend-target
-      ;; get friend location
-      x             =fx
-      y             =fy
+      friend-x     =fx
+      friend-y     =fy
 
     =visual-location>
       ISA           visual-location
@@ -136,14 +130,6 @@
     ;   isa           move-attention
     ;   screen-pos    =visual-location
 
-    ;; TODO this is very not greedy-polite in imaginal. if addition uses imaginal we will need to change it
-    ;; prevent imaginal buffer from being harvested by setting it to the same values
-    ;; TODO an alternative is to attempt to retrive the friend-target chunk from declarative
-    ;; TODO if it's not in the imaginal buffer. that may be more robust in dual-task cases because
-    ;; TODO something else might fill the imaginal buffer and then we'll never get it back
-    ;; NOTE this is different than +imaginal> x =fx which makes the imaginal module busy while it sets the value
-    =imaginal>
-
     !eval!          (format t "avoiding friend~%")
     ;; increment number of times avoided friend
     !eval!          (incf *friend-avoids*)
@@ -154,6 +140,8 @@
     =goal>
       ISA           targeting
       state         move-cursor
+      ;; check that there is no friend info
+      friend-x      nil
 
     ;; check for vis-loc result
     =visual-location>
@@ -161,10 +149,6 @@
       kind          OVAL
       screen-x      =x
       screen-y      =y
-
-    ;; check that there is no friend info
-    ?imaginal>
-      buffer        empty
 
     ;; make sure motor system is free
     ?manual>
@@ -202,12 +186,8 @@
     =goal>
       ISA           targeting
       state         move-cursor
-
-    ;; check for friend info
-    =imaginal>
-      ISA           friend-target
-      x             =fx
-      y             =fy
+      friend-x     =fx
+      friend-y     =fy
 
     =visual-location>
       ISA           visual-location
@@ -242,9 +222,6 @@
       screen-pos    =visual-location
     ;; keep vis-loc as a gp cheat
     =visual-location>
-
-    ;; keep imaginal
-    =imaginal>
 
     =goal>
       state         check-target
@@ -355,16 +332,7 @@
       ISA           response
       action        oh-no-dont-shoot
 
-    ;; make sure imaginal module is free so we can remember where friend is?
-    ;; TODO if it is not free? we should probably skip the remember
-    ?imaginal>
-      state         free
   ==>
-    ;; store location of friend target
-    +imaginal>
-      isa           friend-target
-      x             =sx
-      y             =sy
       
     ;; increment the number of times the friend target was hovered
     !eval!          (incf *friend-hovers*)
@@ -375,6 +343,9 @@
     ;; search for black targets again
     =goal>
       state         find-black-target
+      ;; store location of friend target
+      friend-x      =sx
+      friend-y      =sy
   )
 
   ;; if we are still trying to distinguish a target but it has stayed black through the mouse move,
