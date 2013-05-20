@@ -142,6 +142,10 @@
       screen-x      =sx
       screen-y      =sy
 
+    ?visual>
+      buffer empty
+      state free
+
     ;; get elapsed time
     =temporal>
       ISA           time
