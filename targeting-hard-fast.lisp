@@ -226,6 +226,9 @@
       ISA           visual-location
       screen-x      =sx
       screen-y      =sy
+    ?visual>
+      state free
+      buffer empty
   ==>
     !eval!          (format t "second target location: ~a, ~a~%" =sx =sy)
     ;; calculate x difference
@@ -249,6 +252,9 @@
     =visual-location>
       screen-x      =projected-x
       screen-y      =projected-y
+    +visual>
+      ISA move-attention
+      screen-pos =visual-location
 
     ;; and move to next state
     ;; could move move request here to speed up
@@ -259,6 +265,15 @@
   )
 
 
+  (P harvest-vis
+    =goal>
+      ISA targeting
+    =visual>
+      ISA OVAL
+  ==>
+    +visual>
+      ISA clear
+  )
 
   ;; rule to move cursor toward target
   (P move-cursor
