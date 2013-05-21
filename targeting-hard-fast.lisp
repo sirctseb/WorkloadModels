@@ -190,6 +190,10 @@
       screen-x      =tx
       screen-y      =ty
 
+    ?visual>
+      state free
+      buffer empty
+
     ;; determine that target is not friend
     !bind!          =on-line (not (is-on-line =tx =ty =fx =fy =x-diff =y-diff))
   ==>
