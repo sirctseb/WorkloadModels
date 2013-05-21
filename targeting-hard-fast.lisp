@@ -226,9 +226,6 @@
       ISA           visual-location
       screen-x      =sx
       screen-y      =sy
-    ?visual>
-      state free
-      buffer empty
   ==>
     !eval!          (format t "second target location: ~a, ~a~%" =sx =sy)
     ;; calculate x difference
@@ -252,27 +249,12 @@
     =visual-location>
       screen-x      =projected-x
       screen-y      =projected-y
-    +visual>
-      ISA move-attention
-      screen-pos =visual-location
-
     ;; and move to next state
     ;; could move move request here to speed up
     =goal>
       state         move-cursor
       cur-x-diff    =x-diff-normal
       cur-y-diff    =y-diff-normal
-  )
-
-
-  (P harvest-vis
-    =goal>
-      ISA targeting
-    =visual>
-      ISA OVAL
-  ==>
-    +visual>
-      ISA clear
   )
 
   ;; rule to move cursor toward target
@@ -292,9 +274,9 @@
       preparation   free
 
     ;; make sure visual is free
-    ; ?visual>
-    ;   state         free
-    ;   buffer        empty
+    ?visual>
+      state         free
+      buffer        empty
   ==>
 
     ;; request to move the cursor
@@ -304,14 +286,15 @@
 
     ;; request to attend to visual object so that we can search for nearest when
     ;; distinguishing between friend and enemy targets
-    ; +visual>
-    ;   ISA           move-attention
-    ;   screen-pos    =visual-location
+    +visual>
+      ISA           move-attention
+      screen-pos    =visual-location
     =goal>
       state         check-target
       target-location =visual-location
       ; target-x      =x
       ; target-y      =y
+
   )
 
   ;; re-scan for the nearest oval to get info about its color
@@ -323,6 +306,9 @@
 
     ?visual-location>
         buffer        empty
+
+    =visual>
+      ISA OVAL
   ==>
     ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
     +visual-location>
@@ -331,6 +317,9 @@
       kind          OVAL
       ;; nearest the stored location
       :nearest      =vis-loc
+
+    +visual>
+      ISA clear
 
     =goal>
       ;; move to the state where we distinguish between red and green targets
