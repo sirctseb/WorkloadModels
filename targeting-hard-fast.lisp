@@ -226,6 +226,9 @@
       ISA           visual-location
       screen-x      =sx
       screen-y      =sy
+    ?visual>
+      state free
+      buffer empty
   ==>
     !eval!          (format t "second target location: ~a, ~a~%" =sx =sy)
     ;; calculate x difference
