@@ -148,6 +148,9 @@
       ISA           visual-location
       screen-x      =tx
       screen-y      =ty
+    ?visual>
+      state free
+      buffer empty
 
     =temporal>
       ISA time
