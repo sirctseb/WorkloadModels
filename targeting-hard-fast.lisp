@@ -91,6 +91,9 @@
         state       cap-first-location
     ?visual-location>
         state       error
+    ?visual>
+      state free
+      buffer empty
   ==>
     +visual-location>
         ISA         visual-location
