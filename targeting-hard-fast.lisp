@@ -149,13 +149,25 @@
       screen-x      =tx
       screen-y      =ty
 
+    =temporal>
+      ISA time
+
   ==>
     ;; store location in goal
     =goal>
       target-x      =tx
       target-y      =ty
-      state         search-target-again
+      state         lead-target
       target-location =visual-location
+
+    ;; search for target again
+    +visual-location>
+      ISA visual-location
+      kind      OVAL
+      :nearest  =visual-location
+
+    +temporal>
+      ISA clear
 
     !eval!          (format t "storing first target location: ~a, ~a~%" =tx =ty)
   )
@@ -185,44 +197,21 @@
     =goal>
       target-x      =tx
       target-y      =ty
-      state         search-target-again
+      state         lead-target
       target-location =visual-location
 
-    !eval!          (format t "storing first target location: ~a, ~a~%" =tx =ty)
-
-  )
-
-  ;; Do search for same target location
-  (P search-target-again
-    =goal>
-      ISA    targeting
-      state  search-target-again
-      target-location =target-location
-
-    ;; check empty vis-loc
-    ?visual-location>
-      buffer  empty
-
-    ;; get ticks now because we will get vis-loc now
-    =temporal>
-      ISA time
-      ticks =elapsed-ticks
-  ==>
     ;; search for target again
     +visual-location>
       ISA visual-location
       kind      OVAL
-      :nearest  =target-location
-
-    ;; update goal
-    =goal>
-      state  lead-target
-      ticks =elapsed-ticks
+      :nearest  =visual-location
 
     +temporal>
       ISA clear
-  )
 
+    !eval!          (format t "storing first target location: ~a, ~a~%" =tx =ty)
+
+  )
 
   ;; Rule to capture second location of the target after moving attention
   (P lead-target
@@ -231,7 +220,6 @@
       state         lead-target
       target-x      =tx
       target-y      =ty
-      ticks =elapsed-ticks
 
     ;; get the new location
     =visual-location>
@@ -252,9 +240,9 @@
     !bind!          =projected-x (+ =sx (* *target-projection* =x-diff-normal))
     !bind!          =projected-y (+ =sy (* *target-projection* =y-diff-normal))
     !eval!          (format t "x-diff: ~a~%" =x-diff)
-    !eval!          (format t "speed: ~a~%" (/ =x-diff =elapsed-ticks))
-    !eval!          (format t "projecting move from ~a to ~a by ~a ~%" =tx =projected-x (* *target-projection* (/ =x-diff =elapsed-ticks)))
-    !eval!          (format t "projecting at x: ~a y: ~a, ticks: ~a~%" =projected-x =projected-y =elapsed-ticks)
+    ; !eval!          (format t "speed: ~a~%" (/ =x-diff =elapsed-ticks))
+    ; !eval!          (format t "projecting move from ~a to ~a by ~a ~%" =tx =projected-x (* *target-projection* (/ =x-diff =elapsed-ticks)))
+    ; !eval!          (format t "projecting at x: ~a y: ~a, ticks: ~a~%" =projected-x =projected-y =elapsed-ticks)
 
     ;; store projected location in visual location buffer
     ;; TODO is this a violation of gp?
