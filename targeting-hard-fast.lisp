@@ -157,14 +157,8 @@
     =goal>
       target-x      =tx
       target-y      =ty
-      state         lead-target
+      state         search-second
       target-location =visual-location
-
-    ;; search for target again
-    +visual-location>
-      ISA visual-location
-      kind      OVAL
-      :nearest  =visual-location
 
     +temporal>
       ISA clear
@@ -197,20 +191,33 @@
     =goal>
       target-x      =tx
       target-y      =ty
-      state         lead-target
+      state         search-second
       target-location =visual-location
-
-    ;; search for target again
-    +visual-location>
-      ISA visual-location
-      kind      OVAL
-      :nearest  =visual-location
 
     +temporal>
       ISA clear
 
     !eval!          (format t "storing first target location: ~a, ~a~%" =tx =ty)
 
+  )
+
+  ;; do the second search for the target
+  (P search-second
+    =goal>
+      ISA targeting
+      state search-second
+      target-location =target-location
+    ;; vis-loc gp check
+    ?visual-location>
+      buffer empty
+  ==>
+    ;; search for target again
+    +visual-location>
+      ISA visual-location
+      kind      OVAL
+      :nearest  =visual-location
+    =goal>
+      state lead-target
   )
 
   ;; Rule to capture second location of the target after moving attention
