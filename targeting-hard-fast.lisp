@@ -352,6 +352,21 @@
     +temporal>
       ISA           clear
 
+    =goal>
+      state search-again
+
+  )
+  ;; search for the target again
+  (P search-again
+    =goal>
+      ISA targeting
+      state search-again
+      target-location =target-location
+    ?visual-location>
+      buffer empty
+  ==>
+    =goal>
+      state distinguish-target
     ;; request visual location search for nearest oval (should be the same we found last time, but it may be colored next time
     +visual-location>
       ISA           visual-location
