@@ -148,10 +148,6 @@
       ISA           visual-location
       screen-x      =tx
       screen-y      =ty
-    ;; gp vis check
-    ?visual>
-      state free
-      buffer empty
 
     =temporal>
       ISA time
@@ -169,11 +165,6 @@
       ISA visual-location
       kind      OVAL
       :nearest  =visual-location
-
-    ;; do move attention
-    +visual>
-      ISA move-attention
-      screen-pos =visual-location
 
     +temporal>
       ISA clear
@@ -198,10 +189,6 @@
       ISA           visual-location
       screen-x      =tx
       screen-y      =ty
-    ;; vis gp check
-    ?visual>
-      state free
-      buffer empty
 
     ;; determine that target is not friend
     !bind!          =on-line (not (is-on-line =tx =ty =fx =fy =x-diff =y-diff))
@@ -218,11 +205,6 @@
       ISA visual-location
       kind      OVAL
       :nearest  =visual-location
-
-    ;; do move attention
-    +visual>
-      ISA move-attention
-      screen-pos =visual-location
 
     +temporal>
       ISA clear
@@ -244,9 +226,6 @@
       ISA           visual-location
       screen-x      =sx
       screen-y      =sy
-    ;; get visual
-    =visual>
-      ISA OVAL
   ==>
     !eval!          (format t "second target location: ~a, ~a~%" =sx =sy)
     ;; calculate x difference
@@ -264,9 +243,6 @@
     ; !eval!          (format t "speed: ~a~%" (/ =x-diff =elapsed-ticks))
     ; !eval!          (format t "projecting move from ~a to ~a by ~a ~%" =tx =projected-x (* *target-projection* (/ =x-diff =elapsed-ticks)))
     ; !eval!          (format t "projecting at x: ~a y: ~a, ticks: ~a~%" =projected-x =projected-y =elapsed-ticks)
-    
-    +visual>
-      ISA clear
 
     ;; store projected location in visual location buffer
     ;; TODO is this a violation of gp?
@@ -438,6 +414,11 @@
       screen-x    =sx
       screen-y    =sy
 
+    ;; gp vis check
+    ?visual>
+      state free
+      buffer empty
+
     ;; check that color target is on the original target line
     !bind!          =on-line (is-on-line =sx =sy =cx =cy =x-diff =y-diff)
 
@@ -450,9 +431,23 @@
     +retrieval>
       ISA         response
       color       =color
+    ;; do move attention
+    +visual>
+      ISA move-attention
+      screen-pos =visual-location
     ;; update goal
     =goal>
       state       decide-whether-to-shoot
+  )
+  ;; harvest visual
+  (P harvest-vis
+    =goal>
+      ISA targeting
+    =visual>
+      ISA OVAL
+  ==>
+    +visual>
+      ISA clear
   )
   ;; detect flyby target
   (P detect-flyby
