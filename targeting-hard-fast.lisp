@@ -91,9 +91,6 @@
         state       cap-first-location
     ?visual-location>
         state       error
-    ?visual>
-      state free
-      buffer empty
   ==>
     +visual-location>
         ISA         visual-location
@@ -151,6 +148,7 @@
       ISA           visual-location
       screen-x      =tx
       screen-y      =ty
+    ;; gp vis check
     ?visual>
       state free
       buffer empty
@@ -171,6 +169,11 @@
       ISA visual-location
       kind      OVAL
       :nearest  =visual-location
+
+    ;; do move attention
+    +visual>
+      ISA move-attention
+      screen-pos =visual-location
 
     +temporal>
       ISA clear
@@ -195,7 +198,7 @@
       ISA           visual-location
       screen-x      =tx
       screen-y      =ty
-
+    ;; vis gp check
     ?visual>
       state free
       buffer empty
@@ -215,6 +218,11 @@
       ISA visual-location
       kind      OVAL
       :nearest  =visual-location
+
+    ;; do move attention
+    +visual>
+      ISA move-attention
+      screen-pos =visual-location
 
     +temporal>
       ISA clear
@@ -236,9 +244,9 @@
       ISA           visual-location
       screen-x      =sx
       screen-y      =sy
-    ?visual>
-      state free
-      buffer empty
+    ;; get visual
+    =visual>
+      ISA OVAL
   ==>
     !eval!          (format t "second target location: ~a, ~a~%" =sx =sy)
     ;; calculate x difference
@@ -256,6 +264,9 @@
     ; !eval!          (format t "speed: ~a~%" (/ =x-diff =elapsed-ticks))
     ; !eval!          (format t "projecting move from ~a to ~a by ~a ~%" =tx =projected-x (* *target-projection* (/ =x-diff =elapsed-ticks)))
     ; !eval!          (format t "projecting at x: ~a y: ~a, ticks: ~a~%" =projected-x =projected-y =elapsed-ticks)
+    
+    +visual>
+      ISA clear
 
     ;; store projected location in visual location buffer
     ;; TODO is this a violation of gp?
@@ -285,11 +296,6 @@
     ;; make sure motor system is free
     ?manual>
       preparation   free
-
-    ;; make sure visual is free
-    ?visual>
-      state         free
-      buffer        empty
   ==>
 
     ;; request to move the cursor
@@ -299,9 +305,6 @@
 
     ;; request to attend to visual object so that we can search for nearest when
     ;; distinguishing between friend and enemy targets
-    +visual>
-      ISA           move-attention
-      screen-pos    =visual-location
     =goal>
       state         check-target
       target-location =visual-location
@@ -320,8 +323,6 @@
     ?visual-location>
         buffer        empty
 
-    =visual>
-      ISA OVAL
   ==>
     ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
     +visual-location>
@@ -330,10 +331,6 @@
       kind          OVAL
       ;; nearest the stored location
       :nearest      =vis-loc
-
-    +visual>
-      ISA clear
-
     =goal>
       ;; move to the state where we distinguish between red and green targets
       state         distinguish-target
