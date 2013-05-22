@@ -36,7 +36,7 @@
   (set-cursor-position 960 600)
 
   ;; chunk types
-  (chunk-type targeting state target-x target-y target-location friend-x friend-y friend-x-diff friend-y-diff cur-x-diff cur-y-diff ticks)
+  (chunk-type targeting state target-x target-y target-location friend-x friend-y friend-x-diff friend-y-diff cur-x-diff cur-y-diff ticks color)
   (chunk-type friend-target x y x-diff y-diff)
   (chunk-type response color action)
 
@@ -443,17 +443,18 @@
     !bind!          =on-line (is-on-line =sx =sy =cx =cy =x-diff =y-diff)
 
     ;; wait for retrieval
-    ?retrieval>
-      state       free
-      buffer      empty
+    ; ?retrieval>
+    ;   state       free
+    ;   buffer      empty
   ==>
     ;; request lookup of action based on color
-    +retrieval>
-      ISA         response
-      color       =color
+    ; +retrieval>
+    ;   ISA         response
+    ;   color       =color
     ;; update goal
     =goal>
       state       decide-whether-to-shoot
+      color =color
   )
   ;; detect flyby target
   (P detect-flyby
@@ -497,11 +498,12 @@
     =goal>
       ISA           targeting
       state         decide-whether-to-shoot
+      color         red
 
     ;; match shoot chunk
-    =retrieval>
-      ISA           response
-      action        shoot
+    ; =retrieval>
+    ;   ISA           response
+    ;   action        shoot
 
     ;; let prepare-click go first
     ;; TODO this is not a semantic test. it only exists to allow prepare-click to go first
@@ -536,11 +538,12 @@
       ISA           targeting
       state         decide-whether-to-shoot
       friend-x      =fx
+      color green
 
     ;; match no-shoot chunk
-    =retrieval>
-      ISA           response
-      action        oh-no-dont-shoot
+    ; =retrieval>
+    ;   ISA           response
+    ;   action        oh-no-dont-shoot
 
   ==>
     ;; go back to finding black target
@@ -563,11 +566,12 @@
       target-location =target-location
       cur-x-diff    =x-diff
       cur-y-diff    =y-diff
+      color green
 
     ;; match no-shoot chunk
-    =retrieval>
-      ISA           response
-      action        oh-no-dont-shoot
+    ; =retrieval>
+    ;   ISA           response
+    ;   action        oh-no-dont-shoot
 
   ==>
 
