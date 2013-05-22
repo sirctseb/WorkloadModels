@@ -215,7 +215,7 @@
     +visual-location>
       ISA visual-location
       kind      OVAL
-      :nearest  =visual-location
+      :nearest  =target-location
     =goal>
       state lead-target
   )
