@@ -219,38 +219,14 @@
       state         click-mouse
   )
 
-  ;; prepare a click while checking the target
-  ;; TODO I don't think this abides by greedy-polite, but for combining with addition it doesn't matter
-  (P prepare-click
-    =goal>
-      ISA           targeting
-      state         click-mouse
-
-    ;; wait until manual preparation is free and last command was a move (we didn't already prepare click)
-    ?manual>
-      last-command  move-cursor
-      preparation   free
-  ==>
-    ;; prepare the mouse-click
-    +manual>
-      ISA           prepare
-      style         punch
-      hand          right
-      finger        index
-  )
-
   ;; wait until mouse move is done to click
   (P click-mouse
     =goal>
       ISA           targeting
       state         click-mouse
 
-    ;; let prepare-click go first
-    ;; TODO this is not a semantic test. it only exists to allow prepare-click to go first
-    ;; TODO there should be a better way to let prepare-click to have priority
-    ;; TODO we could just put a flag in goal
+    ;; make sure manual is free
     ?manual>
-      last-command  prepare
       preparation   free
 
   ==>
@@ -259,7 +235,7 @@
 
     ;; submit click request
     +manual>
-      ISA           execute
+      ISA           click-mouse
 
     !eval!          (format t "detected enemy, clicking~%")
 
