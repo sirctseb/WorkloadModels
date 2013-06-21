@@ -57,10 +57,6 @@
     ;; check for empty visual-location buffer
     ?visual-location>
       buffer      empty
-    ;; TODO why is this here?
-    ?visual>
-      state free
-      buffer empty
   ==>
     ;; search for an unattended black target
     +visual-location>
