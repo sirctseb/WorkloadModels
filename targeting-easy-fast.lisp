@@ -180,17 +180,6 @@
       ISA           clear
   )
 
-  ;; harvest vis
-  (P harvest-vis
-    =goal>
-      ISA targeting
-    =visual>
-      ISA OVAL
-  ==>
-    +visual>
-      ISA clear
-  )
-
   ;; rule to move cursor toward target
   (P move-cursor
     =goal>
@@ -207,6 +196,9 @@
     ?manual>
       preparation   free
 
+    =visual>
+      ISA oval
+
   ==>
 
     ;; request to move the cursor
@@ -217,6 +209,9 @@
     ;; update goal
     =goal>
       state         click-mouse
+
+    +visual>
+      isa clear
   )
 
   ;; prepare a click while checking the target
