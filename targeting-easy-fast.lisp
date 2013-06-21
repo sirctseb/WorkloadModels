@@ -196,9 +196,6 @@
     ?manual>
       preparation   free
 
-    =visual>
-      ISA oval
-
   ==>
 
     ;; request to move the cursor
@@ -209,9 +206,6 @@
     ;; update goal
     =goal>
       state         click-mouse
-
-    +visual>
-      isa clear
   )
 
   ;; prepare a click while checking the target
@@ -225,6 +219,9 @@
     ?manual>
       last-command  move-cursor
       preparation   free
+
+    =visual>
+      isa oval
   ==>
     ;; prepare the mouse-click
     +manual>
@@ -232,6 +229,9 @@
       style         punch
       hand          right
       finger        index
+
+    +visual>
+      isa clear
   )
 
   ;; wait until mouse move is done to click
