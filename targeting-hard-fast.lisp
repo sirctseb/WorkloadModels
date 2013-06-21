@@ -269,6 +269,7 @@
     =visual-location>
       ISA           visual-location
       kind          OVAL
+      ;; TODO x,y not used
       screen-x      =x
       screen-y      =y
 
@@ -531,7 +532,7 @@
     !eval!          (incf *check-order*)
   )
 
-  ;; TODO does this ever happen? waiting for imaginal in cap-first should prevent it
+  ;; bump TODO does this ever happen? waiting for imaginal in cap-first should prevent it
   ;; detect friend when we've already seen it
   (P decide-not-to-shoot-friend-remembered
     =goal>

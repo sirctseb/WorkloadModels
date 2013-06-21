@@ -105,6 +105,7 @@
 
     ;; make sure visual is free so we can request move-attention
     ;; also check that visual buffer is empty
+    ;; TODO why is this here?
     ?visual>
       state         free
       buffer        empty

@@ -57,6 +57,7 @@
     ;; check for empty visual-location buffer
     ?visual-location>
       buffer      empty
+    ;; TODO why is this here?
     ?visual>
       state free
       buffer empty
@@ -269,6 +270,7 @@
       ; screen-pos    =vis-loc
 
     ; check that vis-loc is empty because we will request it here
+    ;; TODO this should not be commented
     ; ?visual-location>
     ;   buffer        empty
   ==>
