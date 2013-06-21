@@ -103,13 +103,6 @@
       screen-x      =tx
       screen-y      =ty
 
-    ;; make sure visual is free so we can request move-attention
-    ;; also check that visual buffer is empty
-    ;; TODO why is this here?
-    ?visual>
-      state         free
-      buffer        empty
-
   ==>
     ;; store location in goal
     =goal>
@@ -142,6 +135,11 @@
       ISA           visual-location
       screen-x      =sx
       screen-y      =sy
+
+    ;; gp vis check
+    ?visual>
+      state         free
+      buffer        empty
 
     ;; get elapsed time
     =temporal>
