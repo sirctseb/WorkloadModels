@@ -220,8 +220,6 @@
       last-command  move-cursor
       preparation   free
 
-    =visual>
-      isa oval
   ==>
     ;; prepare the mouse-click
     +manual>
@@ -229,9 +227,6 @@
       style         punch
       hand          right
       finger        index
-
-    +visual>
-      isa clear
   )
 
   ;; wait until mouse move is done to click
@@ -248,6 +243,9 @@
       last-command  prepare
       preparation   free
 
+    =visual>
+      isa oval
+
   ==>
     =goal>
       state         find-red-target
@@ -255,6 +253,9 @@
     ;; submit click request
     +manual>
       ISA           execute
+
+    +visual>
+      isa clear
 
     !eval!          (format t "detected enemy, clicking~%")
 
