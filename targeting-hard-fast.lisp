@@ -278,9 +278,9 @@
       preparation   free
 
     ;; make sure visual is free
-    ; ?visual>
-    ;   state         free
-    ;   buffer        empty
+    ?visual>
+      state         free
+      buffer        empty
   ==>
 
     ;; request to move the cursor
@@ -290,9 +290,9 @@
 
     ;; request to attend to visual object so that we can search for nearest when
     ;; distinguishing between friend and enemy targets
-    ; +visual>
-    ;   ISA           move-attention
-    ;   screen-pos    =visual-location
+    +visual>
+      ISA           move-attention
+      screen-pos    =visual-location
     =goal>
       state         check-target
       target-location =visual-location
@@ -513,6 +513,9 @@
     ?manual>
       last-command  prepare
       state         free
+
+    =visual>
+      isa oval
   ==>
     =goal>
       state         find-black-target
@@ -520,6 +523,9 @@
     ;; submit click request
     +manual>
       ISA           execute
+
+    +visual>
+      isa clear
 
     ;; clear temporal in case we were running a whiff
     ;; TODO this is not gp in temporal
@@ -546,6 +552,9 @@
     ;   ISA           response
     ;   action        oh-no-dont-shoot
 
+    =visual>
+      isa oval
+
   ==>
     ;; go back to finding black target
     =goal>
@@ -555,6 +564,9 @@
     ;; TODO this is not gp in temporal
     +temporal>
       ISA           clear
+
+    +visual>
+      isa clear
   )
 
   ;; after a rescan of the target, check if the target is green
@@ -574,8 +586,13 @@
     ;   ISA           response
     ;   action        oh-no-dont-shoot
 
+    =visual>
+      isa oval
   ==>
 
+    +visual>
+      isa clear
+      
     ;; clear temporal in case we were running a whiff
     ;; TODO this is not gp in temporal
     +temporal>
