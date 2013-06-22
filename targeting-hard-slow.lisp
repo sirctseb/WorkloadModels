@@ -262,13 +262,6 @@
       ISA           targeting
       state         check-target
       target-location =vis-loc
-    ;; get visual location from visual buffer
-    ; TODO instead of moving attention and getting the location from the visual buffer,
-    ; TODO just store the visual location chunk directly from it's own buffer to goal here
-    =visual>
-      ISA           OVAL
-      ; screen-pos    =vis-loc
-
     ; check that vis-loc is empty because we will request it here
     ;; TODO this should not be commented
     ; ?visual-location>
@@ -281,10 +274,6 @@
       kind          OVAL
       ;; nearest the stored location
       :nearest      =vis-loc
-
-    ;; =visual auto harvests here, but it will get re-encoded on color change, so clear it
-    +visual>
-      isa           clear
 
     =goal>
       ;; move to the state where we distinguish between red and green targets
@@ -468,11 +457,16 @@
     ;; TODO only preparation needs to be free
     ?manual>
       state         free
+
+    =visual>
+      isa oval
   ==>
     
     ;; submit click request
     +manual>
       ISA           click-mouse
+    +visual>
+      isa clear
 
     =goal>
       state         find-black-target
