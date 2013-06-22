@@ -277,10 +277,6 @@
     ?manual>
       preparation   free
 
-    ;; make sure visual is free
-    ?visual>
-      state         free
-      buffer        empty
   ==>
 
     ;; request to move the cursor
@@ -288,11 +284,6 @@
       ISA           move-cursor
       loc           =visual-location
 
-    ;; request to attend to visual object so that we can search for nearest when
-    ;; distinguishing between friend and enemy targets
-    +visual>
-      ISA           move-attention
-      screen-pos    =visual-location
     =goal>
       state         check-target
       target-location =visual-location
@@ -447,9 +438,6 @@
     ; ?retrieval>
     ;   state       free
     ;   buffer      empty
-
-    =visual>
-      isa oval
   ==>
     ;; request lookup of action based on color
     ; +retrieval>
@@ -459,8 +447,6 @@
     =goal>
       state       decide-whether-to-shoot
       color =color
-    +visual>
-      isa clear
   )
   ;; detect flyby target
   (P detect-flyby
@@ -684,16 +670,12 @@
     ;; match visual-location so that it harvests
     =visual-location>
       ISA           visual-location
-    =visual>
-      isa oval
   ==>
     =goal>
       state         find-black-target
     ;; clear temporal
     +temporal>
       isa           clear
-    +visual>
-      isa clear
     !eval!          (format t "wiffed too long, moving ~%")
     !eval!          (incf *total-whiff-counter*)
   )
