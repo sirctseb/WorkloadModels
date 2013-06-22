@@ -447,6 +447,9 @@
     ; ?retrieval>
     ;   state       free
     ;   buffer      empty
+
+    =visual>
+      isa oval
   ==>
     ;; request lookup of action based on color
     ; +retrieval>
@@ -456,6 +459,8 @@
     =goal>
       state       decide-whether-to-shoot
       color =color
+    +visual>
+      isa clear
   )
   ;; detect flyby target
   (P detect-flyby
@@ -513,9 +518,6 @@
     ?manual>
       last-command  prepare
       state         free
-
-    =visual>
-      isa oval
   ==>
     =goal>
       state         find-black-target
@@ -523,10 +525,6 @@
     ;; submit click request
     +manual>
       ISA           execute
-
-    +visual>
-      isa clear
-
     ;; clear temporal in case we were running a whiff
     ;; TODO this is not gp in temporal
     +temporal>
@@ -551,10 +549,6 @@
     ; =retrieval>
     ;   ISA           response
     ;   action        oh-no-dont-shoot
-
-    =visual>
-      isa oval
-
   ==>
     ;; go back to finding black target
     =goal>
@@ -564,9 +558,6 @@
     ;; TODO this is not gp in temporal
     +temporal>
       ISA           clear
-
-    +visual>
-      isa clear
   )
 
   ;; after a rescan of the target, check if the target is green
@@ -586,13 +577,8 @@
     ;   ISA           response
     ;   action        oh-no-dont-shoot
 
-    =visual>
-      isa oval
   ==>
 
-    +visual>
-      isa clear
-      
     ;; clear temporal in case we were running a whiff
     ;; TODO this is not gp in temporal
     +temporal>
@@ -698,12 +684,16 @@
     ;; match visual-location so that it harvests
     =visual-location>
       ISA           visual-location
+    =visual>
+      isa oval
   ==>
     =goal>
       state         find-black-target
     ;; clear temporal
     +temporal>
       isa           clear
+    +visual>
+      isa clear
     !eval!          (format t "wiffed too long, moving ~%")
     !eval!          (incf *total-whiff-counter*)
   )
