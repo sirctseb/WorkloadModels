@@ -352,12 +352,17 @@
     ;; TODO if it is not free? we should probably skip the remember
     ?imaginal>
       state         free
+
+    =visual>
+      isa oval
   ==>
     ;; store location of friend target
     +imaginal>
       isa           friend-target
       x             =sx
       y             =sy
+    +visual>
+      isa clear
       
     ;; increment the number of times the friend target was hovered
     !eval!          (incf *friend-hovers*)
