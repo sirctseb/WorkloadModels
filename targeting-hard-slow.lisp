@@ -195,7 +195,6 @@
     =visual-location>
     =goal>
       state         check-target
-      target-location =visual-location
       target-x      =x
       target-y      =y
   )
@@ -251,7 +250,6 @@
 
     =goal>
       state         check-target
-      target-location =visual-location
       target-x      =x
       target-y      =y
   )
@@ -261,7 +259,6 @@
     =goal>
       ISA           targeting
       state         check-target
-      target-location =vis-loc
       target-x      =x
       target-y      =y
     ; check that vis-loc is empty because we will request it here
@@ -281,9 +278,6 @@
     =goal>
       ;; move to the state where we distinguish between red and green targets
       state         distinguish-target
-      ;; store vis-loc of target of focus
-      ; TODO it is already stored now
-      ; target-location =vis-loc
   )
 
   ;; detect if the target is no longer black
