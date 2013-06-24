@@ -24,7 +24,7 @@
   ; (sgp :rt -.45 :esc t :ans 0.05 :mp 16)
   (sgp :er t)
   ;; fitt's law coefficient
-  (sgp :mouse-fitts-coeff 0.15)
+  ; (sgp :mouse-fitts-coeff 0.15)
   ;; we'll count this as sgp
   ;; set the default visloc chunk to something that will never match
   ;; the effect is to disable buffer stuffing
