@@ -33,7 +33,7 @@
   (set-cursor-position 960 600)
 
   ;; chunk types
-  (chunk-type targeting state target-location target-x target-y)
+  (chunk-type targeting state target-x target-y)
   (chunk-type friend-target x y)
   (chunk-type response color action)
 
@@ -262,18 +262,21 @@
       ISA           targeting
       state         check-target
       target-location =vis-loc
+      target-x      =x
+      target-y      =y
     ; check that vis-loc is empty because we will request it here
     ;; TODO this should not be commented
     ; ?visual-location>
     ;   buffer        empty
   ==>
-    ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
+    ;; request visual location search for same oval (should be the same we found last time, but it should be colored now)
     +visual-location>
       ISA           visual-location
       ;; search for oval
       kind          OVAL
-      ;; nearest the stored location
-      :nearest      =vis-loc
+      ;; search for same object
+      screen-x      =x
+      screen-y      =y
 
     =goal>
       ;; move to the state where we distinguish between red and green targets
@@ -288,6 +291,8 @@
     =goal>
       ISA           targeting
       state         distinguish-target
+      target-x      =target-x
+      target-y      =target-y
     
     =visual-location>
       ISA           visual-location
@@ -297,6 +302,9 @@
       - color       black
       ;; match color
       color         =color
+      ;; make sure it's the target we want
+      screen-x      =target-x
+      screen-y      =target-y
 
     ;; TODO other task will have to be gp in retrieval
     ?retrieval>
@@ -340,7 +348,6 @@
     =goal>
       ISA           targeting
       state         decide-whether-to-shoot
-      ; target-location =target-location
       target-x      =sx
       target-y      =sy
 
@@ -381,8 +388,8 @@
     =goal>
       ISA           targeting
       state         distinguish-target
-      ;; match target location for new search
-      target-location =target-location
+      target-x      =target-x
+      target-y      =target-y
 
     ;; wait until visual location found
     =visual-location>
@@ -407,9 +414,9 @@
       ISA           visual-location
       ;; search for oval
       kind          OVAL
-      ;; nearest the current location
-      :nearest      =target-location
-      
+      ;; search for same oval
+      screen-x      =target-x
+      screen-y      =target-y
 
     ;; log that we did this
     !eval!          (incf *whiff-counter*)
@@ -422,8 +429,8 @@
     =goal>
       ISA           targeting
       state         distinguish-target
-      ;; match location for new search
-      target-location =target-location
+      target-x      =target-x
+      target-y      =target-y
 
     ;; wait until visual location is found
     =visual-location>
@@ -437,15 +444,16 @@
     ?manual>
       state         busy
   ==>
-    ;; request visual location search for nearest oval (should be the same we found last time, but it should be colored now)
+    ;; request visual location search for same oval (should be the same we found last time, but it should be colored now)
     ;; TODO this keeps vis-loc busy, violating greedy-polite
     ;; TODO it should be split up into a new state that reads empty vis-loc and does the search
     +visual-location>
       ISA           visual-location
       ;; search for oval
       kind          OVAL
-      ;; nearest the current location
-      :nearest      =target-location
+      ;; search for same object
+      screen-x      =target-x
+      screen-y      =target-y
 
     =goal>
       ;; move to the state where we distinguish between red and green targets
