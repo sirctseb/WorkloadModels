@@ -33,7 +33,7 @@
   (set-cursor-position 960 600)
 
   ;; chunk types
-  (chunk-type targeting state target-x target-y)
+  (chunk-type targeting state target-x target-y friend-x friend-y)
   (chunk-type friend-target x y)
   (chunk-type response color action)
 
@@ -41,7 +41,7 @@
   (add-dm (track isa chunk) (attend-letter isa chunk)
     (enemy-response isa response color red action shoot)
     (friend-response isa response color green action oh-no-dont-shoot)
-    (goal isa targeting state find-black-target friend-x friend-y))
+    (goal isa targeting state find-black-target))
 
   ;; goal focus
   (goal-focus goal)
