@@ -664,9 +664,9 @@
   ==>
     ;; update goal
     =goal>
-      tens        "0"
-      ;; skip to carry check
-      state       check-carry
+      tens        "1"
+      ;; skip to response
+      state       response
     )
   
   ;; Production to add tens when there is only tens place in first addend
