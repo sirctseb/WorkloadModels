@@ -667,8 +667,8 @@
       state       response
     )
   
-  ;; Production to add tens when there is only tens place in first addend
-  (P add-tens-first-nil
+  ;; Production to add tens when there is only tens place in first addend and no carry
+  (P add-tens-first-nil-no-carry
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
@@ -676,15 +676,31 @@
       ;; check that only first has tens
       first-tens  =first-tens
       second-tens nil
+      carry       "0"
+  ==>
+    ;; update goal
+    =goal>
+      tens        =first-tens
+      state       response
+  )
+  (P add-tens-first-nil-carry
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       add-tens
+      ;; check that only first has tens
+      first-tens  =first-tens
+      second-tens nil
+      - carry       "0"
   ==>
     ;; update goal
     =goal>
       tens        =first-tens
       state       check-carry
-    )
+  )
 
   ;; Production to add tens when there is only tens place in second addend
-  (P add-tens-nil-second
+  (P add-tens-nil-second-no-carry
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
@@ -692,12 +708,29 @@
       ;; check that only second has tens
       first-tens  nil
       second-tens =second-tens
+      carry       "0"
+  ==>
+    ;; update goal
+    =goal>
+      tens        =second-tens
+      state       response
+  )
+  ;; Production to add tens when there is only tens place in second addend
+  (P add-tens-nil-second-carry
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       add-tens
+      ;; check that only second has tens
+      first-tens  nil
+      second-tens =second-tens
+      - carry       "0"
   ==>
     ;; update goal
     =goal>
       tens        =second-tens
       state       check-carry
-    )
+  )
 
   ;; Production to start adding tens values
   (P add-tens
@@ -741,13 +774,38 @@
     )
 
   ;; Production to get results of addition retrieval
-  (P finish-retrieve-tens
+  (P finish-retrieve-tens-no-carry
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
       state       finish-retrieve-tens
       first-tens  =first
       second-tens =second
+      carry       "0"
+
+    ;; get retrieval results
+    =retrieval>
+      ISA         arithmetic
+      first       =first
+      operator    +
+      second      =second
+      ones        =ones
+  ==>
+    ;; store ones and carry result in goal
+    =goal>
+      tens        =ones
+      state       response
+  )
+
+  ;; Production to get results of addition retrieval
+  (P finish-retrieve-tens-carry
+    ;; check goal state
+    =goal>
+      ISA         arithmetic-problem
+      state       finish-retrieve-tens
+      first-tens  =first
+      second-tens =second
+      - carry       "0"
 
     ;; get retrieval results
     =retrieval>
@@ -761,7 +819,7 @@
     =goal>
       tens        =ones
       state       check-carry
-    )
+  )
 
   ;; Production to increment tens if there is a carry
   (P check-carry
@@ -786,19 +844,6 @@
     ;; update goal
     =goal>
       state       increment-tens
-    )
-
-  ;; Production to move on to response if there is no carry
-  (P check-no-carry
-    ;; check goal state
-    =goal>
-      ISA         arithmetic-problem
-      state       check-carry
-      ;; no carry
-      carry       "0"
-  ==>
-    =goal>
-      state       response
     )
 
   ;; Production to set new tens place after incrementing for carry
