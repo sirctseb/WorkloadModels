@@ -59,8 +59,7 @@
 
   ;; chunk types
   (chunk-type arithmetic first operator second result ones carry)
-  (chunk-type arithmetic-problem first-ones operator second-ones first-tens second-tens result state ones carry tens second-ones-x first-ones-x)
-  (chunk-type arithmetic-info first-tens first-ones second-tens second-ones)
+  (chunk-type arithmetic-problem first-ones operator second-ones first-tens second-tens result state ones carry tens)
   (chunk-type successor value successor)
   (chunk-type number ones tens value)
 
@@ -277,7 +276,7 @@
     (s67 ISA SUCCESSOR VALUE "6" SUCCESSOR "7")
     (s78 ISA SUCCESSOR VALUE "7" SUCCESSOR "8")
     (s89 ISA SUCCESSOR VALUE "8" SUCCESSOR "9")
-    (addition-goal ISA arithmetic-problem operator + state find-second)
+    (addition-goal ISA arithmetic-problem state find-first)
     )
 
   ;; goal focus
@@ -342,34 +341,34 @@
   ;; Productions
 
   ;; Production to search for the second addend
-  (P find-second
+  (P find-first
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
-      state       find-second
+      state       find-first
 
     ;; gp: require empty visual-location
     ?visual-location>
       buffer      empty
   ==>
-    ;; perform search for right-most text
+    ;; perform search for left-most text
     +visual-location>
       ISA         visual-location
       :attended   nil
       kind        text
-      screen-x    highest
+      screen-x    lowest
 
     ;; update goal
     =goal>
-      state       attend-second
+      state       attend-first
     )
 
   ;; Production to move visual attention to second addend
-  (P attend-second
+  (P attend-first
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
-      state       attend-second
+      state       attend-first
 
     ;; get vis-loc reference
     =visual-location>
@@ -388,15 +387,15 @@
 
     ;; update goal
     =goal>
-      state       encode-second
+      state       encode-first
     )
 
-  ;; Production to encode and store the value of the second addend
-  (P encode-second
+  ;; Production to encode and store the value of the first addend
+  (P encode-first
     ;; chck goal state
     =goal>
       ISA         arithmetic-problem
-      state       encode-second
+      state       encode-first
 
     ;; wait for visual object
     =visual>
@@ -409,7 +408,6 @@
       buffer      empty
 
     ;; make sure visual is free so we can request move-attention
-    ;; TODO clear visual after last attend?
     ?visual>
       state       free
   ==>
@@ -424,15 +422,15 @@
 
     ;; update goal
     =goal>
-      state       find-first
+      state       find-second
     )
 
   ;; Production to get number chunk and store tens and ones
-  (P store-second
+  (P store-first
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
-      second-ones nil
+      first-ones nil
     
     ;; wait for retrieval
     =retrieval>
@@ -442,16 +440,16 @@
   ==>
     ;; update goal
     =goal>
-      second-ones =ones
-      second-tens =tens
+      first-ones =ones
+      first-tens =tens
     )
 
   ;; Production to get number chunk and store tens and ones when tens is nil
-  (P store-second-nil-tens
+  (P store-first-nil-tens
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
-      second-ones nil
+      first-ones  nil
 
     ;; wait for retrieval
     =retrieval>
@@ -461,61 +459,66 @@
   ==>
     ;; update goal
     =goal>
-      second-ones =ones
-    )
+      first-ones =ones
+  )
 
-  (P find-first
+  ;; Production to do initial search for second addend
+  (P find-second
+    ;; check goal state
     =goal>
       ISA arithmetic-problem
-      state find-first
+      state find-second
+
     ;; gp vis-loc check
     ?visual-location>
       buffer  empty
   ==>
-    ;; request visual location of first addend
+    ;; request visual location of second addend
     +visual-location>
       ISA         visual-location
       kind        text
-      screen-x    lowest
+      screen-x    highest
+
     ;; update goal state
     =goal>
-      state attend-first
+      state attend-second
   )
 
-  (P attend-first
+  ;; Production to move attention to second addend
+  (P attend-second
+    ;; check goal state
     =goal>
       ISA arithmetic-problem
-      state attend-first
+      state attend-second
+
     ;; get vis-loc
     =visual-location>
       ISA visual-location
       kind text
+
+    ;; gp: check free and empty visual
     ?visual>
       buffer empty
       state free
-
   ==>
-    ;; request move-attention to first addend
+    ;; request move-attention to second addend
     +visual>
       ISA         move-attention
       screen-pos  =visual-location
+
     ;; update goal state
     =goal>
-      state encode-first
+      state encode-second
   )
 
-  ;; TODO production to do vis-loc in case there isn't one ready?
-  ;; TODO production to do move-attend?
-
-  ;; Production to encode value of first addend
-  (P encode-first-ones
+  ;; Production to encode value of second addend
+  (P encode-second-ones
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
-      state       encode-first
+      state       encode-second
       ;; make sure store-second-nil-tens goes first
-      ;; TODO why isn't that a different state if it has to go first?
-      - second-ones nil
+      - first-ones nil
 
     ;; wait for visual attention to move
     =visual>
@@ -538,30 +541,33 @@
 
     ;; update goal
     =goal>
-      state       store-first
-    )
+      state       store-second
+  )
 
   ;; Production to get the number info from dm and store in goal
-  (P store-first
+  (P store-second
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
-      state       store-first
-      second-ones =second-ones
+      state       store-second
+      first-ones =first-ones
     
     ;; wait for retrieval
     =retrieval>
       ISA         number
-      ones        =first-ones
-      tens        =first-tens
+      ones        =second-ones
+      tens        =second-tens
+
+    ;; gp: check retrieval free
+    ;; TODO this should also check for empty
     ?retrieval>
       state       free
   ==>
     ;; update goal
     =goal>
-      state       finish-retrieve-ones
-      first-ones  =first-ones
-      first-tens  =first-tens
+      state        finish-retrieve-ones
+      second-ones  =second-ones
+      second-tens  =second-tens
 
     ;; request addition dm retrieval
     +retrieval>
@@ -572,18 +578,21 @@
     )
 
   ;; Production to get the number info from dm and store in goal when tens is nil
-  (P store-first-tens-nil
+  (P store-second-tens-nil
     ;; check goal state
     =goal>
       ISA         arithmetic-problem
-      state       store-first
-      second-ones =second-ones
+      state       store-second
+      first-ones =first-ones
 
     ;; wait for retrieval
     =retrieval>
       ISA         number
-      ones        =first-ones
+      ones        =second-ones
       tens        nil
+
+    ;; gp: check retrieval free
+    ;; TODO this should also check for empty
     ?retrieval>
       state       free
   ==>
@@ -597,7 +606,7 @@
     ;; update goal
     =goal>
       state       finish-retrieve-ones
-      first-ones  =first-ones
+      second-ones =second-ones
   )
 
   ;; Production to get results of addition retrieval
@@ -607,7 +616,7 @@
       ISA         arithmetic-problem
       state       finish-retrieve-ones
       first-ones  =first
-      second-ones      =second
+      second-ones =second
     ;; get retrieval results
     =retrieval>
       ISA         arithmetic
