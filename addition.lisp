@@ -561,7 +561,6 @@
     ;; gp: check retrieval free
     ?retrieval>
       state       free
-      buffer      empty
   ==>
     ;; update goal
     =goal>
@@ -594,7 +593,6 @@
     ;; gp: check retrieval free
     ?retrieval>
       state       free
-      buffer      empty
   ==>
     ;; request addition dm retrieval
     +retrieval>
