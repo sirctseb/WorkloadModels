@@ -559,9 +559,9 @@
       tens        =second-tens
 
     ;; gp: check retrieval free
-    ;; TODO this should also check for empty
     ?retrieval>
       state       free
+      buffer      empty
   ==>
     ;; update goal
     =goal>
@@ -592,9 +592,9 @@
       tens        nil
 
     ;; gp: check retrieval free
-    ;; TODO this should also check for empty
     ?retrieval>
       state       free
+      buffer      empty
   ==>
     ;; request addition dm retrieval
     +retrieval>
@@ -676,7 +676,6 @@
       ISA         arithmetic-problem
       state       add-tens
       ;; check that only first has tens
-      - first-tens nil
       first-tens  =first-tens
       second-tens nil
   ==>
@@ -695,7 +694,6 @@
       ;; check that only second has tens
       first-tens  nil
       second-tens =second-tens
-      - second-tens nil
   ==>
     ;; update goal
     =goal>
