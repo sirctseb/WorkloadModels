@@ -22,7 +22,7 @@
   (set-cursor-position 960 600)
 
   ;; chunk types
-  (chunk-type targeting state target-x target-y cursor-diff-x cursor-diff-y target-location check-miss)
+  (chunk-type targeting state target-x target-y target-location check-miss)
   (chunk-type friend-target x y)
 
   ;; dms
@@ -69,16 +69,27 @@
     ?manual>
       state         free
   ==>
-    ;; search for any red that we might have missed
-    +visual-location>
-      ISA           visual-location
-      kind          OVAL
-      color         red
-      
     =goal>
+      state no-unattended-red-search
       check-miss    t
     !eval!          (dolog "failed to attend to target location in move cursor~%")
     !eval!          (incf *vis-fails*)
+  )
+  (P no-unattended-red-search
+    =goal>
+      ISA targeting
+      state no-unattended-red-search
+    ?visual-location>
+      buffer empty
+  ==>
+    ;; search for any red that we might have missed
+    +visual-location>
+      ISA visual-location
+      kind OVAL
+      color red
+
+    =goal>
+      state move-cursor
   )
 
   ;; if there is no red target at all, go to end state
@@ -110,11 +121,6 @@
       ISA           visual-location
       kind          OVAL
 
-    ;; check that visual is free and empty
-    ?visual>
-      state         free
-      buffer        empty
-
     ;; make sure motor system is free
     ?manual>
       preparation   free
@@ -125,13 +131,31 @@
       ISA           move-cursor
       loc           =visual-location
 
+    =goal>
+      state         move-attention
+      target-location =visual-location
+      check-miss    nil
+  )
+
+  (P move-attention
+    =goal>
+      ISA targeting
+      state move-attention
+      target-location =target-location
+    
+    ;; check that visual is free and empty
+    ?visual>
+      state         free
+      buffer        empty
+
+  ==>
     ;; attend to target
     +visual>
       ISA           move-attention
-      screen-pos    =visual-location
+      screen-pos    =target-location
+
     =goal>
-      state         click-mouse
-      check-miss    nil
+      state click-mouse
   )
 
   ;; TODO this holds visual for the whole mouse move

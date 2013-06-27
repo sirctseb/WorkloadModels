@@ -23,8 +23,7 @@
   (set-cursor-position 960 600)
 
   ;; chunk-types
-  (chunk-type targeting state target-x target-y projected-x projected-y)
-  (chunk-type friend-target x y x-diff y-diff)
+  (chunk-type targeting state target-location target-x target-y projected-x projected-y)
 
   ;; dms
   (add-dm (track isa chunk) (attend-letter isa chunk)
@@ -55,9 +54,6 @@
     ?visual-location>
       buffer      empty
 
-    ;; check for empty temporal
-    ?temporal>
-      buffer      empty
   ==>
     ;; do search for enemy target
     +visual-location>
@@ -70,9 +66,6 @@
     =goal>
       state       cap-first-location
 
-    ;; start timer
-    +temporal>
-      ISA           time
   )
 
   ;; Rule to fail forever if no red target is found
@@ -83,9 +76,6 @@
     ?visual-location>
       state       error
   ==>
-    ; stop temporal counter
-    +temporal>
-      ISA         clear
     ; go to fail state
     =goal>
       state       fail
@@ -108,18 +98,32 @@
     =goal>
       target-x      =tx
       target-y      =ty
-      state         lead-target
+      target-location =visual-location
+      state         cap-first-location-search
 
     !eval!          (format t "storing first target location: ~a, ~a~%" =tx =ty)
+  )
+  (P cap-first-location-search
+    =goal>
+      isa targeting
+      state cap-first-location-search
+      target-location =target-location
+      
+    ?visual-location>
+      buffer empty
 
+  ==>
     ;; search for same location
     ;; TODO is this a violation of greedy-polite?
     ;; TODO i.e., should vis-loc become empty for a production cycle before we can do the search again?
     ;; TODO then we would have to store the location
     +visual-location>
       ISA           visual-location
-      :nearest      =visual-location
+      :nearest      =target-location
       color         red
+
+    =goal>
+      state lead-target
   )
 
   ;; Rule to capture second location of the target after moving attention
@@ -136,15 +140,6 @@
       screen-x      =sx
       screen-y      =sy
 
-    ;; gp vis check
-    ?visual>
-      state         free
-      buffer        empty
-
-    ;; get elapsed time
-    =temporal>
-      ISA           time
-      ticks         =elapsed-ticks
   ==>
     !eval!          (format t "second target location: ~a, ~a~%" =sx =sy)
     ;; calculate x difference
@@ -157,13 +152,10 @@
     !bind!          =projected-x (+ =sx (* *target-projection* =x-diff-normal))
     !bind!          =projected-y (+ =sy (* *target-projection* =y-diff-normal))
     !eval!          (format t "x-diff: ~a~%" =x-diff)
-    !eval!          (format t "speed: ~a~%" (/ =x-diff =elapsed-ticks))
-    !eval!          (format t "projecting move from ~a to ~a by ~a ~%" =tx =projected-x (* *target-projection* (/ =x-diff =elapsed-ticks)))
-    !eval!          (format t "projecting at x: ~a y: ~a, ticks: ~a~%" =projected-x =projected-y =elapsed-ticks)
+    ; !eval!          (format t "speed: ~a~%" (/ =x-diff =elapsed-ticks))
+    ; !eval!          (format t "projecting move from ~a to ~a by ~a ~%" =tx =projected-x (* *target-projection* (/ =x-diff =elapsed-ticks)))
+    ; !eval!          (format t "projecting at x: ~a y: ~a, ticks: ~a~%" =projected-x =projected-y =elapsed-ticks)
 
-    +visual>
-      ISA           move-attention
-      screen-pos    =visual-location
     ;; store projected location in visual location buffer
     ;; TODO is this a violation of greedy-polite?
     =visual-location>
@@ -175,9 +167,6 @@
     =goal>
       state         move-cursor
 
-    ;; clear timer
-    +temporal>
-      ISA           clear
   )
 
   ;; rule to move cursor toward target
@@ -197,7 +186,6 @@
       preparation   free
 
   ==>
-
     ;; request to move the cursor
     +manual>
       ISA           move-cursor
@@ -205,7 +193,28 @@
 
     ;; update goal
     =goal>
-      state         click-mouse
+      state         move-attention
+      target-location =visual-location
+  )
+
+  (P move-attention
+    =goal>
+      isa targeting
+      state move-attention
+      target-location =target-location
+    
+    ;; gp vis check
+    ?visual>
+      state         free
+      buffer        empty
+
+  ==>
+    +visual>
+      ISA           move-attention
+      screen-pos    =target-location
+
+    =goal>
+      state prepare-click
   )
 
   ;; prepare a click while checking the target
@@ -213,7 +222,7 @@
   (P prepare-click
     =goal>
       ISA           targeting
-      state         click-mouse
+      state         prepare-click
 
     ;; wait until manual preparation is free and last command was a move (we didn't already prepare click)
     ?manual>
@@ -227,6 +236,9 @@
       style         punch
       hand          right
       finger        index
+
+    =goal>
+      state click-mouse
   )
 
   ;; wait until mouse move is done to click
@@ -245,6 +257,8 @@
 
     =visual>
       isa oval
+    ?visual>
+      state free
 
   ==>
     =goal>

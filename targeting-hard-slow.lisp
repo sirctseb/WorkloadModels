@@ -33,7 +33,7 @@
   (set-cursor-position 960 600)
 
   ;; chunk types
-  (chunk-type targeting state target-x target-y friend-x friend-y)
+  (chunk-type targeting state target-location target-x target-y friend-x friend-y)
   (chunk-type friend-target x y)
   (chunk-type response color action)
 
@@ -120,20 +120,9 @@
       screen-x      =fx
       screen-y      =fy
 
-    ;; make sure visual is free so we can move attention
-    ;; TODO doing a move-attention can guarantee that we switch to the other target,
-    ;; TODO but it also takes more time so it probably doesn't save any
-    ; ?visual>
-    ;   state         free
-    ;   buffer        empty
   ==>
     =goal>
       state         find-black-target
-
-    ;; move attention to friend target so that find-target-black searches for the other
-    ; +visual>
-    ;   isa           move-attention
-    ;   screen-pos    =visual-location
 
     !eval!          (format t "avoiding friend~%")
     ;; increment number of times avoided friend
@@ -157,11 +146,6 @@
     ;; make sure motor system is free
     ?manual>
       preparation   free
-
-    ;; make sure visual is free to do move-attention
-    ?visual>
-      state         free
-      buffer        empty
   ==>
 
     ;; request to move the cursor
@@ -169,19 +153,11 @@
       ISA           move-cursor
       loc           =visual-location
 
-    ;; request to attend to visual object so that we can search for nearest when
-    ;; distinguishing between friend and enemy targets
-    ; TODO instead of moving attention and getting the location from the visual buffer,
-    ; TODO just store the visual location chunk directly from it's own buffer to goal here
-    +visual>
-      ISA           move-attention
-      screen-pos    =visual-location
-    ;; keep vis-loc as gp cheat
-    =visual-location>
     =goal>
-      state         check-target
+      state         move-attention
       target-x      =x
       target-y      =y
+      target-location =visual-location
   )
 
   ;; rule to move cursor toward target when there is friend info but it doesn't match
@@ -204,13 +180,6 @@
     ;; make sure motor system is free
     ?manual>
       preparation   free
-
-    ;; check for visual free because we will move-attention
-    ; TODO instead of moving attention and getting the location from the visual buffer,
-    ; TODO just store the visual location chunk directly from it's own buffer to goal here
-    ?visual>
-      state         free
-      buffer        empty
   ==>
 
     ;; request to move the cursor
@@ -218,18 +187,28 @@
       ISA           move-cursor
       loc           =visual-location
 
-    ;; request to attend to visual object so that we can search for nearest when
-    ;; distinguishing between friend and enemy targets
-    +visual>
-      ISA           move-attention
-      screen-pos    =visual-location
-    ;; keep vis-loc as a gp cheat
-    =visual-location>
-
     =goal>
-      state         check-target
+      state         move-attention
       target-x      =x
       target-y      =y
+      target-location =visual-location
+  )
+
+  (P move-attention
+    =goal>
+      isa targeting
+      state move-attention
+      target-location =target-location
+
+    ?visual>
+      state free
+      buffer empty
+  ==>
+    +visual>
+      isa move-attention
+      screen-pos =target-location
+    =goal>
+      state check-target
   )
 
   ;; re-scan for the nearest oval to get info about its color
@@ -240,9 +219,8 @@
       target-x      =x
       target-y      =y
     ; check that vis-loc is empty because we will request it here
-    ;; TODO this should not be commented
-    ; ?visual-location>
-    ;   buffer        empty
+    ?visual-location>
+      buffer        empty
   ==>
     ;; request visual location search for same oval (should be the same we found last time, but it should be colored now)
     +visual-location>
@@ -350,8 +328,6 @@
     =goal>
       ISA           targeting
       state         distinguish-target
-      target-x      =target-x
-      target-y      =target-y
 
     ;; wait until visual location found
     =visual-location>
@@ -365,12 +341,29 @@
     ?manual>
       state         free
   ==>
+    =goal>
+      state distinguish-whiff-search
     ;; move to the same location
     +manual>
       isa           move-cursor
       loc           =visual-location
 
-    ;; TODO this should be a separate rule for greedy-polite
+    ;; log that we did this
+    !eval!          (incf *whiff-counter*)
+    !eval!          (format t "wiffed too long, moving ~%")
+    !eval!          (incf *total-whiff-counter*)
+  )
+
+  (P distinguish-whiff-search
+    =goal>
+      isa targeting
+      state distinguish-whiff-search
+      target-x      =target-x
+      target-y      =target-y
+
+    ?visual-location>
+      buffer empty
+  ==>
     ;; start vis-loc loop again
     +visual-location>
       ISA           visual-location
@@ -379,11 +372,8 @@
       ;; search for same oval
       screen-x      =target-x
       screen-y      =target-y
-
-    ;; log that we did this
-    !eval!          (incf *whiff-counter*)
-    !eval!          (format t "wiffed too long, moving ~%")
-    !eval!          (incf *total-whiff-counter*)
+    =goal>
+      state distinguish-target
   )
 
   ;; after a rescan of the target, check if the target is still black and keep rescanning
@@ -391,8 +381,6 @@
     =goal>
       ISA           targeting
       state         distinguish-target
-      target-x      =target-x
-      target-y      =target-y
 
     ;; wait until visual location is found
     =visual-location>
@@ -406,9 +394,22 @@
     ?manual>
       state         busy
   ==>
+    =goal>
+      ;; move to the state where we distinguish between red and green targets
+      state         distinguish-target-black-search
+  )
+  (P distinguish-target-black-search
+    =goal>
+      isa targeting
+      state distinguish-target-black-search
+      target-x      =target-x
+      target-y      =target-y
+
+    ?visual-location>
+      buffer empty
+
+  ==>
     ;; request visual location search for same oval (should be the same we found last time, but it should be colored now)
-    ;; TODO this keeps vis-loc busy, violating greedy-polite
-    ;; TODO it should be split up into a new state that reads empty vis-loc and does the search
     +visual-location>
       ISA           visual-location
       ;; search for oval
@@ -416,11 +417,10 @@
       ;; search for same object
       screen-x      =target-x
       screen-y      =target-y
-
     =goal>
-      ;; move to the state where we distinguish between red and green targets
-      state         distinguish-target
+      state distinguish-target
   )
+
 
   ; request a mouse click
   (P click-mouse
