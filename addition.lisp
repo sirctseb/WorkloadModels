@@ -350,6 +350,9 @@
     ;; gp: require empty visual-location
     ?visual-location>
       buffer      empty
+    ?visual>
+      state free
+      buffer empty
   ==>
     ;; perform search for left-most text
     +visual-location>
@@ -407,7 +410,7 @@
       state       free
       buffer      empty
 
-    ;; make sure visual is free so we can request move-attention
+    ;; make sure visual so we can safely clear
     ?visual>
       state       free
   ==>
@@ -472,6 +475,9 @@
     ;; gp vis-loc check
     ?visual-location>
       buffer  empty
+    ?visual>
+      state free
+      buffer empty
   ==>
     ;; request visual location of second addend
     +visual-location>
