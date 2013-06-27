@@ -531,6 +531,10 @@
       ISA         text
       value       =value
 
+    ;; make sure visual free so we can clear
+    ?visual>
+      state free
+
     ;; make sure retrieval is free
     ?retrieval>
       state       free
