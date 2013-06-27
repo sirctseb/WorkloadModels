@@ -274,9 +274,6 @@
       - color       black
       ;; match color
       color         =color
-      ;; make sure it's the target we want
-      screen-x      =target-x
-      screen-y      =target-y
 
     ;; TODO other task will have to be gp in retrieval
     ?retrieval>
