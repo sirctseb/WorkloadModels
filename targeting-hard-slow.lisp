@@ -300,6 +300,9 @@
 
     =visual>
       isa oval
+    ;; make sure state is free so we can clear
+    ?visual>
+      state free
   ==>
     +visual>
       isa clear
@@ -431,6 +434,9 @@
 
     =visual>
       isa oval
+    ;; make sure visual is free so we can clear it
+    ?visual>
+      state free
   ==>
     
     ;; submit click request
