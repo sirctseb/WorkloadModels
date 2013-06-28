@@ -207,6 +207,18 @@
       state check-target
   )
 
+  (P harvest-visual
+    =goal>
+      isa targeting
+    ?visual>
+      state free
+    =visual>
+      isa OVAL
+  ==>
+    +visual>
+      isa clear
+  )
+
   ;; re-scan for the nearest oval to get info about its color
   (P check-target
     =goal>
@@ -298,14 +310,14 @@
       ISA           response
       action        oh-no-dont-shoot
 
-    =visual>
-      isa oval
+    ; =visual>
+    ;   isa oval
     ;; make sure state is free so we can clear
-    ?visual>
-      state free
+    ; ?visual>
+    ;   state free
   ==>
-    +visual>
-      isa clear
+    ; +visual>
+    ;   isa clear
       
     ;; increment the number of times the friend target was hovered
     !eval!          (incf *friend-hovers*)
@@ -432,18 +444,18 @@
     ?manual>
       state         free
 
-    =visual>
-      isa oval
+    ; =visual>
+    ;   isa oval
     ;; make sure visual is free so we can clear it
-    ?visual>
-      state free
+    ; ?visual>
+    ;   state free
   ==>
     
     ;; submit click request
     +manual>
       ISA           click-mouse
-    +visual>
-      isa clear
+    ; +visual>
+    ;   isa clear
 
     =goal>
       state         find-black-target
