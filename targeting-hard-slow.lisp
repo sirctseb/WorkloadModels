@@ -70,35 +70,6 @@
       state       move-cursor
   )
 
-  ;; TODO I think this never occurs and should be taken out
-  (P on-move
-    =goal>
-      ISA         targeting
-      state       find-black-target
-    ?visual-location>
-      state       error
-  ==>
-    +visual-location>
-      ISA         visual-location
-      kind        OVAL
-    !eval!          (dolog "failed to attend to target location in find black target~%")
-    !eval!          (incf *vis-fails*)
-  )
-  ;; TODO this may also never occur and should be taken out
-  (P on-move-move-cursor
-    =goal>
-      ISA           targeting
-      state         move-cursor
-    ?visual-location>
-      state         error
-  ==>
-    +visual-location>
-      ISA           visual-location
-      kind          OVAL
-    !eval!          (dolog "failed to attend to target location in move cursor~%")
-    !eval!          (incf *vis-fails*)
-  )
-
   ;; rule to check the visual location against a remembered
   ;; location of a friend target and go to a different one
   (P avoid-friend
