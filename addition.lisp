@@ -42,7 +42,7 @@
     :le 10
     )
   (sgp :blc 0.1)
-  (sgp :ans 0.05)
+  (sgp :ans 0.08)
   (sgp :rt -.45)
   ; (sgp :rt -.45 :esc t :ans 0.05 :mp 16)
   (sgp :er t)
