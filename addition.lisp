@@ -59,7 +59,7 @@
 
   ;; chunk types
   (chunk-type arithmetic first operator second result ones carry)
-  (chunk-type arithmetic-problem first-ones operator second-ones first-tens second-tens result state ones carry tens)
+  (chunk-type arithmetic-problem first-ones operator second-ones first-tens second-tens result state ones carry tens focus-loc)
   (chunk-type successor value successor)
   (chunk-type number ones tens value)
 
@@ -350,9 +350,6 @@
     ;; gp: require empty visual-location
     ?visual-location>
       buffer      empty
-    ?visual>
-      state free
-      buffer empty
   ==>
     ;; perform search for left-most text
     +visual-location>
@@ -363,8 +360,25 @@
 
     ;; update goal
     =goal>
-      state       attend-first
+      state       harvest-first-loc
     )
+  (P harvest-first-loc
+    ;; check goal-state
+    =goal>
+      ISA arithmetic-problem
+      state harvest-first-loc
+
+    ;; get vis-loc reference
+    =visual-location>
+      ISA visual-location
+      kind text
+  ==>
+    ;; store location in goal
+    =goal>
+      focus-loc =visual-location
+      ;; change state
+      state attend-first
+  )
 
   ;; Production to move visual attention to second addend
   (P attend-first
@@ -372,11 +386,7 @@
     =goal>
       ISA         arithmetic-problem
       state       attend-first
-
-    ;; get vis-loc reference
-    =visual-location>
-      ISA         visual-location
-      kind text
+      focus-loc   =visual-location
 
     ;; check for free visual
     ?visual>
@@ -487,6 +497,24 @@
 
     ;; update goal state
     =goal>
+      state harvest-second-loc
+  )
+
+  (P harvest-second-loc
+    ;; check goal state
+    =goal>
+      ISA arithmetic-problem
+      state harvest-second-loc
+    
+    ;; get vis-loc
+    =visual-location>
+      ISA visual-location
+      kind text
+  ==>
+    ;; store location in goal
+    =goal>
+      focus-loc =visual-location
+      ;; update state
       state attend-second
   )
 
@@ -496,11 +524,7 @@
     =goal>
       ISA arithmetic-problem
       state attend-second
-
-    ;; get vis-loc
-    =visual-location>
-      ISA visual-location
-      kind text
+      focus-loc =visual-location
 
     ;; gp: check free and empty visual
     ?visual>
