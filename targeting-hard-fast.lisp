@@ -44,6 +44,7 @@
     (enemy-response isa response color red action shoot)
     (friend-response isa response color green action oh-no-dont-shoot)
     (goal isa targeting state find-black-target))
+  (set-base-levels (enemy-response 1) (friend-response 1))
 
   ;; goal focus
   (goal-focus goal)
@@ -318,7 +319,6 @@
     ;; TODO this is not a semantic test. it only exists to allow prepare-click to go first
     ;; TODO there should be a better way to let prepare-click to have priority
     ;; TODO we could just put a flag in goal
-    ?manual>
       last-command  prepare
   ==>
     ;; clear temporal in case we were running a whiff
