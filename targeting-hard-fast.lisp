@@ -315,11 +315,6 @@
     ;; only loop when the move is not complete
     ?manual>
       state         busy
-    ;; let prepare-click go first
-    ;; TODO this is not a semantic test. it only exists to allow prepare-click to go first
-    ;; TODO there should be a better way to let prepare-click to have priority
-    ;; TODO we could just put a flag in goal
-      last-command  prepare
   ==>
     ;; clear temporal in case we were running a whiff
     ;; TODO this is not gp in temporal
