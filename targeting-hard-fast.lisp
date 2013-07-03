@@ -270,7 +270,7 @@
       loc           =visual-location
 
     =goal>
-      state         check-target
+      state         prepare-click
       target-location =visual-location
   )
 
@@ -356,7 +356,7 @@
   (P prepare-click
     =goal>
       ISA           targeting
-      state         distinguish-target
+      state         prepare-click
 
     ;; wait until manual preparation is free and last command was a move (we didn't already prepare click)
     ?manual>
@@ -369,6 +369,9 @@
       style         punch
       hand          right
       finger        index
+
+    =goal>
+      state check-target
   )
 
   ;; check if there the nearest target is no longer black
