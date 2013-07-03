@@ -67,6 +67,7 @@
       :attended   nil
       kind        OVAL
       color       black
+      screen-x    lowest
 
     ;; update goal
     =goal>
@@ -127,11 +128,31 @@
 
   ==>
     =goal>
-      state         find-black-target
+      state         avoid-friend-search
 
     !eval!          (format t "avoiding friend~%")
     ;; increment number of times avoided friend
     !eval!          (incf *friend-avoids*)
+  )
+  ;; rule to search in a way to avoid the friend target
+  (P avoid-friend-search
+     ;; check state
+     =goal>
+      isa targeting
+      state avoid-friend-search
+
+    ;; gp vis-loc check
+    ?visual-location>
+      buffer empty
+  ==>
+    ;; search for highest x
+    +visual-location>
+      isa visual-location
+      kind oval
+      color black
+      screen-x highest
+    =goal>
+      state cap-first-location
   )
 
   ;; Rule to capture the location of a target when there is no friend info
