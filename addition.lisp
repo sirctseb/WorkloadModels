@@ -37,7 +37,7 @@
   
   ;; sgp section
   (sgp
-    :esc t
+    ; :esc t
     :lf .2
     :le 10
     )

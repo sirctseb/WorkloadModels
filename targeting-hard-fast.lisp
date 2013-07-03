@@ -14,7 +14,7 @@
     :pixels-per-inch 96
     :viewing-distance 96)
   (sgp
-    :esc t
+    ; :esc t
     :lf .2
     :le 10
     )
