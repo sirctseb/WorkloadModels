@@ -574,16 +574,9 @@
   ==>
     ;; update goal
     =goal>
-      state        finish-retrieve-ones
+      state        retrieve-ones
       second-ones  =second-ones
       second-tens  =second-tens
-
-    ;; request addition dm retrieval
-    +retrieval>
-      ISA         arithmetic
-      first       =first-ones
-      second      =second-ones
-      operator    +
     )
 
   ;; Production to get the number info from dm and store in goal when tens is nil
@@ -604,17 +597,37 @@
     ?retrieval>
       state       free
   ==>
-    ;; request addition dm retrieval
-    +retrieval>
-      ISA         arithmetic
-      first       =first-ones
-      second      =second-ones
-      operator    +
-    
     ;; update goal
     =goal>
-      state       finish-retrieve-ones
+      state       retrieve-ones
       second-ones =second-ones
+  )
+
+  ;; Production to request retrieval of the sum of ones
+  (P retrieve-ones
+    ;; check goal state
+    =goal>
+      isa arithmetic-problem
+      state retrieve-ones
+      first-ones =first-ones
+      second-ones =second-ones
+    
+    ;; gp: gcheck retrieval free and empty
+    ?retrieval>
+      state free
+      buffer empty
+
+  ==>
+    ;; request addition dm retrieval
+    +retrieval>
+      isa arithmetic
+      first =first-ones
+      second =second-ones
+      operator +
+
+    ;; update goal
+    =goal>
+      state finish-retrieve-ones
   )
 
   ;; Production to get results of addition retrieval
