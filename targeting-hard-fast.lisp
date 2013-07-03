@@ -36,14 +36,18 @@
   (set-cursor-position 960 600)
 
   ;; chunk types
-  (chunk-type targeting state target-x target-y target-location friend-x friend-y friend-x-diff friend-y-diff cur-x-diff cur-y-diff ticks)
+  (chunk-type targeting
+              state target-x target-y target-location
+              friend-x friend-y friend-x-diff friend-y-diff
+              cur-x-diff cur-y-diff ticks
+              heuristic)
   (chunk-type response color action)
 
   ;; dms
   (add-dm (track isa chunk) (attend-letter isa chunk)
     (enemy-response isa response color red action shoot)
     (friend-response isa response color green action oh-no-dont-shoot)
-    (goal isa targeting state find-black-target))
+    (goal isa targeting state find-black-target heuristic lowest))
   (set-base-levels (enemy-response 1) (friend-response 1))
 
   ;; goal focus
@@ -56,6 +60,8 @@
     =goal>
       ISA         targeting
       state       find-black-target
+      ;; TODO can make this a variable and provide to search directly?
+      heuristic   =heuristic
 
     ;; check for empty vis-loc
     ?visual-location>
@@ -67,7 +73,7 @@
       :attended   nil
       kind        OVAL
       color       black
-      screen-x    lowest
+      screen-x    =heuristic
 
     ;; update goal
     =goal>
@@ -107,7 +113,7 @@
 
   ;; rule to check the visual location against a remembered
   ;; location of a friend target and go to a different one
-  (P avoid-friend
+  (P avoid-friend-lowest
     ;; check state
     =goal>
       ISA           targeting
@@ -116,6 +122,7 @@
       friend-y      =fy
       friend-x-diff =x-diff
       friend-y-diff =y-diff
+      heuristic     lowest
 
     =visual-location>
       ISA           visual-location
@@ -128,31 +135,41 @@
 
   ==>
     =goal>
-      state         avoid-friend-search
+      state         find-black-target
+      heuristic     highest
 
     !eval!          (format t "avoiding friend~%")
     ;; increment number of times avoided friend
     !eval!          (incf *friend-avoids*)
   )
-  ;; rule to search in a way to avoid the friend target
-  (P avoid-friend-search
-     ;; check state
-     =goal>
-      isa targeting
-      state avoid-friend-search
-
-    ;; gp vis-loc check
-    ?visual-location>
-      buffer empty
-  ==>
-    ;; search for highest x
-    +visual-location>
-      isa visual-location
-      kind oval
-      color black
-      screen-x highest
+  (P avoid-friend-highest
+    ;; check state
     =goal>
-      state cap-first-location
+      ISA           targeting
+      state         cap-first-location
+      friend-x      =fx
+      friend-y      =fy
+      friend-x-diff =x-diff
+      friend-y-diff =y-diff
+      heuristic     highest
+
+    =visual-location>
+      ISA           visual-location
+      ;; check if new location is at the remembered friend location
+      screen-x      =tx
+      screen-y      =ty
+
+    ;; test if target is on friend line
+    !bind!          =on-line (is-on-line =tx =ty =fx =fy =x-diff =y-diff)
+
+  ==>
+    =goal>
+      state         find-black-target
+      heuristic     lowest
+
+    !eval!          (format t "avoiding friend~%")
+    ;; increment number of times avoided friend
+    !eval!          (incf *friend-avoids*)
   )
 
   ;; Rule to capture the location of a target when there is no friend info
