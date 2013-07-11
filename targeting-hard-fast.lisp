@@ -611,6 +611,7 @@
       friend-y      =sy
       friend-x-diff =x-diff
       friend-y-diff =y-diff
+      heuristic     highest
     ;; increment the number of times the friend target was hovered
     !eval!          (incf *friend-hovers*)
     !eval!          (format t "detected friend~%")
