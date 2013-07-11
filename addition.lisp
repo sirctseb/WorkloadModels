@@ -167,6 +167,7 @@
     (a9+7 ISA ARITHMETIC FIRST "9" OPERATOR + SECOND "7" RESULT "16" ONES "6" CARRY "1")
     (a9+8 ISA ARITHMETIC FIRST "9" OPERATOR + SECOND "8" RESULT "17" ONES "7" CARRY "1")
     (a9+9 ISA ARITHMETIC FIRST "9" OPERATOR + SECOND "9" RESULT "18" ONES "8" CARRY "1")
+    ;; TODO remove the ones we don't use
     (n00 ISA NUMBER VALUE "0" ONES "0" TENS nil)
     (n01 ISA NUMBER VALUE "1" ONES "1" TENS nil)
     (n02 ISA NUMBER VALUE "2" ONES "2" TENS nil)
@@ -838,6 +839,7 @@
       ISA         arithmetic-problem
       state       check-carry
       ;; check that there is a carry
+      ;; TODO this check now redundant
       carry       "1"
       ;; match tens sum
       tens        =tens
