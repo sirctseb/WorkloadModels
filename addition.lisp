@@ -59,6 +59,7 @@
 
   ;; chunk types
   (chunk-type arithmetic first operator second result ones carry)
+  ;; remove result
   (chunk-type arithmetic-problem first-ones operator second-ones first-tens second-tens result state ones carry tens)
   (chunk-type successor value successor)
   (chunk-type number ones tens value)
@@ -288,7 +289,7 @@
 
     (n00 0.5) (n01 0.5) (n02 0.5) (n03 0.5) (n04 0.5) (n05 0.5) (n06 0.5)
     (n07 0.5) (n08 0.5) (n09 0.5) (n10 0.5) (n11 0.5) (n12 0.5)
-    
+
     (n13 0.015)
     (n14 0.015) (n15 0.015) (n16 0.015) (n17 0.015) (n18 0.015) (n19 0.015) (n20 0.015)
     (n21 0.015) (n22 0.015) (n23 0.015) (n24 0.015) (n25 0.015)

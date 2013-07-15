@@ -22,10 +22,13 @@
   (set-cursor-position 960 600)
 
   ;; chunk types
+  ;; TODO remove target-x target-y
   (chunk-type targeting state target-x target-y target-location check-miss)
+  ;; TODO remove
   (chunk-type friend-target x y)
 
   ;; dms
+  ;; remove track and attend-letter
   (add-dm (track isa chunk) (attend-letter isa chunk)
     (goal isa targeting state find-red-target))
 
