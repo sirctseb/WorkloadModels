@@ -33,7 +33,7 @@
   (set-cursor-position 960 600)
 
   ;; chunk types
-  (chunk-type targeting state target-location target-x target-y friend-x friend-y)
+  (chunk-type targeting state target-location target-x target-y friend-x friend-y hits)
   (chunk-type friend-target x y)
   (chunk-type response color action)
 
@@ -41,7 +41,7 @@
   (add-dm (track isa chunk) (attend-letter isa chunk)
     (enemy-response isa response color red action shoot)
     (friend-response isa response color green action oh-no-dont-shoot)
-    (goal isa targeting state find-black-target))
+    (goal isa targeting state find-black-target hits 0))
   (set-base-levels (enemy-response 1) (friend-response 1))
 
   ;; goal focus
@@ -49,12 +49,27 @@
 
   ;; Productions
 
+  ;; reset hits and friend location on the second hit
+  ;; TODO if we hit a friend this will not actually occur when the task is complete
+  (P reset-hits
+    =goal>
+      ISA targeting
+      state find-black-target
+      hits 2
+  ==>
+    =goal>
+      friend-x nil
+      friend-y nil
+      hits 0
+  )
+
   ;; Rule to start searching for a target
   (P find-black-target
     =goal>
       ISA         targeting
       state       find-black-target
       friend-x    nil
+      < hits 2
 
     ;; check for empty visual-location buffer
     ?visual-location>
@@ -76,6 +91,7 @@
       state       find-black-target
       friend-x    =fx
       friend-y    =fy
+      < hits 2
 
     ;; check for empty visual-location buffer
     ?visual-location>
@@ -433,6 +449,7 @@
     =goal>
       ISA           targeting
       state         click-mouse
+      hits          =hits
 
     ;; make sure motor module is free
     ;; TODO only preparation needs to be free
@@ -454,5 +471,7 @@
 
     =goal>
       state         find-black-target
+      hits          (+ =hits 1)
   )
+
 ) ; end model

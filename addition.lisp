@@ -929,7 +929,7 @@
 
     ;; update goal
     =goal>
-      state       done
+      state       reset
     )
 
   ;; Production to speak the ones value
@@ -951,6 +951,24 @@
       string      =ones
     ;; update goal
     =goal>
-      state       done
+      state       reset
     )
+
+  ;; reset goal to initial state for next problem
+  (P reset
+    =goal>
+      ISA arithmetic-problem
+      state reset
+  ==>
+    =goal>
+      first-ones nil
+      second-ones nil
+      first-tens nil
+      second-tens nil
+      result nil
+      ones nil
+      carry nil
+      tens nil
+      state find-first
+  )
 ) ; end model
