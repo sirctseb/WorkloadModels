@@ -9,7 +9,7 @@ my $difficulty = easy;
 my $speed = slow;
 my $oprange = easy;
 my $trials = 240;
-my $incentive = no;
+my $incentive = 'no';
 
 # parse command line options
 GetOptions('a' => \$addition, 't' => \$targeting, 'd=s' => \$difficulty, 's=s' => \$speed, 'o=s' => \$oprange,
