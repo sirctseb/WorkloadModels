@@ -1,6 +1,6 @@
 model_root = .
 output_dir = $(model_root)/output
-exp_dir = ~/dart/WorkloadExperiment
+exp_dir = ~/Documents/WorkloadExperiment
 SHELL=/bin/bash
 TRIALS=1000
 MODEL_TRIALS=480

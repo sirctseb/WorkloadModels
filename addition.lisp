@@ -523,6 +523,7 @@
   )
 
   ;; Production to encode value of second addend
+  ;; rename to encode-second
   (P encode-second-ones
     ;; check goal state
     =goal>
