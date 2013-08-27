@@ -86,8 +86,8 @@
       ISA         visual-location
       kind OVAL
       color black
-      - screen-x =fx
-      - screen-y =fy
+      -screen-x =fx
+      -screen-y =fy
 
     ;; update state
     =goal>
