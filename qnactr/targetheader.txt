@@ -1,4 +1,5 @@
 
+  ;; TODO test if green is at the bottom if we change the order of these
   ;; items for targeting task
   ( :item_type    display_item_visual_text_button
     :item_name enemy1
