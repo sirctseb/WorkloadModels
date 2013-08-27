@@ -54,6 +54,7 @@
     =goal>
       ISA         targeting
       state       find-black-target
+      friend-x    nil
 
     ;; check for empty visual-location buffer
     ?visual-location>
@@ -62,13 +63,35 @@
     ;; search for an unattended black target
     +visual-location>
       ISA         visual-location
-      :attended   nil
       kind        OVAL
       color       black
 
     ;; update state
     =goal>
       state       move-cursor
+  )
+  (P find-black-target-friend
+    =goal>
+      ISA         targeting
+      state       find-black-target
+      friend-x    =fx
+      friend-y    =fy
+
+    ;; check for empty visual-location buffer
+    ?visual-location>
+      buffer empty
+  ==>
+    ;; search for an unattended black target where the friend isn't
+    +visual-location>
+      ISA         visual-location
+      kind OVAL
+      color black
+      - screen-x =fx
+      - screen-y =fy
+
+    ;; update state
+    =goal>
+      state     move-cursor
   )
 
   ;; rule to check the visual location against a remembered
