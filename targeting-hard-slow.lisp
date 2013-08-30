@@ -49,27 +49,12 @@
 
   ;; Productions
 
-  ;; reset hits and friend location on the second hit
-  ;; TODO if we hit a friend this will not actually occur when the task is complete
-  (P reset-hits
-    =goal>
-      ISA targeting
-      state find-black-target
-      hits 2
-  ==>
-    =goal>
-      friend-x nil
-      friend-y nil
-      hits 0
-  )
-
   ;; Rule to start searching for a target
   (P find-black-target
     =goal>
       ISA         targeting
       state       find-black-target
       friend-x    nil
-      < hits 2
 
     ;; check for empty visual-location buffer
     ?visual-location>
@@ -91,11 +76,12 @@
       state       find-black-target
       friend-x    =fx
       friend-y    =fy
-      < hits 2
 
     ;; check for empty visual-location buffer
     ?visual-location>
       buffer empty
+      ;; TODO this should avoid catching addition vis-loc errors in fail-find-not-friend
+      -state error
   ==>
     ;; search for an unattended black target where the friend isn't
     +visual-location>
@@ -108,6 +94,24 @@
     ;; update state
     =goal>
       state     move-cursor
+  )
+
+  ;; if we fail to find a target that is not the friend, keep searching for it until the targets refresh
+  ;; TODO this is not gp
+  (P fail-find-not-friend
+    =goal>
+      state move-cursor
+      friend-x =fx
+      friend-y =fy
+    ?visual-location>
+      state error
+  ==>
+    +visual-location>
+      ISA visual-location
+      kind OVAL
+      color black
+      -screen-x =fx
+      -screen-y =fy
   )
 
   ;; rule to check the visual location against a remembered
@@ -287,6 +291,23 @@
       state         decide-whether-to-shoot
   )
 
+  ;; handle case where friend was not found before clicking both targets so we started moving to it
+  ;; before targets refreshed
+  (P distinguish-target-error
+    =goal>
+      ISA targeting
+      state distinguish-target
+    ;; TODO should check not error in check-target to avoid getting addition vis-loc errors here
+    ?visual-location>
+      state error
+  ==>
+    =goal>
+      state find-black-target
+      ;; reset friend location so find-black-target can fire
+      friend-x nil
+      friend-y nil
+  )
+
   ;; after a rescan of the target, check if the target is red and click it
   (P decide-to-shoot
     =goal>
@@ -461,6 +482,7 @@
     ;; make sure visual is free so we can clear it
     ; ?visual>
     ;   state free
+    !bind! =hits-inc (+ =hits 1)
   ==>
     
     ;; submit click request
@@ -471,7 +493,7 @@
 
     =goal>
       state         find-black-target
-      hits          (+ =hits 1)
+      hits          =hits-inc
   )
 
 ) ; end model
