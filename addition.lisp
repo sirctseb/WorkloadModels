@@ -362,14 +362,30 @@
     ;; perform search for left-most text
     +visual-location>
       ISA         visual-location
-      :attended   nil
       kind        text
+      < screen-x  100
       screen-x    lowest
+      :attended   nil
 
     ;; update goal
     =goal>
       state       attend-first
-    )
+  )
+
+  ;; keep searching until a new problem comes up
+  (P fail-find
+    =goal>
+      ISA arithmetic-problem
+      state attend-first
+    ?visual-location>
+      state error
+  ==>
+    +visual-location>
+      ISA visual-location
+      kind text
+      < screen-x 100
+      :attended nil
+  )
 
   ;; Production to move visual attention to second addend
   (P attend-first
