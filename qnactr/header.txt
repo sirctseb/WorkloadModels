@@ -24,7 +24,8 @@
 )
 
 (add_trials_from_discrete_display_feedback_two_stages_method
-  :add_number_of_blocks_per_day       20 ; trials
+  ;; TODO trials has to be 1 or the initialization gets messed up on the IMPRINT side
+  :add_number_of_blocks_per_day       1 ; trials
   :add_number_of_trials_per_block       1
   :number_of_responses_per_trial      1 
   :display_and_response_duration      ( 90 )    ;; (-1.0) seconds by default, mean infinite display until response collection done
