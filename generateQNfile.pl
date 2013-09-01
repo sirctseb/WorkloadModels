@@ -74,6 +74,20 @@ if($addition) {
 	while(<additionmodel>) {
 		if($model_def && !/; end model/) {
 			if(!badline($_)) {
+				# replace base level parameter variable with constants
+				if($incentive eq 'no') {
+					s/\*seq-base-level\*/0.5/g;
+					s/\*n-low-base-level\*/0.5/g;
+					s/\*n-high-base-level\*/0.015/g;
+					s/\*a-no-carry-base-level\*/0.15/g;
+					s/\*a-carry-base-level\*/0.1/g;
+				} else {
+					s/\*seq-base-level\*/0.7/g;
+					s/\*n-low-base-level\*/0.7/g;
+					s/\*n-high-base-level\*/0.03/g;
+					s/\*a-no-carry-base-level\*/0.2/g;
+					s/\*a-carry-base-level\*/0.15/g;
+				}
 				# copy line to output file
 				print modelfile $_;
 			}

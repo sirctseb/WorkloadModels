@@ -32,6 +32,11 @@
   (proc-display)
   (run 30)))
 
+(defparameter *seq-base-level* 0.5)
+(defparameter *n-low-base-level* 0.5)
+(defparameter *n-high-base-level* 0.015)
+(defparameter *a-no-carry-base-level* 0.15)
+(defparameter *a-carry-base-level* 0.1)
 
 (define-model addition
   
@@ -285,50 +290,74 @@
   (goal-focus addition-goal)
 
   (set-base-levels
-    (s01 0.5) (s12 0.5) (s23 0.5) (s34 0.5) (s45 0.5) (s56 0.5) (s67 0.5) (s78 0.5) (s89 0.5)
+    (s01 *seq-base-level*) (s12 *seq-base-level*) (s23 *seq-base-level*)
+    (s34 *seq-base-level*) (s45 *seq-base-level*) (s56 *seq-base-level*)
+    (s67 *seq-base-level*) (s78 *seq-base-level*) (s89 *seq-base-level*)
 
-    (n00 0.5) (n01 0.5) (n02 0.5) (n03 0.5) (n04 0.5) (n05 0.5) (n06 0.5)
-    (n07 0.5) (n08 0.5) (n09 0.5) (n10 0.5) (n11 0.5) (n12 0.5)
+    (n00 *n-low-base-level*) (n01 *n-low-base-level*) (n02 *n-low-base-level*)
+    (n03 *n-low-base-level*) (n04 *n-low-base-level*) (n05 *n-low-base-level*) (n06 *n-low-base-level*)
+    (n07 *n-low-base-level*) (n08 *n-low-base-level*) (n09 *n-low-base-level*)
+    (n10 *n-low-base-level*) (n11 *n-low-base-level*) (n12 *n-low-base-level*)
 
-    (n13 0.015)
-    (n14 0.015) (n15 0.015) (n16 0.015) (n17 0.015) (n18 0.015) (n19 0.015) (n20 0.015)
-    (n21 0.015) (n22 0.015) (n23 0.015) (n24 0.015) (n25 0.015)
+    (n13 *n-high-base-level*) (n14 *n-high-base-level*) (n15 *n-high-base-level*)
+    (n16 *n-high-base-level*) (n17 *n-high-base-level*) (n18 *n-high-base-level*)
+    (n19 *n-high-base-level*) (n20 *n-high-base-level*) (n21 *n-high-base-level*)
+    (n22 *n-high-base-level*) (n23 *n-high-base-level*) (n24 *n-high-base-level*) (n25 *n-high-base-level*)
   )
 
   (set-base-levels
-    (a0+0 0.15) (a0+1 0.15) (a0+2 0.15) (a0+3 0.15) (a0+4 0.15)
-    (a0+5 0.15) (a0+6 0.15) (a0+7 0.15) (a0+8 0.15) (a0+9 0.15)
-    (a1+0 0.15) (a1+1 0.15) (a1+2 0.15) (a1+3 0.15) (a1+4 0.15)
-    (a1+5 0.15) (a1+6 0.15) (a1+7 0.15) (a1+8 0.15)
-    ; (a1+9 0.15)
-    (a2+0 0.15) (a2+1 0.15) (a2+2 0.15) (a2+3 0.15) (a2+4 0.15)
-    (a2+5 0.15) (a2+6 0.15) (a2+7 0.15)
-    ; (a2+8 0.15) (a2+9 0.15)
-    (a3+0 0.15) (a3+1 0.15) (a3+2 0.15) (a3+3 0.15) (a3+4 0.15)
-    (a3+5 0.15) (a3+6 0.15)
-    ; (a3+7 0.15) (a3+8 0.15) (a3+9 0.15)
-    (a4+0 0.15) (a4+1 0.15) (a4+2 0.15) (a4+3 0.15) (a4+4 0.15)
-    (a4+5 0.15)
-    ; (a4+6 0.15) (a4+7 0.15) (a4+8 0.15) (a4+9 0.15)
-    (a5+0 0.15) (a5+1 0.15) (a5+2 0.15) (a5+3 0.15) (a5+4 0.15)
+    (a0+0 *a-no-carry-base-level*) (a0+1 *a-no-carry-base-level*) (a0+2 *a-no-carry-base-level*)
+    (a0+3 *a-no-carry-base-level*) (a0+4 *a-no-carry-base-level*)
+    (a0+5 *a-no-carry-base-level*) (a0+6 *a-no-carry-base-level*) (a0+7 *a-no-carry-base-level*)
+    (a0+8 *a-no-carry-base-level*) (a0+9 *a-no-carry-base-level*)
+    (a1+0 *a-no-carry-base-level*) (a1+1 *a-no-carry-base-level*) (a1+2 *a-no-carry-base-level*)
+    (a1+3 *a-no-carry-base-level*) (a1+4 *a-no-carry-base-level*)
+    (a1+5 *a-no-carry-base-level*) (a1+6 *a-no-carry-base-level*) (a1+7 *a-no-carry-base-level*) (a1+8 *a-no-carry-base-level*)
 
-    ; (a5+5 0.15) (a5+6 0.15) (a5+7 0.15) (a5+8 0.15) (a5+9 0.15)
-    (a6+0 0.15) (a6+1 0.15) (a6+2 0.15) (a6+3 0.15)
+    (a1+9 *a-carry-base-level*)
 
-    ; (a6+4 0.15) (a6+5 0.15) (a6+6 0.15) (a6+7 0.15) (a6+8 0.15)
-    ; (a6+9 0.15)
-    (a7+0 0.15) (a7+1 0.15) (a7+2 0.15)
+    (a2+0 *a-no-carry-base-level*) (a2+1 *a-no-carry-base-level*) (a2+2 *a-no-carry-base-level*)
+    (a2+3 *a-no-carry-base-level*) (a2+4 *a-no-carry-base-level*)
+    (a2+5 *a-no-carry-base-level*) (a2+6 *a-no-carry-base-level*) (a2+7 *a-no-carry-base-level*)
 
-    ; (a7+3 0.15) (a7+4 0.15) (a7+5 0.15) (a7+6 0.15) (a7+7 0.15)
-    ; (a7+8 0.15) (a7+9 0.15)
-    (a8+0 0.15) (a8+1 0.15)
+    (a2+8 *a-carry-base-level*) (a2+9 *a-carry-base-level*)
 
-    ; (a8+2 0.15) (a8+3 0.15) (a8+4 0.15) (a8+5 0.15) (a8+6 0.15)
-    ; (a8+7 0.15) (a8+8 0.15) (a8+9 0.15)
-    (a9+0 0.15)
+    (a3+0 *a-no-carry-base-level*) (a3+1 *a-no-carry-base-level*) (a3+2 *a-no-carry-base-level*)
+    (a3+3 *a-no-carry-base-level*) (a3+4 *a-no-carry-base-level*)
+    (a3+5 *a-no-carry-base-level*) (a3+6 *a-no-carry-base-level*)
+
+    (a3+7 *a-carry-base-level*) (a3+8 *a-carry-base-level*) (a3+9 *a-carry-base-level*)
+
+    (a4+0 *a-no-carry-base-level*) (a4+1 *a-no-carry-base-level*) (a4+2 *a-no-carry-base-level*)
+    (a4+3 *a-no-carry-base-level*) (a4+4 *a-no-carry-base-level*)
+    (a4+5 *a-no-carry-base-level*)
+
+    (a4+6 *a-carry-base-level*) (a4+7 *a-carry-base-level*) (a4+8 *a-carry-base-level*) (a4+9 *a-carry-base-level*)
+
+    (a5+0 *a-no-carry-base-level*) (a5+1 *a-no-carry-base-level*) (a5+2 *a-no-carry-base-level*)
+    (a5+3 *a-no-carry-base-level*) (a5+4 *a-no-carry-base-level*)
+
+    (a5+5 *a-carry-base-level*) (a5+6 *a-carry-base-level*) (a5+7 *a-carry-base-level*) (a5+8 *a-carry-base-level*) (a5+9 *a-carry-base-level*)
+
+    (a6+0 *a-no-carry-base-level*) (a6+1 *a-no-carry-base-level*) (a6+2 *a-no-carry-base-level*) (a6+3 *a-no-carry-base-level*)
+
+    (a6+4 *a-carry-base-level*) (a6+5 *a-carry-base-level*) (a6+6 *a-carry-base-level*) (a6+7 *a-carry-base-level*) (a6+8 *a-carry-base-level*)
+    (a6+9 *a-carry-base-level*)
+
+    (a7+0 *a-no-carry-base-level*) (a7+1 *a-no-carry-base-level*) (a7+2 *a-no-carry-base-level*)
+
+    (a7+3 *a-carry-base-level*) (a7+4 *a-carry-base-level*) (a7+5 *a-carry-base-level*) (a7+6 *a-carry-base-level*) (a7+7 *a-carry-base-level*)
+    (a7+8 *a-carry-base-level*) (a7+9 *a-carry-base-level*)
+
+    (a8+0 *a-no-carry-base-level*) (a8+1 *a-no-carry-base-level*)
+
+    (a8+2 *a-carry-base-level*) (a8+3 *a-carry-base-level*) (a8+4 *a-carry-base-level*) (a8+5 *a-carry-base-level*) (a8+6 *a-carry-base-level*)
+    (a8+7 *a-carry-base-level*) (a8+8 *a-carry-base-level*) (a8+9 *a-carry-base-level*)
+
+    (a9+0 *a-no-carry-base-level*)
     
-    ; (a9+1 0.15) (a9+2 0.15) (a9+3 0.15) (a9+4 0.15) (a9+5 0.15)
-    ; (a9+6 0.15) (a9+7 0.15) (a9+8 0.15) (a9+9 0.15)
+    (a9+1 *a-carry-base-level*) (a9+2 *a-carry-base-level*) (a9+3 *a-carry-base-level*) (a9+4 *a-carry-base-level*) (a9+5 *a-carry-base-level*)
+    (a9+6 *a-carry-base-level*) (a9+7 *a-carry-base-level*) (a9+8 *a-carry-base-level*) (a9+9 *a-carry-base-level*)
   )
 
 ;;; TODO rules:
