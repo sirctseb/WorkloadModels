@@ -96,6 +96,23 @@
       state     move-cursor
   )
 
+  ;; TODO possible failure case when check friend first, then click on enemy that overlaps with another
+
+  ;; if we fail to find a target when we have no friend info, we may be over the green target,
+  ;; so keep searching until targets refresh
+  (P fail-find-no-friend
+    =goal>
+      state move-cursor
+      friend-x nil
+    ?visual-location>
+      state error
+  ==>
+    +visual-location>
+      ISA visual-location
+      kind OVAL
+      color black
+  )
+
   ;; if we fail to find a target that is not the friend, keep searching for it until the targets refresh
   ;; TODO this is not gp
   (P fail-find-not-friend
