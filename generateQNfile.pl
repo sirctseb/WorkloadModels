@@ -145,5 +145,6 @@ if($addition) {
 my $targetNumber = $targeting ? 3 : 0;
 my $targetSpeed = ($speed eq fast) ? 200 : 0;
 my $tD = ($difficulty eq hard) ? 1 : 0;
-print blockfile "{\"trials\":$trials,\"practice\":false,\"targetNumber\":$targetNumber,\"targetSpeed\":$targetSpeed,\"additionDifficulty\":$oplevel,\"targetDifficulty\":$tD}";
+my $incentive = ($incentive eq yes) ? true : false;
+print blockfile "{\"trials\":$trials,\"practice\":false,\"targetNumber\":$targetNumber,\"targetSpeed\":$targetSpeed,\"additionDifficulty\":$oplevel,\"targetDifficulty\":$tD,\"incentive\":$incentive}";
 close(blockfile);
