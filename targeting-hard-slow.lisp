@@ -12,6 +12,7 @@
     :randomize-time t
     :visual-movement-tolerance 0.5
     :pixels-per-inch 96
+    :motor-feature-prep-time 0.03
     :viewing-distance 96)
   (sgp
     :esc t
