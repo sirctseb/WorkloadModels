@@ -2,7 +2,7 @@ model_root = .
 output_dir = $(model_root)/output
 exp_dir = ~/Documents/WorkloadExperiment
 SHELL=/bin/bash
-TRIALS=1000
+TRIALS=8
 MODEL_TRIALS=480
 SAVE=saved
 DIFFICULT=t
@@ -67,29 +67,33 @@ compare: $(output_dir)/compare.pdf
 qnactralways:
 
 qnactr: targeting-hard-slow.lisp addition.lisp generateQNfile.pl qnactr/header.txt qnactr/additionheader.txt qnactr/targetheader.txt qnactralways
-	# addition only
-	perl generateQNfile.pl -n $(MODEL_TRIALS) -a -o easy -i no && mkdir -p qnactr/block1/trial0 && cp qnactr/qnactr_model.txt qnactr/block1/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block1/trial0/block.txt;
-	perl generateQNfile.pl -n $(MODEL_TRIALS) -a -o hard -i no && mkdir -p qnactr/block2/trial0 && cp qnactr/qnactr_model.txt qnactr/block2/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block2/trial0/block.txt;
-	# targeting only
-	perl generateQNfile.pl -n $(MODEL_TRIALS) -t -d hard -s slow -i no && mkdir -p qnactr/block3/trial0 && cp qnactr/qnactr_model.txt qnactr/block3/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block3/trial0/block.txt;
-	# combined
-	perl generateQNfile.pl -n $(MODEL_TRIALS) -a -o easy -t -d hard -s slow -i no && mkdir -p qnactr/block4/trial0 && cp qnactr/qnactr_model.txt qnactr/block4/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block4/trial0/block.txt;
-	perl generateQNfile.pl -n $(MODEL_TRIALS) -a -o hard -t -d hard -s slow -i no && mkdir -p qnactr/block5/trial0 && cp qnactr/qnactr_model.txt qnactr/block5/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block5/trial0/block.txt;
-	# incentivized
-	# addition only
-	perl generateQNfile.pl -n $(MODEL_TRIALS) -a -o easy -i yes && mkdir -p qnactr/block6/trial0 && cp qnactr/qnactr_model.txt qnactr/block6/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block6/trial0/block.txt;
-	perl generateQNfile.pl -n $(MODEL_TRIALS) -a -o hard -i yes && mkdir -p qnactr/block7/trial0 && cp qnactr/qnactr_model.txt qnactr/block7/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block7/trial0/block.txt;
-	# targeting only
-	perl generateQNfile.pl -n $(MODEL_TRIALS) -t -d hard -s slow -i yes && mkdir -p qnactr/block8/trial0 && cp qnactr/qnactr_model.txt qnactr/block8/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block8/trial0/block.txt;
-	# combined
-	perl generateQNfile.pl -n $(MODEL_TRIALS) -a -o easy -t -d hard -s slow -i yes && mkdir -p qnactr/block9/trial0 && cp qnactr/qnactr_model.txt qnactr/block9/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block9/trial0/block.txt;
-	perl generateQNfile.pl -n $(MODEL_TRIALS) -a -o hard -t -d hard -s slow -i yes && mkdir -p qnactr/block10/trial0 && cp qnactr/qnactr_model.txt qnactr/block10/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block10/trial0/block.txt;
+	for trial in {1..$(TRIALS)}; do \
+\
+		perl generateQNfile.pl -x $$trial -m $(MODELNUM) -n $(MODEL_TRIALS) -a -o easy -i no && mkdir -p qnactr/block1/trial$$trial && cp qnactr/qnactr_model.txt qnactr/block1/trial$$trial/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block1/trial$$trial/block.txt; \
+		perl generateQNfile.pl -x $$trial -m $(MODELNUM) -n $(MODEL_TRIALS) -a -o hard -i no && mkdir -p qnactr/block2/trial$$trial && cp qnactr/qnactr_model.txt qnactr/block2/trial$$trial/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block2/trial$$trial/block.txt; \
+\
+		perl generateQNfile.pl -x $$trial -m $(MODELNUM) -n $(MODEL_TRIALS) -t -d hard -s slow -i no && mkdir -p qnactr/block3/trial$$trial && cp qnactr/qnactr_model.txt qnactr/block3/trial$$trial/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block3/trial$$trial/block.txt; \
+\
+		perl generateQNfile.pl -x $$trial -m $(MODELNUM) -n $(MODEL_TRIALS) -a -o easy -t -d hard -s slow -i no && mkdir -p qnactr/block4/trial$$trial && cp qnactr/qnactr_model.txt qnactr/block4/trial$$trial/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block4/trial$$trial/block.txt; \
+		perl generateQNfile.pl -x $$trial -m $(MODELNUM) -n $(MODEL_TRIALS) -a -o hard -t -d hard -s slow -i no && mkdir -p qnactr/block5/trial$$trial && cp qnactr/qnactr_model.txt qnactr/block5/trial$$trial/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block5/trial$$trial/block.txt; \
+\
+\
+		perl generateQNfile.pl -x $$trial -m $(MODELNUM) -n $(MODEL_TRIALS) -a -o easy -i yes && mkdir -p qnactr/block6/trial$$trial && cp qnactr/qnactr_model.txt qnactr/block6/trial$$trial/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block6/trial$$trial/block.txt; \
+		perl generateQNfile.pl -x $$trial -m $(MODELNUM) -n $(MODEL_TRIALS) -a -o hard -i yes && mkdir -p qnactr/block7/trial$$trial && cp qnactr/qnactr_model.txt qnactr/block7/trial$$trial/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block7/trial$$trial/block.txt; \
+\
+		perl generateQNfile.pl -x $$trial -m $(MODELNUM) -n $(MODEL_TRIALS) -t -d hard -s slow -i yes && mkdir -p qnactr/block8/trial$$trial && cp qnactr/qnactr_model.txt qnactr/block8/trial$$trial/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block8/trial$$trial/block.txt; \
+\
+		perl generateQNfile.pl -x $$trial -m $(MODELNUM) -n $(MODEL_TRIALS) -a -o easy -t -d hard -s slow -i yes && mkdir -p qnactr/block9/trial$$trial && cp qnactr/qnactr_model.txt qnactr/block9/trial$$trial/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block9/trial$$trial/block.txt; \
+		perl generateQNfile.pl -x $$trial -m $(MODELNUM) -n $(MODEL_TRIALS) -a -o hard -t -d hard -s slow -i yes && mkdir -p qnactr/block10/trial$$trial && cp qnactr/qnactr_model.txt qnactr/block10/trial$$trial/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block10/trial$$trial/block.txt; \
+	done
 
 publish-models: qnactr
-	mkdir -p $(exp_dir)/output/subject$(MODELNUM)/block{1,2,3,4,5,6,7,8,9,10}/trial0
+	mkdir -p $(exp_dir)/output/subject$(MODELNUM)/block{1,2,3,4,5,6,7,8,9,10}/trial{1..$(TRIALS)}
 	for block in 1 2 3 4 5 6 7 8 9 10; do \
-		cp qnactr/block$$block/trial0/block.txt $(exp_dir)/output/subject$(MODELNUM)/block$$block; \
-		cp qnactr/block$$block/trial0/QN_ACTR_Model_Initialization.txt $(exp_dir)/output/subject$(MODELNUM)/block$$block/trial0; \
+		for trial in {1..$(TRIALS)}; do \
+			cp qnactr/block$$block/trial$$trial/block.txt $(exp_dir)/output/subject$(MODELNUM)/block$$block; \
+			cp qnactr/block$$block/trial$$trial/QN_ACTR_Model_Initialization.txt $(exp_dir)/output/subject$(MODELNUM)/block$$block/trial$$trial; \
+		done \
 	done
 
 clean:
