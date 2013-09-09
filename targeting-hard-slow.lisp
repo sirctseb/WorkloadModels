@@ -71,7 +71,8 @@
     =goal>
       state       move-cursor
   )
-  (P find-black-target-friend
+  ;; search for a black target that isn't at the friend location, but only check the x value of the location
+  (P find-black-target-friend-x
     =goal>
       ISA         targeting
       state       find-black-target
@@ -88,9 +89,9 @@
     +visual-location>
       ISA         visual-location
       kind OVAL
+      ;; TODO don't actually need black filter when searching away from friend
       color black
       -screen-x =fx
-      -screen-y =fy
 
     ;; update state
     =goal>
@@ -115,6 +116,8 @@
   )
 
   ;; if we fail to find a target that is not the friend, keep searching for it until the targets refresh
+  ;; this also checks against the y value, handling the case where a remaining enemy target shares an x value
+  ;; with the friend
   ;; TODO this is not gp
   (P fail-find-not-friend
     =goal>
@@ -127,8 +130,7 @@
     +visual-location>
       ISA visual-location
       kind OVAL
-      color black
-      -screen-x =fx
+      ; color black
       -screen-y =fy
   )
 
