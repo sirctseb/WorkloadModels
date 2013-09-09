@@ -23,6 +23,7 @@
   (sgp :rt -.45)
   ; (sgp :rt -.45 :esc t :ans 0.05 :mp 16)
   (sgp :er t)
+  (sgp :seed (30 15))
   ;; fitt's law coefficient
   ; (sgp :mouse-fitts-coeff 0.15)
   ;; we'll count this as sgp

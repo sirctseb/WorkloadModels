@@ -57,6 +57,7 @@
     :trace-detail high
     :randomize-time t
     )
+  (sgp :seed (30 15))
   ;; we'll count this as sgp
   ;; set the default visloc chunk to something that will never match
   ;; the effect is to disable buffer stuffing

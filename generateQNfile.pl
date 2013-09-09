@@ -90,6 +90,8 @@ if($addition) {
 					s/\*a-no-carry-base-level\*/0.2/g;
 					s/\*a-carry-base-level\*/0.15/g;
 				}
+				# set seed to subject number
+				s/\(sgp\s*:seed\s*\(\d+\s*\d+\)\)/(sgp :seed ($subject$trial 1))/g;
 				# copy line to output file
 				print modelfile $_;
 			}
@@ -132,6 +134,8 @@ if($targeting) {
 				s/\*whiff-wait-time\*/16/g;
 				# replace - slot_name slot_value ;negate tests with slot_name NOT_slot_value
 				s/^(\s*)(-\s*)(\w*\s*)(\w*\s*);negate\s*$/$1$3NOT_$4/g;
+				# set seed to subject number
+				s/\(sgp\s*:seed\s*\(\d+\s*\d+\)\)/(sgp :seed ($subject$trial 1))/g;
 				# copy line to output file
 				print modelfile $_;
 			}
