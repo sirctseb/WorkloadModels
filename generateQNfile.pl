@@ -79,14 +79,14 @@ if($addition) {
 				# replace base level parameter variable with constants
 				if($incentive eq 'no') {
 					s/\*seq-base-level\*/0.11/g;
-					s/\*n-low-base-level\*/0.11/g;
-					s/\*n-high-base-level\*/0.001/g;
+					s/\*n-low-base-level\*/0.10/g;
+					s/\*n-high-base-level\*/0.0004/g;
 					s/\*a-no-carry-base-level\*/0.02/g;
 					s/\*a-carry-base-level\*/0.004/g;
 				} else {
 					s/\*seq-base-level\*/0.16/g;
-					s/\*n-low-base-level\*/0.16/g;
-					s/\*n-high-base-level\*/0.003/g;
+					s/\*n-low-base-level\*/0.15/g;
+					s/\*n-high-base-level\*/0.0009/g;
 					s/\*a-no-carry-base-level\*/0.06/g;
 					s/\*a-carry-base-level\*/0.01/g;
 				}
