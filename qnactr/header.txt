@@ -28,4 +28,4 @@
   :add_number_of_blocks_per_day       1 ; trials
   :add_number_of_trials_per_block       1
   :number_of_responses_per_trial      1 
-  :display_and_response_duration      ( 450 )    ;; (-1.0) seconds by default, mean infinite display until response collection done
+  :display_and_response_duration      ( 90 )    ;; (-1.0) seconds by default, mean infinite display until response collection done
