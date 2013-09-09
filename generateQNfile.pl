@@ -9,11 +9,13 @@ my $difficulty = easy;
 my $speed = slow;
 my $oprange = easy;
 my $trials = 240;
+my $trial = 1;
 my $incentive = 'no';
+my $subject = 0;
 
 # parse command line options
 GetOptions('a' => \$addition, 't' => \$targeting, 'd=s' => \$difficulty, 's=s' => \$speed, 'o=s' => \$oprange,
-			'n=i' => \$trials, 'i=s' => \$incentive);
+			'n=i' => \$trials, 'i=s' => \$incentive, 'm=i' => \$subject, 'x=i' => \$trial);
 
 # TODO implement incentive params
 
