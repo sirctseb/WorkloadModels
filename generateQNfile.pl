@@ -72,9 +72,9 @@ if($addition) {
 		if($model_def && !/; end model/) {
 			if(!badline($_)) {
 				# replace base level parameter variable with constants
-				s/\*seq-base-level\*/0.7/g;
-				s/\*n-low-base-level\*/0.9/g;
-				s/\*n-high-base-level\*/0.04/g;
+				s/\*seq-base-level\*/0.3/g;
+				s/\*n-low-base-level\*/0.3/g;
+				s/\*n-high-base-level\*/0.004/g;
 				s/\*a-no-carry-base-level\*/0.2/g;
 				s/\*a-carry-base-level\*/0.15/g;
 				# copy line to output file
