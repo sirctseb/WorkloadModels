@@ -74,7 +74,7 @@ if($addition) {
 				# replace base level parameter variable with constants
 				s/\*seq-base-level\*/0.1/g;
 				s/\*n-low-base-level\*/0.1/g;
-				s/\*n-high-base-level\*/0.004/g;
+				s/\*n-high-base-level\*/0.0004/g;
 				s/\*a-no-carry-base-level\*/0.2/g;
 				s/\*a-carry-base-level\*/0.15/g;
 				# copy line to output file
