@@ -75,8 +75,8 @@ if($addition) {
 				s/\*seq-base-level\*/0.1/g;
 				s/\*n-low-base-level\*/0.1/g;
 				s/\*n-high-base-level\*/0.0004/g;
-				s/\*a-no-carry-base-level\*/0.2/g;
-				s/\*a-carry-base-level\*/0.15/g;
+				s/\*a-no-carry-base-level\*/0.1/g;
+				s/\*a-carry-base-level\*/0.05/g;
 				# copy line to output file
 				print modelfile $_;
 			}
