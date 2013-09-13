@@ -48,7 +48,7 @@
     (enemy-response isa response color red action shoot)
     (friend-response isa response color green action oh-no-dont-shoot)
     (goal isa targeting state find-black-target heuristic lowest))
-  (set-base-levels (enemy-response 0.8) (friend-response 0.8))
+  (set-base-levels (enemy-response 0.6) (friend-response 0.6))
 
   ;; goal focus
   (goal-focus goal)
