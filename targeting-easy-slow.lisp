@@ -18,7 +18,7 @@
   ;; the effect is to disable buffer stuffing
   (set-visloc-default isa visual-location color does-not-exist)
   (start-hand-at-mouse)
-  (sgp :mouse-fitts-coeff 0.11)
+  (sgp :mouse-fitts-coeff 0.12)
   (set-cursor-position 960 600)
 
   ;; chunk types
