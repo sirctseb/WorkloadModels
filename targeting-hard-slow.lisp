@@ -43,7 +43,7 @@
     (enemy-response isa response color red action shoot)
     (friend-response isa response color green action oh-no-dont-shoot)
     (goal isa targeting state find-black-target))
-  (set-base-levels (enemy-response 0.6) (friend-response 0.6))
+  (set-base-levels (enemy-response 0.2) (friend-response 0.2))
 
   ;; goal focus
   (goal-focus goal)
