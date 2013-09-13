@@ -68,22 +68,22 @@ qnactralways:
 
 qnactr: targeting-easy-fast.lisp targeting-easy-slow.lisp targeting-hard-slow.lisp targeting-hard-fast.lisp addition.lisp generateQNfile.pl qnactr/header.txt qnactr/additionheader.txt qnactr/targetheader.txt qnactralways
 	# addition only
-	perl generateQNfile.pl -n $(MODEL_TRIALS) -a -o easy && mkdir -p qnactr/block1/trial0 && cp qnactr/qnactr_model.txt qnactr/block1/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block1/trial0/block.txt;
-	perl generateQNfile.pl -n $(MODEL_TRIALS) -a -o hard && mkdir -p qnactr/block2/trial0 && cp qnactr/qnactr_model.txt qnactr/block2/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block2/trial0/block.txt;
+	perl generateQNfile.pl -m $(MODELNUM) -n $(MODEL_TRIALS) -a -o easy && mkdir -p qnactr/block1/trial0 && cp qnactr/qnactr_model.txt qnactr/block1/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block1/trial0/block.txt;
+	perl generateQNfile.pl -m $(MODELNUM) -n $(MODEL_TRIALS) -a -o hard && mkdir -p qnactr/block2/trial0 && cp qnactr/qnactr_model.txt qnactr/block2/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block2/trial0/block.txt;
 	# targeting only
-	perl generateQNfile.pl -n $(MODEL_TRIALS) -t -d easy -s slow && mkdir -p qnactr/block3/trial0 && cp qnactr/qnactr_model.txt qnactr/block3/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block3/trial0/block.txt;
-	perl generateQNfile.pl -n $(MODEL_TRIALS) -t -d easy -s fast && mkdir -p qnactr/block4/trial0 && cp qnactr/qnactr_model.txt qnactr/block4/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block4/trial0/block.txt;
-	perl generateQNfile.pl -n $(MODEL_TRIALS) -t -d hard -s slow && mkdir -p qnactr/block5/trial0 && cp qnactr/qnactr_model.txt qnactr/block5/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block5/trial0/block.txt;
-	perl generateQNfile.pl -n $(MODEL_TRIALS) -t -d hard -s fast && mkdir -p qnactr/block6/trial0 && cp qnactr/qnactr_model.txt qnactr/block6/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block6/trial0/block.txt;
+	perl generateQNfile.pl -m $(MODELNUM) -n $(MODEL_TRIALS) -t -d easy -s slow && mkdir -p qnactr/block3/trial0 && cp qnactr/qnactr_model.txt qnactr/block3/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block3/trial0/block.txt;
+	perl generateQNfile.pl -m $(MODELNUM) -n $(MODEL_TRIALS) -t -d easy -s fast && mkdir -p qnactr/block4/trial0 && cp qnactr/qnactr_model.txt qnactr/block4/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block4/trial0/block.txt;
+	perl generateQNfile.pl -m $(MODELNUM) -n $(MODEL_TRIALS) -t -d hard -s slow && mkdir -p qnactr/block5/trial0 && cp qnactr/qnactr_model.txt qnactr/block5/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block5/trial0/block.txt;
+	perl generateQNfile.pl -m $(MODELNUM) -n $(MODEL_TRIALS) -t -d hard -s fast && mkdir -p qnactr/block6/trial0 && cp qnactr/qnactr_model.txt qnactr/block6/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block6/trial0/block.txt;
 	# combined
-	perl generateQNfile.pl -n $(MODEL_TRIALS) -a -o easy -t -d easy -s slow && mkdir -p qnactr/block7/trial0 && cp qnactr/qnactr_model.txt qnactr/block7/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block7/trial0/block.txt;
-	perl generateQNfile.pl -n $(MODEL_TRIALS) -a -o easy -t -d easy -s fast && mkdir -p qnactr/block8/trial0 && cp qnactr/qnactr_model.txt qnactr/block8/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block8/trial0/block.txt;
-	perl generateQNfile.pl -n $(MODEL_TRIALS) -a -o easy -t -d hard -s slow && mkdir -p qnactr/block9/trial0 && cp qnactr/qnactr_model.txt qnactr/block9/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block9/trial0/block.txt;
-	perl generateQNfile.pl -n $(MODEL_TRIALS) -a -o easy -t -d hard -s fast && mkdir -p qnactr/block10/trial0 && cp qnactr/qnactr_model.txt qnactr/block10/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block10/trial0/block.txt;
-	perl generateQNfile.pl -n $(MODEL_TRIALS) -a -o hard -t -d easy -s slow && mkdir -p qnactr/block11/trial0 && cp qnactr/qnactr_model.txt qnactr/block11/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block11/trial0/block.txt;
-	perl generateQNfile.pl -n $(MODEL_TRIALS) -a -o hard -t -d easy -s fast && mkdir -p qnactr/block12/trial0 && cp qnactr/qnactr_model.txt qnactr/block12/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block12/trial0/block.txt;
-	perl generateQNfile.pl -n $(MODEL_TRIALS) -a -o hard -t -d hard -s slow && mkdir -p qnactr/block13/trial0 && cp qnactr/qnactr_model.txt qnactr/block13/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block13/trial0/block.txt;
-	perl generateQNfile.pl -n $(MODEL_TRIALS) -a -o hard -t -d hard -s fast && mkdir -p qnactr/block14/trial0 && cp qnactr/qnactr_model.txt qnactr/block14/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block14/trial0/block.txt;
+	perl generateQNfile.pl -m $(MODELNUM) -n $(MODEL_TRIALS) -a -o easy -t -d easy -s slow && mkdir -p qnactr/block7/trial0 && cp qnactr/qnactr_model.txt qnactr/block7/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block7/trial0/block.txt;
+	perl generateQNfile.pl -m $(MODELNUM) -n $(MODEL_TRIALS) -a -o easy -t -d easy -s fast && mkdir -p qnactr/block8/trial0 && cp qnactr/qnactr_model.txt qnactr/block8/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block8/trial0/block.txt;
+	perl generateQNfile.pl -m $(MODELNUM) -n $(MODEL_TRIALS) -a -o easy -t -d hard -s slow && mkdir -p qnactr/block9/trial0 && cp qnactr/qnactr_model.txt qnactr/block9/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block9/trial0/block.txt;
+	perl generateQNfile.pl -m $(MODELNUM) -n $(MODEL_TRIALS) -a -o easy -t -d hard -s fast && mkdir -p qnactr/block10/trial0 && cp qnactr/qnactr_model.txt qnactr/block10/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block10/trial0/block.txt;
+	perl generateQNfile.pl -m $(MODELNUM) -n $(MODEL_TRIALS) -a -o hard -t -d easy -s slow && mkdir -p qnactr/block11/trial0 && cp qnactr/qnactr_model.txt qnactr/block11/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block11/trial0/block.txt;
+	perl generateQNfile.pl -m $(MODELNUM) -n $(MODEL_TRIALS) -a -o hard -t -d easy -s fast && mkdir -p qnactr/block12/trial0 && cp qnactr/qnactr_model.txt qnactr/block12/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block12/trial0/block.txt;
+	perl generateQNfile.pl -m $(MODELNUM) -n $(MODEL_TRIALS) -a -o hard -t -d hard -s slow && mkdir -p qnactr/block13/trial0 && cp qnactr/qnactr_model.txt qnactr/block13/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block13/trial0/block.txt;
+	perl generateQNfile.pl -m $(MODELNUM) -n $(MODEL_TRIALS) -a -o hard -t -d hard -s fast && mkdir -p qnactr/block14/trial0 && cp qnactr/qnactr_model.txt qnactr/block14/trial0/QN_ACTR_Model_Initialization.txt && cp qnactr/block.txt qnactr/block14/trial0/block.txt;
 
 publish-models: qnactr
 	mkdir -p $(exp_dir)/output/subject$(MODELNUM)/block{1,2,3,4,5,6,7,8,9,10,11,12,13,14}/trial0

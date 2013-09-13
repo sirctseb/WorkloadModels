@@ -9,10 +9,11 @@ my $difficulty = easy;
 my $speed = slow;
 my $oprange = easy;
 my $trials = 240;
+my $subject = 0;
 
 # parse command line options
 GetOptions('a' => \$addition, 't' => \$targeting, 'd=s' => \$difficulty, 's=s' => \$speed, 'o=s' => \$oprange,
-			'n=i' => \$trials);
+			'n=i' => \$trials, 'm=i' => \$subject);
 
 print "addition:" . $addition . "\n";
 print "targeting:" . $targeting . "\n";
@@ -77,6 +78,8 @@ if($addition) {
 				s/\*n-high-base-level\*/0.0004/g;
 				s/\*a-no-carry-base-level\*/0.08/g;
 				s/\*a-carry-base-level\*/0.04/g;
+				# replace seed value with subject number
+				s/\(sgp :seed \(\d* \d*\)\)/(sgp :seed ($subject 1))/g;
 				# copy line to output file
 				print modelfile $_;
 			}
@@ -114,6 +117,8 @@ if($targeting) {
 					s/=goal>/=goal-2>/g;
 					s/goal-focus/goal-2-focus/g;
 				}
+				# replace seed value with subject number
+				s/\(sgp :seed \(\d* \d*\)\)/(sgp :seed ($subject 1))/g;
 				# replace global variables with constants
 				s/\*target-projection\*/139/g;
 				s/\*whiff-wait-time\*/16/g;
