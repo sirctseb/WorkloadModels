@@ -73,7 +73,7 @@ if($addition) {
 			if(!badline($_)) {
 				# replace base level parameter variable with constants
 				s/\*seq-base-level\*/0.1/g;
-				s/\*n-low-base-level\*/0.1/g;
+				s/\*n-low-base-level\*/0.2/g;
 				s/\*n-high-base-level\*/0.0004/g;
 				s/\*a-no-carry-base-level\*/0.08/g;
 				s/\*a-carry-base-level\*/0.04/g;
