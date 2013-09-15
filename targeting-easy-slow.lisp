@@ -24,13 +24,17 @@
   ;; chunk types
   ;; TODO remove target-x target-y
   (chunk-type targeting state target-x target-y target-location check-miss)
+  (chunk-type response color action)
   ;; TODO remove
   (chunk-type friend-target x y)
 
   ;; dms
   ;; remove track and attend-letter
   (add-dm (track isa chunk) (attend-letter isa chunk)
+    (enemy-response isa response color red action shoot)
+    (friend-response isa response color green action oh-no-dont-shoot)
     (goal isa targeting state find-red-target))
+  (set-base-levels (enemy-response 0.2) (friend-response 0.2))
 
   ;; goal focus
   (goal-focus goal)
@@ -148,6 +152,10 @@
     
     ;; check that visual is free and empty
     ?visual>
+      state         free
+      buffer        empty
+    ;; check for free retrieval
+    ?retrieval>
       state         free
       buffer        empty
 
