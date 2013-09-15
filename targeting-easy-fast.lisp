@@ -97,6 +97,9 @@
       screen-x      =tx
       screen-y      =ty
 
+    ?retrieval>
+      state free
+
   ==>
     ;; store location in goal
     =goal>
