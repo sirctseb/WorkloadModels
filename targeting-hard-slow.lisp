@@ -60,6 +60,9 @@
     ;; check for empty visual-location buffer
     ?visual-location>
       buffer      empty
+
+    ?retrieval>
+      state free
   ==>
     ;; search for an unattended black target
     +visual-location>
@@ -81,6 +84,9 @@
     ;; check for empty visual-location buffer
     ?visual-location>
       buffer empty
+
+    ?retrieval>
+      state free
   ==>
     ;; search for an unattended black target where the friend isn't
     +visual-location>
