@@ -54,6 +54,9 @@
     ?visual-location>
       buffer      empty
 
+    ?retrieval>
+      buffer empty
+
   ==>
     ;; do search for enemy target
     +visual-location>
