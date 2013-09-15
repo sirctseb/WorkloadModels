@@ -54,6 +54,10 @@
     ?visual-location>
       buffer      empty
 
+    ?retrieval>
+      state       free
+      buffer      empty
+
   ==>
     ;; do search for enemy target
     +visual-location>
@@ -103,27 +107,28 @@
       target-x      =tx
       target-y      =ty
       target-location =visual-location
-      state         cap-first-location-search
+  ;     state         cap-first-location-search
 
-    !eval!          (format t "storing first target location: ~a, ~a~%" =tx =ty)
-  )
-  (P cap-first-location-search
-    =goal>
-      isa targeting
-      state cap-first-location-search
-      target-location =target-location
+  ;   !eval!          (format t "storing first target location: ~a, ~a~%" =tx =ty)
+  ; )
+  ; (P cap-first-location-search
+  ;   =goal>
+  ;     isa targeting
+  ;     state cap-first-location-search
+  ;     target-location =target-location
       
-    ?visual-location>
-      buffer empty
+  ;   ?visual-location>
+  ;     buffer empty
 
-  ==>
+  ; ==>
     ;; search for same location
     ;; TODO is this a violation of greedy-polite?
     ;; TODO i.e., should vis-loc become empty for a production cycle before we can do the search again?
     ;; TODO then we would have to store the location
     +visual-location>
       ISA           visual-location
-      :nearest      =target-location
+      ; :nearest      =target-location
+      :nearest =visual-location
       color         red
 
     =goal>
