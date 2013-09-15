@@ -196,29 +196,30 @@
 
     ;; update goal
     =goal>
-      state         move-attention
+      ; state         move-attention
+      state prepare-click
       target-location =visual-location
   )
 
-  (P move-attention
-    =goal>
-      isa targeting
-      state move-attention
-      target-location =target-location
+  ; (P move-attention
+  ;   =goal>
+  ;     isa targeting
+  ;     state move-attention
+  ;     target-location =target-location
     
-    ;; gp vis check
-    ?visual>
-      state         free
-      buffer        empty
+  ;   ;; gp vis check
+  ;   ?visual>
+  ;     state         free
+  ;     buffer        empty
 
-  ==>
-    +visual>
-      ISA           move-attention
-      screen-pos    =target-location
+  ; ==>
+  ;   +visual>
+  ;     ISA           move-attention
+  ;     screen-pos    =target-location
 
-    =goal>
-      state prepare-click
-  )
+  ;   =goal>
+  ;     state prepare-click
+  ; )
 
   ;; prepare a click while checking the target
   ;; TODO I don't think this abides by greedy-polite, but for combining with addition it doesn't matter
@@ -232,14 +233,14 @@
       last-command  move-cursor
       preparation   free
 
-    =visual>
-      isa oval
-    ?visual>
-      state free
+    ; =visual>
+    ;   isa oval
+    ; ?visual>
+    ;   state free
 
   ==>
-    +visual>
-      isa clear
+    ; +visual>
+    ;   isa clear
 
     ;; prepare the mouse-click
     +manual>
