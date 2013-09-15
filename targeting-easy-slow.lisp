@@ -49,6 +49,11 @@
     ;; check for empty vis-loc
     ?visual-location>
       buffer      empty
+
+    ;; check for free retrieval
+    ?retrieval>
+      state         free
+      buffer        empty
   ==>
     +visual-location>
       ISA         visual-location
@@ -131,11 +136,6 @@
     ;; make sure motor system is free
     ?manual>
       preparation   free
-      
-    ;; check for free retrieval
-    ?retrieval>
-      state         free
-      buffer        empty
   ==>
 
     ;; request to move the cursor
