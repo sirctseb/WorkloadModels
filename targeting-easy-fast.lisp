@@ -55,7 +55,7 @@
       buffer      empty
 
     ?retrieval>
-      buffer empty
+      state       free
 
   ==>
     ;; do search for enemy target
