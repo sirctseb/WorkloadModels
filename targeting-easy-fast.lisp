@@ -19,7 +19,7 @@
   (set-visloc-default isa visual-location color does-not-exist)
   (start-hand-at-mouse)
   ;; fitt's law coefficient
-  ; (sgp :mouse-fitts-coeff 0.15)
+  (sgp :mouse-fitts-coeff 0.13)
   (set-cursor-position 960 600)
 
   ;; chunk-types
