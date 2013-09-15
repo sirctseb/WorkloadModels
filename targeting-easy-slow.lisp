@@ -131,6 +131,11 @@
     ;; make sure motor system is free
     ?manual>
       preparation   free
+      
+    ;; check for free retrieval
+    ?retrieval>
+      state         free
+      buffer        empty
   ==>
 
     ;; request to move the cursor
@@ -152,10 +157,6 @@
     
     ;; check that visual is free and empty
     ?visual>
-      state         free
-      buffer        empty
-    ;; check for free retrieval
-    ?retrieval>
       state         free
       buffer        empty
 
