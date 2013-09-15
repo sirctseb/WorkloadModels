@@ -99,6 +99,7 @@
 
     ?retrieval>
       state free
+      buffer empty
 
   ==>
     ;; store location in goal
