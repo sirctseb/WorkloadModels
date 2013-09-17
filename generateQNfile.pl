@@ -86,9 +86,9 @@ if($addition) {
 				} else {
 					s/\*seq-base-level\*/0.16/g;
 					s/\*n-low-base-level\*/0.15/g;
-					s/\*n-high-base-level\*/0.00035/g;
-					s/\*a-no-carry-base-level\*/0.06/g;
-					s/\*a-carry-base-level\*/0.01/g;
+					s/\*n-high-base-level\*/0.0006/g;
+					s/\*a-no-carry-base-level\*/0.1/g;
+					s/\*a-carry-base-level\*/0.06/g;
 				}
 				# set seed to subject number
 				s/\(sgp\s*:seed\s*\(\d+\s*\d+\)\)/(sgp :seed ($subject$trial 1))/g;
