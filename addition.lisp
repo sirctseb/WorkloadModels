@@ -385,6 +385,7 @@
     ;; gp: require empty visual-location
     ?visual-location>
       buffer      empty
+      -state error
     ?visual>
       state free
       buffer empty

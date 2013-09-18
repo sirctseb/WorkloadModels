@@ -265,6 +265,7 @@
     ; check that vis-loc is empty because we will request it here
     ?visual-location>
       buffer        empty
+      -state error
   ==>
     ;; request visual location search for same oval (should be the same we found last time, but it should be colored now)
     +visual-location>
