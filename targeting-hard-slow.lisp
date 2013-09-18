@@ -10,7 +10,7 @@
     :vwt t
     :incremental-mouse-moves 0.01
     :randomize-time t
-    :visual-movement-tolerance 0.5
+    :visual-movement-tolerance 0
     :pixels-per-inch 96
     :motor-feature-prep-time 0.035
     :viewing-distance 96)
@@ -61,6 +61,7 @@
     ;; check for empty visual-location buffer
     ?visual-location>
       buffer      empty
+      -state error
   ==>
     ;; search for an unattended black target
     +visual-location>
@@ -324,10 +325,16 @@
       state error
   ==>
     =goal>
-      state find-black-target
+      state move-cursor
       ;; reset friend location so find-black-target can fire
       friend-x nil
       friend-y nil
+
+    ;; search for an unattended black target
+    +visual-location>
+      ISA         visual-location
+      kind        OVAL
+      color       black
   )
 
   ;; after a rescan of the target, check if the target is red and click it
@@ -428,6 +435,7 @@
 
     ?visual-location>
       buffer empty
+    -state error
   ==>
     ;; start vis-loc loop again
     +visual-location>
@@ -472,6 +480,7 @@
 
     ?visual-location>
       buffer empty
+      -state error
 
   ==>
     ;; request visual location search for same oval (should be the same we found last time, but it should be colored now)

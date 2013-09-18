@@ -57,6 +57,7 @@
     :trace-detail high
     :randomize-time t
     )
+  (sgp :visual-finst-span 10)
   (sgp :seed (30 15))
   ;; we'll count this as sgp
   ;; set the default visloc chunk to something that will never match
@@ -527,6 +528,7 @@
     ;; gp vis-loc check
     ?visual-location>
       buffer  empty
+      -state error
     ?visual>
       state free
       buffer empty
