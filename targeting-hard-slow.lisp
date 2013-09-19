@@ -191,8 +191,16 @@
     ?visual-location>
       state error
   ==>
+    ;; search for an unattended black target
+    +visual-location>
+      ISA         visual-location
+      kind        OVAL
+      color       black
+
+    ;; update state
     =goal>
-      state find-black-target
+      state       move-cursor
+      search-state black
   )
 
   ;; rule to check the visual location against a remembered
