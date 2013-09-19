@@ -272,8 +272,9 @@
       ISA           visual-location
       kind          OVAL
       ;; check that it doesn't match friend location
-      - screen-x    =fx
-      - screen-y    =fy
+      ;; don't have to do this now because we search away
+      ; - screen-x    =fx
+      ; - screen-y    =fy
       screen-x      =x
       screen-y      =y
 
