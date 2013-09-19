@@ -86,7 +86,7 @@ if($addition) {
 				} else {
 					s/\*seq-base-level\*/0.16/g;
 					s/\*n-low-base-level\*/0.3/g;
-					s/\*n-high-base-level\*/0.0001/g;
+					s/\*n-high-base-level\*/0.0002/g;
 					s/\*a-no-carry-base-level\*/0.1/g;
 					s/\*a-carry-base-level\*/0.06/g;
 				}
