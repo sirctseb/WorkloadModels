@@ -35,7 +35,7 @@
   (set-cursor-position 960 600)
 
   ;; chunk types
-  (chunk-type targeting state target-location target-x target-y friend-x friend-y hits)
+  (chunk-type targeting state target-location target-x target-y friend-x friend-y hits search-state)
   (chunk-type friend-target x y)
   (chunk-type response color action)
 
@@ -61,7 +61,7 @@
     ;; check for empty visual-location buffer
     ?visual-location>
       buffer      empty
-      -state error
+      - state error
   ==>
     ;; search for an unattended black target
     +visual-location>
@@ -72,6 +72,7 @@
     ;; update state
     =goal>
       state       move-cursor
+      search-state black
   )
   ;; search for a black target that isn't at the friend location, but only check the x value of the location
   (P find-black-target-friend-x
@@ -85,7 +86,7 @@
     ?visual-location>
       buffer empty
       ;; TODO this should avoid catching addition vis-loc errors in fail-find-not-friend
-      -state error
+      - state error
   ==>
     ;; search for an unattended black target where the friend isn't
     +visual-location>
@@ -93,11 +94,12 @@
       kind OVAL
       ;; TODO don't actually need black filter when searching away from friend
       color black
-      -screen-x =fx
+      - screen-x =fx
 
     ;; update state
     =goal>
       state     move-cursor
+      search-state black
   )
 
   ;; TODO possible failure case when check friend first, then click on enemy that overlaps with another
@@ -106,6 +108,7 @@
   ;; so keep searching until targets refresh
   (P fail-find-no-friend
     =goal>
+      ISA targeting
       state move-cursor
       friend-x nil
     ?visual-location>
@@ -123,6 +126,7 @@
   ;; TODO this is not gp
   (P fail-find-not-friend
     =goal>
+      ISA targeting
       state move-cursor
       friend-x =fx
       friend-y =fy
@@ -132,8 +136,63 @@
     +visual-location>
       ISA visual-location
       kind OVAL
-      ; color black
-      -screen-y =fy
+      color black
+      - screen-y =fy
+    =goal>
+      search-state black-not-friend-y
+  )
+  ;; use up a production fire to let target be dismissed
+  (P check-double-red-after-fail-buffer
+    =goal>
+      ISA targeting
+      state move-cursor
+      search-state black-not-friend-y
+    ?visual-location>
+      state error
+  ==>
+    =goal>
+      search-state double-red-buffer
+  )
+  (P check-double-red-after-fail
+    =goal>
+      ISA targeting
+      state move-cursor
+      search-state double-red-buffer
+    ;; redundant check
+    ?visual-location>
+      state error
+  ==>
+    ;; by this time, either we were over two overlapping red targets, or there are new targets on screen (or at least the old ones are gone)
+    +visual-location>
+      ISA visual-location
+      kind OVAL
+      color red
+    =goal>
+      state double-red-search
+      search-state double-red
+  )
+  ;; if there is a still a red target at this point, it was overlapping and we can just click
+  (P found-double-red
+    =goal>
+      ISA targeting
+      state double-red-search
+    =visual-location>
+      ISA visual-location
+      kind OVAL
+  ==>
+    =goal>
+      state click-mouse
+  )
+  ;; if search fails, then there should be new targets on screen, so go to beginning
+  (P fail-double-red
+    =goal>
+      ISA targeting
+      state double-red-search
+    ?visual-location>
+      state error
+  ==>
+    =goal>
+      state find-black-target
   )
 
   ;; rule to check the visual location against a remembered
@@ -266,7 +325,7 @@
     ; check that vis-loc is empty because we will request it here
     ?visual-location>
       buffer        empty
-      -state error
+      - state error
   ==>
     ;; request visual location search for same oval (should be the same we found last time, but it should be colored now)
     +visual-location>
@@ -435,7 +494,7 @@
 
     ?visual-location>
       buffer empty
-    -state error
+    - state error
   ==>
     ;; start vis-loc loop again
     +visual-location>
@@ -480,7 +539,7 @@
 
     ?visual-location>
       buffer empty
-      -state error
+      - state error
 
   ==>
     ;; request visual location search for same oval (should be the same we found last time, but it should be colored now)
