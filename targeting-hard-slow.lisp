@@ -263,7 +263,7 @@
       loc           =visual-location
 
     =goal>
-      state         move-attention
+      state         check-target
       target-x      =x
       target-y      =y
       target-location =visual-location
@@ -298,7 +298,7 @@
       loc           =visual-location
 
     =goal>
-      state         move-attention
+      state         check-target
       target-x      =x
       target-y      =y
       target-location =visual-location
