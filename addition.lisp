@@ -57,7 +57,7 @@
     :trace-detail high
     :randomize-time t
     )
-  (sgp :visual-finst-span 10)
+  (sgp :visual-finst-span 100)
   (sgp :seed (30 15))
   ;; we'll count this as sgp
   ;; set the default visloc chunk to something that will never match
