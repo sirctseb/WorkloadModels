@@ -255,6 +255,9 @@
     ;; make sure motor system is free
     ?manual>
       preparation   free
+
+    ?retrieval>
+      state free
   ==>
 
     ;; request to move the cursor
@@ -290,6 +293,9 @@
     ;; make sure motor system is free
     ?manual>
       preparation   free
+
+    ?retrieval>
+      state free
   ==>
 
     ;; request to move the cursor
@@ -558,7 +564,6 @@
     ?visual-location>
       buffer empty
       - state error
-
 
     ?retrieval>
       state free
