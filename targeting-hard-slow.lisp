@@ -128,6 +128,7 @@
     =goal>
       ISA targeting
       state move-cursor
+      search-state black
       friend-x =fx
       friend-y =fy
     ?visual-location>
