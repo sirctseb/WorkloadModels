@@ -543,6 +543,9 @@
     ;; only loop when the move is not complete
     ?manual>
       state         busy
+
+    ?retrieval>
+      state free
   ==>
     =goal>
       ;; move to the state where we distinguish between red and green targets
