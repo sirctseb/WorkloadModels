@@ -58,6 +58,9 @@
       state       find-black-target
       friend-x    nil
 
+    ?retrieval>
+      state free
+
     ;; check for empty visual-location buffer
     ?visual-location>
       buffer      empty
@@ -81,6 +84,9 @@
       state       find-black-target
       friend-x    =fx
       friend-y    =fy
+
+    ?retrieval>
+      state free
 
     ;; check for empty visual-location buffer
     ?visual-location>
@@ -204,6 +210,7 @@
       search-state black
   )
 
+  ;; TODO this rule is no longer used, remove
   ;; rule to check the visual location against a remembered
   ;; location of a friend target and go to a different one
   (P avoid-friend
@@ -230,6 +237,7 @@
     !eval!          (incf *friend-avoids*)
   )
 
+  ;; TODO combine with the other move-cursor rule
   ;; rule to move cursor toward target when there is no friend info remembered
   (P move-cursor-no-friend-info
     =goal>
