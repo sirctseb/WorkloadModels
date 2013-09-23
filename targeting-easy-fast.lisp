@@ -127,8 +127,8 @@
     ;; TODO then we would have to store the location
     +visual-location>
       ISA           visual-location
-      ; :nearest      =target-location
-      :nearest =visual-location
+      :nearest      =target-location
+      ; :nearest =visual-location
       color         red
 
     =goal>
