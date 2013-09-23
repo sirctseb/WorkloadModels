@@ -107,20 +107,20 @@
       target-x      =tx
       target-y      =ty
       target-location =visual-location
-  ;     state         cap-first-location-search
+      state         cap-first-location-search
 
-  ;   !eval!          (format t "storing first target location: ~a, ~a~%" =tx =ty)
-  ; )
-  ; (P cap-first-location-search
-  ;   =goal>
-  ;     isa targeting
-  ;     state cap-first-location-search
-  ;     target-location =target-location
+    !eval!          (format t "storing first target location: ~a, ~a~%" =tx =ty)
+  )
+  (P cap-first-location-search
+    =goal>
+      isa targeting
+      state cap-first-location-search
+      target-location =target-location
       
-  ;   ?visual-location>
-  ;     buffer empty
+    ?visual-location>
+      buffer empty
 
-  ; ==>
+  ==>
     ;; search for same location
     ;; TODO is this a violation of greedy-polite?
     ;; TODO i.e., should vis-loc become empty for a production cycle before we can do the search again?
