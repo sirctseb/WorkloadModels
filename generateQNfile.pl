@@ -78,17 +78,17 @@ if($addition) {
 			if(!badline($_)) {
 				# replace base level parameter variable with constants
 				if($incentive eq 'no') {
-					s/\*seq-base-level\*/0.1/g;
+					s/\*seq-base-level\*/0.01/g;
 					s/\*n-low-base-level\*/0.3/g;
-					s/\*n-high-base-level\*/0.00003/g;
+					s/\*n-high-base-level\*/0.05/g;
 					s/\*a-no-carry-base-level\*/0.05/g;
-					s/\*a-carry-base-level\*/0.02/g;
+					s/\*a-carry-base-level\*/0.05/g;
 				} else {
-					s/\*seq-base-level\*/0.16/g;
-					s/\*n-low-base-level\*/0.6/g;
-					s/\*n-high-base-level\*/0.0001/g;
+					s/\*seq-base-level\*/0.05/g;
+					s/\*n-low-base-level\*/0.3/g;
+					s/\*n-high-base-level\*/0.08/g;
 					s/\*a-no-carry-base-level\*/0.08/g;
-					s/\*a-carry-base-level\*/0.04/g;
+					s/\*a-carry-base-level\*/0.08/g;
 				}
 				# set seed to subject number
 				s/\(sgp\s*:seed\s*\(\d+\s*\d+\)\)/(sgp :seed ($subject$trial 1))/g;
