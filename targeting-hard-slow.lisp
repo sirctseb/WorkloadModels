@@ -15,12 +15,12 @@
     :viewing-distance 96)
   (sgp
     :esc t
-    :lf .2
-    :le 10
+    ; :lf .2
+    ; :le 10
     )
-  (sgp :blc 0.1)
-  (sgp :ans 0.05)
-  (sgp :rt -.45)
+  ; (sgp :blc 0.1)
+  ; (sgp :ans 0.05)
+  ; (sgp :rt -.45)
   (sgp :seed (1 1))
   ; (sgp :rt -.45 :esc t :ans 0.05 :mp 16)
   (sgp :er t)
