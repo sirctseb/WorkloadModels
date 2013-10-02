@@ -73,11 +73,11 @@ if($addition) {
 		if($model_def && !/; end model/) {
 			if(!badline($_)) {
 				# replace base level parameter variable with constants
-				s/\*seq-base-level\*/0.1/g;
-				s/\*n-low-base-level\*/0.2/g;
-				s/\*n-high-base-level\*/0.0004/g;
-				s/\*a-no-carry-base-level\*/0.08/g;
-				s/\*a-carry-base-level\*/0.04/g;
+				s/\*seq-base-level\*/0.5/g;
+				s/\*n-low-base-level\*/0.5/g;
+				s/\*n-high-base-level\*/0.3/g;
+				s/\*a-no-carry-base-level\*/0.2/g;
+				s/\*a-carry-base-level\*/0.2/g;
 				# replace seed value with subject number
 				s/\(sgp :seed \(\d* \d*\)\)/(sgp :seed ($subject 1))/g;
 				# copy line to output file
