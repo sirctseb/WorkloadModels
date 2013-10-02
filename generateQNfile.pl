@@ -75,7 +75,7 @@ if($addition) {
 				# replace base level parameter variable with constants
 				s/\*seq-base-level\*/1/g;
 				s/\*n-low-base-level\*/3.5/g;
-				s/\*n-high-base-level\*/2.4/g;
+				s/\*n-high-base-level\*/2/g;
 				s/\*a-no-carry-base-level\*/2.7/g;
 				s/\*a-carry-base-level\*/2.7/g;
 				# replace seed value with subject number
