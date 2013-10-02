@@ -51,6 +51,7 @@
   ; (sgp :rt -.45)
   (sgp :seed (1 1))
   ; (sgp :rt -.45 :esc t :ans 0.05 :mp 16)
+  (sgp :rt -1)
   (sgp :er t)
   (sgp
     :v t
