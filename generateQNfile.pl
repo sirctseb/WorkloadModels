@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 use Getopt::Long;
 use File::Copy;
+use JSON;
 
 # set default values for command line options
 my $addition = 0;
@@ -10,10 +11,11 @@ my $speed = slow;
 my $oprange = easy;
 my $trials = 240;
 my $subject = 0;
+my $dupsubject = 0;
 
 # parse command line options
 GetOptions('a' => \$addition, 't' => \$targeting, 'd=s' => \$difficulty, 's=s' => \$speed, 'o=s' => \$oprange,
-			'n=i' => \$trials, 'm=i' => \$subject);
+			'n=i' => \$trials, 'm=i' => \$subject, 'x=s' => \$dupsubject);
 
 print "addition:" . $addition . "\n";
 print "targeting:" . $targeting . "\n";
@@ -48,6 +50,19 @@ if($addition) {
 	close(additionheader);
 }
 
+sub buildTarget {
+	$obj = $_[0];
+	$x = $obj->{'startX'};
+	$y = $obj->{'startY'};
+	$endx = $obj->{'endX'};
+	$endy = $obj->{'endY'};
+	$diffx = $endx - $x;
+	$diffy = $endy - $y;
+	$movementx = $diffx / 600;
+	$movementy = $diffy / 600;
+	return ('x' => $x, 'y' => $y, 'movex' => $movementx, 'movey' => $movementy);
+}
+
 # if targeting is enabled, put in targeting header stuff
 if($targeting) {
 	# copy in contents of targeting header file
@@ -55,6 +70,37 @@ if($targeting) {
 	while(<targetingheader>) {
 		# uncomment conditional lines
 		s/^([^;]*);([^;]*; $difficulty)/$1$2/g;
+		# read target locations from subject file
+		if($dupsubject) {
+			# read in events file
+			open(events, $dupsubject);
+			$json_string = <events>;
+			close(events);
+			# strip prepended text
+			$json_string = substr($json_string, 13);
+			# parse json
+			$json = decode_json($json_string);
+			# get iterations list
+			$iterations = $json->{'events'};
+			# make target info arrays
+			@t1 = ();
+			@t2 = ();
+			@f = ();
+			# for each iteration
+			foreach(@$iterations) {
+				$targ1 = @$_->[0];
+				$targ2 = @$_->[1];
+				$targ3 = @$_->[2];
+				push(@t1, buildTarget($targ1));
+				push(@t2, buildTarget($targ3));
+				push(@f, buildTarget($targ2));
+			}
+				# push(@t1, ('x' => $targ1->{'startX'}, 'y' => $targ1->{'startY'}, 'endx' => $targ1->{'endX'}, 'endy' => $targ1->{'endY'}))
+				# push(@t2, ('x' => $targ3->{'startX'}, 'y' => $targ3->{'startY'}, 'endx' => $targ3->{'endX'}, 'endy' => $targ3->{'endY'}))
+				# push(@f, ('x' => $targ2->{'startX'}, 'y' => $targ2->{'startY'}, 'endx' => $targ2->{'endX'}, 'endy' => $targ2->{'endY'}))
+			# replace enemy 1 x line
+			s/(:display_item_screen_location_x)\s*\(150\))/$1 ()
+		}
 		print modelfile $_;
 	}
 	close(targetingheader);
